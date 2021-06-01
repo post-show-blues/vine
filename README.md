@@ -1,2 +1,2 @@
 # vine
-<img src="https://user-images.githubusercontent.com/52027965/120340497-0cc54200-c331-11eb-9499-f4f3771c6d1c.png" width="70%" height="45%">
+![image](https://user-images.githubusercontent.com/52027965/120344441-8ad71800-c334-11eb-98cc-5a2a50163298.png)
