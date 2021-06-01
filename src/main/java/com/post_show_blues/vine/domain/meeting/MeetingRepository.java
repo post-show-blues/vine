@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.domain.meetingimg;
+package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import org.springframework.data.jpa.repository.JpaRepository;
