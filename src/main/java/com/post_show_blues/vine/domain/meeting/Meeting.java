@@ -2,6 +2,7 @@ package com.post_show_blues.vine.domain.meeting;
 
 
 import com.post_show_blues.vine.domain.BaseEntity;
+import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class Meeting extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "master_id", nullable = false)
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="category_id", nullable = false)
+    private Category category;
 
     @Column(nullable = false)
     private String title;
