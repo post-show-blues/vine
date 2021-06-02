@@ -8,11 +8,17 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RoomDTO {
+@AllArgsConstructor
+public class MeetingImgDTO {
 
-    private Long id;
+    private String uuid;
+
+    private String fileName;
+
+    private String filePath;
+
+
 
 
 }
