@@ -32,7 +32,8 @@ public class Meeting extends BaseEntity {
     private String title;
 
     @Column(nullable = false)
-    private String text;
+    @Builder.Default
+    private String text = "";
 
     @Column(nullable = false)
     private String place;
