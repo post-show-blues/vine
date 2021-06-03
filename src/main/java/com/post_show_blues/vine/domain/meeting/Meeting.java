@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"member","category"})
 public class Meeting extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,8 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private int maxNumber;
 
-    private int currentNumber;
+    @Builder.Default
+    private int currentNumber=0;
 
     @Column(nullable = false)
     private String meetDate;
@@ -50,4 +51,59 @@ public class Meeting extends BaseEntity {
 
 
     private String chatLink;
+
+    public void changeCategory(Category category){
+        this.category = category;
+    }
+
+    public void changeMember(Member member){
+        this.member = member;
+    }
+
+    public void changeTitle(String title){
+        this.title = title;
+    }
+
+    public void changeText(String text){
+        this.text = text;
+    }
+
+    public void changePlace(String place){
+        this.place = place;
+    }
+
+    public void changeMaxNumber (int maxNumber){
+        if(maxNumber < this.currentNumber){
+            throw new IllegalStateException("참여인원 초과입니다.");
+        }
+        else{
+            this.maxNumber = maxNumber;
+        }
+    }
+
+    public void changeMeetDate (String meetDate){
+        this.meetDate = meetDate;
+    }
+
+    public void changeReqDeadline (String reqDeadline){
+        this.reqDeadline = reqDeadline;
+    }
+
+    public void changeChatLink (String chatLink){
+        this.chatLink = chatLink;
+    }
+
+    public void addCurrentNumber(){
+        if( (this.currentNumber + 1) > this.maxNumber){
+            throw new IllegalStateException("참여인원 초과입니다.");
+        }
+        else{
+            this.currentNumber += 1;
+        }
+    }
+
+    public void removeCurrentNumber(){
+       this.currentNumber -=1;
+    }
+
 }
