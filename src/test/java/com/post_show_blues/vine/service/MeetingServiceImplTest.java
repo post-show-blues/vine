@@ -6,23 +6,34 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.participant.Participant;
+import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@Slf4j
 class MeetingServiceImplTest {
 
     @Autowired MeetingService meetingService;
     @Autowired MeetingRepository meetingRepository;
     @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
+    @Autowired ParticipantRepository participantRepository;
 
    @Test
    //TODO 2021.06.02 - 사진등록 테스트는? -hyeongwoo
@@ -87,6 +98,76 @@ class MeetingServiceImplTest {
 
     }
 
+    @Test
+    void 인원수정오류() throws Exception{
+        //given
+        Meeting meeting = createMeeting();
+
+        Category category1 = createCategory();
+        Member member1 = createMember();
+
+        MeetingDTO meetingDTO = MeetingDTO.builder()
+                .meetingId(meeting.getId())
+                .categoryId(category1.getId())
+                .masterId(member1.getId())
+                .title("MeetingB") //meetingA -> meeting B로 변경
+                .text("meet2") //meet -> meet2
+                .place("B") // A -> B
+                .meetDate("2021-06-05")
+                .reqDeadline("2021-06-04")
+                .maxNumber(2) // 4 -> 2로 변경
+                .build();
+
+        //when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> meetingService.modify(meetingDTO));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
+
+    }
+    
+    /*@Test
+    void 모임삭제() throws Exception{
+        //given
+        Participant participant = createParticipant();
+        Long meetingId = participant.getMeeting().getId();
+
+        //when
+        meetingService.remove(meetingId);
+
+        //then
+
+        System.out.println(participantRepository.findById(participant.getId()));
+
+        //삭제된 모임방 검색
+        NoSuchElementException e2 = assertThrows(NoSuchElementException.class,
+                () -> meetingService.findOne(meetingId));
+
+        NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId());
+
+
+        Assertions.assertThat(e1.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
+
+    } */
+
+    private Participant createParticipant() {
+        Meeting meeting = createMeeting();
+        Member member = createMember();
+
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(member)
+                .req(false)
+                .build();
+
+        participantRepository.save(participant);
+
+        return participant;
+    }
+
     private Meeting createMeeting() {
         Category category = createCategory();
         Member member = createMember();
@@ -100,6 +181,7 @@ class MeetingServiceImplTest {
                 .meetDate("2021-06-05")
                 .reqDeadline("2021-06-04")
                 .maxNumber(4)
+                .currentNumber(3)
                 .build();
 
         meetingRepository.save(meeting);

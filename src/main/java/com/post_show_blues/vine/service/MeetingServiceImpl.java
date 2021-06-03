@@ -7,6 +7,7 @@ import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
 import com.sun.xml.bind.v2.TODO;
@@ -27,6 +28,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final MeetingRepository meetingRepository;
     private final MeetingImgRepository meetingImgRepository;
     private final NoticeRepository noticeRepository;
+    private final ParticipantRepository participantRepository;
 
     @Override
     @Transactional
@@ -73,7 +75,7 @@ public class MeetingServiceImpl implements MeetingService{
             meetingRepository.save(meeting);
 
             /* 여기서부터 img 변경 */
-            // meeting에 해당되는 사진 모두 삭제
+            // meeting의 사진 모두 삭제
             meetingImgRepository.deleteByMeeting(meeting);
 
             List<MeetingImg> meetingImgList = getImgDtoToEntity(meetingDTO, meeting);
@@ -90,7 +92,13 @@ public class MeetingServiceImpl implements MeetingService{
 
     @Override
     public void remove(Long meetingId) {
+        Optional<Meeting> result = meetingRepository.findById(meetingId);
+        Meeting meeting = result.get();
 
+        // participant -> meetingImg -> meeting 순으로 삭제
+        participantRepository.deleteByMeeting(meeting);
+        meetingImgRepository.deleteByMeeting(meeting);
+        meetingRepository.deleteById(meetingId);
     }
 
     @Override
