@@ -25,13 +25,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	compileOnly 'org.projectlombok:lombok'
+    implementation 'junit:junit:4.12'
+    implementation 'junit:junit:4.12'
+    compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'com.querydsl:querydsl-jpa'  //qdsl 추가 내용
+
+	// validation 추가
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 test {
