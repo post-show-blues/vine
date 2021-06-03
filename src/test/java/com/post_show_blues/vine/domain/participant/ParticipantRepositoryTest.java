@@ -25,12 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParticipantRepositoryTest {
 
     @Autowired ParticipantRepository participantRepository;
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    MeetingRepository meetingRepository;
-    @Autowired
-    CategoryRepository categoryRepository;
+    @Autowired MemberRepository memberRepository;
+    @Autowired MeetingRepository meetingRepository;
+    @Autowired CategoryRepository categoryRepository;
 
     /*
     @Test@Commit
