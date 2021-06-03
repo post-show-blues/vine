@@ -18,11 +18,14 @@ public class Member{
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
     private String email;
+
+    @Builder.Default
+    private String text="";
 
     @Column(nullable = false)
     private String password;

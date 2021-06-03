@@ -18,7 +18,7 @@ public class MemberImg {
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="member_id",nullable = false)
-    private Member memberId;
+    private Member member;
 
     @Column(nullable = false)
     private String uuid;
