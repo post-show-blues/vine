@@ -23,6 +23,7 @@ import java.util.Optional;
 @Service
 @Log4j2
 @RequiredArgsConstructor
+@Transactional
 public class MeetingServiceImpl implements MeetingService{
 
     private final MeetingRepository meetingRepository;
@@ -30,8 +31,10 @@ public class MeetingServiceImpl implements MeetingService{
     private final NoticeRepository noticeRepository;
     private final ParticipantRepository participantRepository;
 
+    /**
+     * 모임등록
+     */
     @Override
-    @Transactional
     public Long register(MeetingDTO meetingDTO) {
         Map<String, Object> result = dtoToEntity(meetingDTO);
 
@@ -54,6 +57,9 @@ public class MeetingServiceImpl implements MeetingService{
         return meeting.getId();
     }
 
+    /**
+     * 모임수정
+     */
     @Override
     public void modify(MeetingDTO meetingDTO) {
         Optional<Meeting> result = meetingRepository.findById(meetingDTO.getMeetingId());
@@ -90,6 +96,9 @@ public class MeetingServiceImpl implements MeetingService{
 
     }
 
+    /**
+     * 모임삭제
+     */
     @Override
     public void remove(Long meetingId) {
         Optional<Meeting> result = meetingRepository.findById(meetingId);
@@ -101,7 +110,11 @@ public class MeetingServiceImpl implements MeetingService{
         meetingRepository.deleteById(meetingId);
     }
 
+    /**
+     * 모임조회
+     */
     @Override
+    @Transactional(readOnly = true)
     public Meeting findOne(Long meetingId) {
         Optional<Meeting> result = meetingRepository.findById(meetingId);
 
