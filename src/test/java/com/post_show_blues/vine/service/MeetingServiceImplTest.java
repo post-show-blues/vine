@@ -145,13 +145,13 @@ class MeetingServiceImplTest {
                 () -> meetingService.findOne(meetingId));
 
         NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
-                () -> participantRepository.findById(participant.getId());
+                () -> (participantRepository.findById(participant.getId())).get());
 
 
         Assertions.assertThat(e1.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
 
-    } */
+    }*/
 
     private Participant createParticipant() {
         Meeting meeting = createMeeting();

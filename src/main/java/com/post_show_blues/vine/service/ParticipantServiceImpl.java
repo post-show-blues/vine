@@ -99,6 +99,67 @@ public class ParticipantServiceImpl implements ParticipantService{
 
     }
 
+    @Override
+    public void reject(Long participantId) {
+        Optional<Participant> result = participantRepository.findById(participantId);
+        Participant participant = result.get();
+
+        Member member = participant.getMember();
+        Meeting meeting = participant.getMeeting();
+
+        participantRepository.deleteById(participantId);
+
+        //TODO 2021.06.04.-거절 당한 회원에게 알림-hyeongwoo
+        /*
+        Notice notice = Notice.builder()
+                .memberId(member.getId())
+                .text(meeting.getTitle() + "방에 거절되었습니다")
+                .link()
+                .build();
+
+        noticeRepository.save(notice);
+        */
+
+    }
+
+    @Override
+    public void remove(Long participantId, Long memberId) {
+        Optional<Participant> result = participantRepository.findById(participantId);
+        Participant participant = result.get();
+
+        Meeting meeting = participant.getMeeting();
+
+        meeting.removeCurrentNumber();
+
+        participantRepository.deleteById(participantId);
+
+        //TODO 2021.06.04
+        // 1.추방 -> 회원에게 알림
+        // 2. 나가기 -> 방장에게 알림
+        // -hyeongwoo
+        /*
+        //알림
+        //방장에게 알림(나감)
+        if(meeting.getMember().getId() == memberId){
+            Notice masterNotice = Notice.builder()
+                    .memberId(memberId)
+                    .text(meeting.getTitle() + "방 인원이 나갔습니다.")
+                    .link()
+                    .build();
+            noticeRepository.save(masterNotice);
+        }
+        //회원에게 알림(추방)
+        else{
+            Notice memberNotice = Notice.builder()
+                    .memberId(participant.getMember().getId())
+                    .text(meeting.getTitle() + "방에 ~~했습니다.")
+                    .link()
+                    .build();
+            noticeRepository.save(memberNotice);
+        }
+         */
+    }
+
     /**
      * 참여조회
      */

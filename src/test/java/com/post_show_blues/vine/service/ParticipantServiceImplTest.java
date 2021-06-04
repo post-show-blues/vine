@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -136,6 +139,57 @@ class ParticipantServiceImplTest {
 
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
+    }
+
+    @Test
+    void 참여거절() throws Exception{
+        //given
+        Member member = createMember();
+        Meeting meeting = createMeeting();
+
+        Participant participant = Participant.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        participantService.reject(participant.getId());
+
+        //then
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId()).get());
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+    }
+    
+    @Test
+    void 추방_나가기_기능() throws Exception{
+        //given
+        Member member = createMember();
+        Meeting meeting = createMeeting();
+        int beforeNumber = meeting.getCurrentNumber();
+
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        //추방일때
+        participantService.remove(participant.getId(), meeting.getId());
+
+        //then
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber-1);
+
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId()).get());
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+
     }
 
     private Meeting createMeeting() {
