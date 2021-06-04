@@ -7,11 +7,15 @@ import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
+import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +27,7 @@ class ParticipantServiceImplTest {
     @Autowired MeetingRepository meetingRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired CategoryRepository categoryRepository;
+    @Autowired ParticipantRepository participantRepository;
 
 
     @Test
@@ -71,6 +76,120 @@ class ParticipantServiceImplTest {
 
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
+    }
+
+    @Test
+    void 참여수락() throws Exception{
+        //given
+        Meeting meeting = createMeeting();
+        Member member = createMember();
+
+        //수락전 참여 현재인원
+        int beforeNumber = meeting.getCurrentNumber();
+
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        participantService.accept(participant.getId());
+
+        //then
+        Assertions.assertThat(participant.getReq()).isEqualTo(true);
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber+1);
+    }
+
+    @Test
+    void 수락시_인원초과() throws Exception{
+        //given
+        Member member1 = createMember();
+
+        //meeting 생성
+        Category category = createCategory();
+        Member member2 = createMember();
+
+        Meeting meeting = Meeting.builder()
+                .category(category)
+                .member(member2)
+                .title("MeetingA")
+                .text("meet")
+                .place("A")
+                .meetDate("2021-06-05")
+                .reqDeadline("2021-06-04")
+                .maxNumber(4)
+                .currentNumber(4) // maxNumber == currentNumber
+                .build();
+
+        meetingRepository.save(meeting);
+
+        //participant 생성
+        Participant participant = Participant.builder()
+                .member(member1)
+                .meeting(meeting)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> participantService.accept(participant.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
+    }
+
+    @Test
+    void 참여거절() throws Exception{
+        //given
+        Member member = createMember();
+        Meeting meeting = createMeeting();
+
+        Participant participant = Participant.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        participantService.reject(participant.getId());
+
+        //then
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId()).get());
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+    }
+    
+    @Test
+    void 추방_나가기_기능() throws Exception{
+        //given
+        Member member = createMember();
+        Meeting meeting = createMeeting();
+        int beforeNumber = meeting.getCurrentNumber();
+
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+
+        participantRepository.save(participant);
+
+        //when
+        //추방일때
+        participantService.remove(participant.getId(), meeting.getId());
+
+        //then
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber-1);
+
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId()).get());
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+
     }
 
     private Meeting createMeeting() {
