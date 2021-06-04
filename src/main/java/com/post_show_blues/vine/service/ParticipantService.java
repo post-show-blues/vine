@@ -6,5 +6,7 @@ public interface ParticipantService {
 
     Long request(Long meetingId, Long memberId);
 
+    void accept(Long participantId);
+
     Participant findOne(Long id);
 }

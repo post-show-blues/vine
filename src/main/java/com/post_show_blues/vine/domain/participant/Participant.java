@@ -30,4 +30,9 @@ public class Participant extends BaseEntity {
 
     @Builder.Default
     private Boolean req=false;
+
+    public void changeReq(Boolean req){
+        this.req = req;
+    }
+
 }
