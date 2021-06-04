@@ -4,6 +4,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * 중복 닉네임 검증
@@ -31,6 +33,9 @@ public class AuthService {
      */
     @Transactional
     public Member join(Member member) {
+        String rawPassword = member.getPassword();
+        String encPassword = bCryptPasswordEncoder.encode(rawPassword);
+        member.setPassword(encPassword);
         Member memberEntity = memberRepository.save(member);
         return memberEntity;
     }
@@ -43,8 +48,8 @@ public class AuthService {
     }
 
     private void validateDuplicateMember(String nickname) {
-        Optional<Member> findMember = memberRepository.findByNickname(nickname);
-        if (findMember.isPresent()) {
+        Member findMember = memberRepository.findByNickname(nickname);
+        if (findMember!=null) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
