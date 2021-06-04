@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @ToString
-public class notice extends BaseEntity {
+public class Notice extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="notice_id")
     private Long id;
@@ -25,6 +25,7 @@ public class notice extends BaseEntity {
     private String link;
 
     @Column(nullable = false)
+
     @Builder.Default
     private Boolean state=false;
 
