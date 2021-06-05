@@ -1,5 +1,6 @@
 package com.post_show_blues.vine;
 
+import com.post_show_blues.vine.service.AuthService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

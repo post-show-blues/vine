@@ -35,15 +35,15 @@ class MeetingServiceImplTest {
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
 
-   @Test
-   //TODO 2021.06.02 - 사진등록 테스트는? -hyeongwoo
+    @Test
+        //TODO 2021.06.02 - 사진등록 테스트는? -hyeongwoo
     void 모임등록() throws Exception{
         //given
 
-       Member member = createMember();
-       Category category = createCategory();
+        Member member = createMember();
+        Category category = createCategory();
 
-       MeetingDTO meetingDTO = MeetingDTO.builder()
+        MeetingDTO meetingDTO = MeetingDTO.builder()
                 .categoryId(category.getId())
                 .masterId(member.getId())
                 .title("MeetingA")
@@ -66,7 +66,7 @@ class MeetingServiceImplTest {
     }
 
     @Test
-    //TODO 2021.06.02 - 사진변경 테스트는? -hyeongwoo
+        //TODO 2021.06.02 - 사진변경 테스트는? -hyeongwoo
     void 모임수정() throws Exception{
         //given
         Meeting meeting = createMeeting();
@@ -126,7 +126,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
 
     }
-    
+
     /*@Test
     void 모임삭제() throws Exception{
         //given

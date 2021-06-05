@@ -57,7 +57,7 @@ public class ParticipantServiceImpl implements ParticipantService{
                 .build();
 
         participantRepository.save(participant);
-        
+
         //TODO 2021.06.04.-요청시 방장에게 수락요청 알림-hyeongwoo
         /*Long masterId = meeting.getMember().getId();
 

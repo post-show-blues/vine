@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.domain.member;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +8,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 public class Member{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +21,17 @@ public class Member{
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Builder.Default
     private String text="";
+
+    @Builder.Default
+    private String instaurl="";
+
+    @Builder.Default
+    private String twitterurl="";
 
     @Column(nullable = false)
     private String password;

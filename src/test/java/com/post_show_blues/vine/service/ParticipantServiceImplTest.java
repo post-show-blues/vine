@@ -46,7 +46,7 @@ class ParticipantServiceImplTest {
         Assertions.assertThat(participant.getMember()).isEqualTo(member);
         Assertions.assertThat(participant.getReq()).isEqualTo(false);
     }
-    
+
     @Test
     void 요청시_인원초과() throws Exception{
         //given
@@ -163,7 +163,7 @@ class ParticipantServiceImplTest {
 
         Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
     }
-    
+
     @Test
     void 추방_나가기_기능() throws Exception{
         //given
