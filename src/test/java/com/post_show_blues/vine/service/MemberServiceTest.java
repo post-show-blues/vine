@@ -37,12 +37,12 @@ public class MemberServiceTest {
 
     SignupDto createSignupDto(){
         return SignupDto.builder()
-                .name("memberA")
-                .email("member@kookmin.ac.kr")
+                .name("memberB")
+                .email("member@duksung.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("국민대학교")
+                .university("덕성대학교")
                 .build();
     }
 

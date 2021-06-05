@@ -3,20 +3,17 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 //회원가입
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 

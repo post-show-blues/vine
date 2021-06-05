@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.domain.member;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Entity
