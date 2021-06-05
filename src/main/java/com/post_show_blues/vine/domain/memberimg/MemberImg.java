@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"member"})
 public class MemberImg {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_img_id")
