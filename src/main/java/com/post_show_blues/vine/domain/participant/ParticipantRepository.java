@@ -4,6 +4,7 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
 
     @Modifying
-    @Query("delete from Participant p  where p.meeting = :meeting")
+    @Query("delete from Participant p where p.meeting= :meeting")
     void deleteByMeeting(Meeting meeting);
 
 

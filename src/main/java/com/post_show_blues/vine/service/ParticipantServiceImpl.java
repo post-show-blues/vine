@@ -72,6 +72,9 @@ public class ParticipantServiceImpl implements ParticipantService{
         return participant.getId();
     }
 
+    /**
+     * 요청수락
+     */
     @Override
     public void accept(Long participantId) {
 
@@ -99,6 +102,9 @@ public class ParticipantServiceImpl implements ParticipantService{
 
     }
 
+    /**
+     * 요청거절
+     */
     @Override
     public void reject(Long participantId) {
         Optional<Participant> result = participantRepository.findById(participantId);
@@ -122,6 +128,9 @@ public class ParticipantServiceImpl implements ParticipantService{
 
     }
 
+    /**
+     * 추방_나가기
+     */
     @Override
     public void remove(Long participantId, Long memberId) {
         Optional<Participant> result = participantRepository.findById(participantId);

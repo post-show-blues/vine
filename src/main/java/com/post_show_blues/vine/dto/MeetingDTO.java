@@ -22,6 +22,8 @@ public class MeetingDTO {
 
     private Long categoryId;
 
+    private String categoryName;
+
     private String title;
 
     private String text;

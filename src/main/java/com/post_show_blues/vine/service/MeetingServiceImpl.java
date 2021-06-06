@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -108,6 +109,30 @@ public class MeetingServiceImpl implements MeetingService{
         participantRepository.deleteByMeeting(meeting);
         meetingImgRepository.deleteByMeeting(meeting);
         meetingRepository.deleteById(meetingId);
+    }
+
+    /**
+     * 모임조회 페이지
+     */
+    @Override
+    public MeetingDTO getMeeting(Long meetingId) {
+        List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
+
+        Meeting meeting =(Meeting)result.get(0)[0];
+
+
+        List<MeetingImg> meetingImgList = new ArrayList<>();
+
+        //모임 사진 유무 체크
+        if(result.get(0)[1] != null){
+            result.forEach(arr ->{
+                meetingImgList.add( (MeetingImg) arr[1] );
+            });
+        }
+
+        Category category = (Category) result.get(0)[2];
+
+        return readEntitiesToDTO(meeting, meetingImgList, category);
     }
 
     /**
