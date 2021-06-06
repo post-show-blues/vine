@@ -30,7 +30,7 @@ class ParticipantRepositoryTest {
     @Autowired CategoryRepository categoryRepository;
 
     /*
-    @Test@Commit
+    @Test
     //TODO 2021.06.03.-@Query로 삭제가 안됨(Repository)-hyeongwoo
     void 모임관련삭제() throws Exception{
         //given
@@ -61,7 +61,10 @@ class ParticipantRepositoryTest {
             System.out.println(participant2.getMeeting().getId());
         }
 
-        Assertions.assertThat(participantRepository.findByMeeting(meeting)).isEmpty();
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> participantRepository.findById(participant.getId()).get());
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
 
 
         Member member1 = Member.builder()
@@ -120,8 +123,8 @@ class ParticipantRepositoryTest {
         participantRepository.save(participant1);
         participantRepository.save(participant2);
 
-    }*/
-
+    }
+*/
 
 
     private List<Participant> createParticipantList() {

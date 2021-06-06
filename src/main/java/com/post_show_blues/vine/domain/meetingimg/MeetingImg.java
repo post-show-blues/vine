@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"meeting"})
 public class MeetingImg {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

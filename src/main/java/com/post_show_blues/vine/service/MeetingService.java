@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
+import com.post_show_blues.vine.dto.PageResultDTO;
 import lombok.Builder;
 
 import java.util.HashMap;
@@ -20,6 +21,10 @@ public interface MeetingService {
     void modify(MeetingDTO meetingDTO);
 
     void remove(Long meetingId);
+
+    //PageResultDTO<MeetingDTO, Object[]> getList();
+
+    MeetingDTO getMeeting(Long meetingId);
 
     Meeting findOne(Long id);
 
@@ -74,8 +79,46 @@ public interface MeetingService {
     }
 
 
-    default MeetingDTO entitiesToDTO(){
+    default MeetingDTO listEntityToDTO(){
         return null;
     }
+
+    default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,
+                                         Category category){
+
+        MeetingDTO meetingDTO = MeetingDTO.builder()
+                .meetingId(meeting.getId())
+                .masterId(meeting.getMember().getId())
+                .categoryId(category.getId())
+                .title(meeting.getTitle())
+                .text(meeting.getText())
+                .place(meeting.getPlace())
+                .maxNumber(meeting.getMaxNumber())
+                .currentNumber(meeting.getCurrentNumber())
+                .meetDate(meeting.getMeetDate())
+                .reqDeadline(meeting.getReqDeadline())
+                .chatLink(meeting.getChatLink())
+                .regDate(meeting.getRegDate())
+                .modDate(meeting.getModDate())
+                .build();
+
+
+        List<MeetingImgDTO> meetingImgDTOList = meetingImgList.stream().map(meetingImg -> {
+            return MeetingImgDTO.builder()
+                    .filePath(meetingImg.getFilePath())
+                    .fileName(meetingImg.getFileName())
+                    .uuid(meetingImg.getUuid())
+                    .build();
+        }).collect(Collectors.toList());
+
+        meetingDTO.setImgDTOList(meetingImgDTOList);
+
+
+        meetingDTO.setCategoryName(category.getName());
+
+        return meetingDTO;
+    }
+
+
 
 }

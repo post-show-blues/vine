@@ -2,6 +2,8 @@ package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.category.CategoryRepository;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
@@ -17,9 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,11 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class MeetingRepositoryTest {
 
-    @Autowired MeetingRepository meetingRepository;
-    @Autowired CategoryRepository categoryRepository;
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MeetingRepository meetingRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired ParticipantRepository participantRepository;
+    @Autowired
+    MeetingImgRepository meetingImgRepository;
 
     @Test
     void testGetListPage() throws Exception {
@@ -101,27 +106,38 @@ class MeetingRepositoryTest {
     }
 
     @Test
-    void date타입() throws Exception{
-        Category category = createCategory();
-        Member member = createMember();
+    void testGetMeetingWithAll() throws Exception {
+        //given
 
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
-                .maxNumber(4)
-                .currentNumber(3)
+        Meeting meeting = createMeeting();
+
+        MeetingImg meetingImg1 = MeetingImg.builder()
+                .meeting(meeting)
+                .fileName("MeetingImg1")
+                .filePath("/hyeongwoo1")
+                .uuid(UUID.randomUUID().toString())
                 .build();
 
-        meetingRepository.save(meeting);
+        meetingImgRepository.save(meetingImg1);
 
-        String deadline = meeting.getReqDeadline();
+        MeetingImg meetingImg2 = MeetingImg.builder()
+                .meeting(meeting)
+                .fileName("MeetingImg2")
+                .filePath("/hyeongwoo2")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgRepository.save(meetingImg2);
 
 
+
+        //when
+        List<Object[]> objects = meetingRepository.getMeetingWithAll(meeting.getId());
+
+        //then
+        for (Object[] object : objects){
+            System.out.println(Arrays.toString(object));
+        }
     }
 
 
@@ -150,13 +166,13 @@ class MeetingRepositoryTest {
         return member;
     }
 
-    private MemberImg createMemberImg(){
+    private MemberImg createMemberImg() {
 
         Member member = createMember();
 
         MemberImg memberImg = MemberImg.builder()
                 .member(member)
-                .fileName("Img1")
+                .fileName("MemberImg1")
                 .filePath("/hyeongwoo")
                 .uuid(UUID.randomUUID().toString())
                 .build();
@@ -166,4 +182,26 @@ class MeetingRepositoryTest {
         return memberImg;
     }
 
+
+    private Meeting createMeeting() {
+        Category category = createCategory();
+        Member member = createMember();
+
+        Meeting meeting = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("MeetingA")
+                .text("meet")
+                .place("A")
+                .meetDate("2021-06-05")
+                .reqDeadline("2021-06-04")
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meeting);
+
+        return meeting;
+
+    }
 }

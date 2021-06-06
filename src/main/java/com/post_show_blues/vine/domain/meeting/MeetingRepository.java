@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     //TODO 2021.06.05
@@ -36,4 +38,11 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "group by m.meeting_id",
             nativeQuery = true)
     Page<Object[]> getListPage(Pageable pageable);
+
+
+    @Query("select m, mi, c from Meeting m " +
+            "left join Category c on m.category = c " +
+            "left join MeetingImg mi on mi.meeting = m " +
+            "where m.id = :meetingId")
+    List<Object[]> getMeetingWithAll(Long meetingId);
 }

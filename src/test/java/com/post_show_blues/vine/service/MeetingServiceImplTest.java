@@ -4,6 +4,8 @@ import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +37,7 @@ class MeetingServiceImplTest {
     @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
+    @Autowired MeetingImgRepository meetingImgRepository;
 
    @Test
    //TODO 2021.06.02 - 사진등록 테스트는? -hyeongwoo
@@ -152,6 +156,54 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
 
     }*/
+
+    @Test
+    void 모임_조회페이지DTO() throws Exception{
+        //given
+        Meeting meeting = createMeeting();
+
+        MeetingImg meetingImg1 = MeetingImg.builder()
+                .meeting(meeting)
+                .fileName("MeetingImg1")
+                .filePath("/hyeongwoo1")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgRepository.save(meetingImg1);
+
+        MeetingImg meetingImg2 = MeetingImg.builder()
+                .meeting(meeting)
+                .fileName("MeetingImg2")
+                .filePath("/hyeongwoo2")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgRepository.save(meetingImg2);
+
+
+
+        //when
+        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+
+        //then
+        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(meetingDTO.getCategoryName()).isEqualTo("categoryA");
+        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
+    }
+
+    @Test
+    void 모임_조회페이지DTO_사진x경우() throws Exception{
+        //given
+        Meeting meeting = createMeeting();
+
+        //when
+        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+
+        //then
+        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(meetingDTO.getCategoryName()).isEqualTo("categoryA");
+        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(0);
+    }
 
     private Participant createParticipant() {
         Meeting meeting = createMeeting();
