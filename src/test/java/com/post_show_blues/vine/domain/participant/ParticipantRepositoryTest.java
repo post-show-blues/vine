@@ -6,6 +6,8 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +27,7 @@ class ParticipantRepositoryTest {
     @Autowired MemberRepository memberRepository;
     @Autowired MeetingRepository meetingRepository;
     @Autowired CategoryRepository categoryRepository;
+    @Autowired MemberImgRepository memberImgRepository;
 
     /*
     @Test
@@ -126,30 +126,80 @@ class ParticipantRepositoryTest {
     }
 */
 
+    @Test
+    void 참여자리스트() throws Exception{
+        //given
+        List<Participant> participantList = createParticipantList();
+
+        Participant participant1 = participantList.get(0);
+
+        Long meetingId = participant1.getMeeting().getId();
+
+        //when
+        List<Object[]> result = participantRepository.getListParticipant(meetingId);
+
+        //then
+        for(Object[] arr : result){
+            System.out.println(Arrays.toString(arr));
+        }
+    }
+
+    private MemberImg createMemberImg() {
+
+        Member member = createMember();
+
+        MemberImg memberImg = MemberImg.builder()
+                .member(member)
+                .fileName("MemberImg1")
+                .filePath("/hyeongwoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        memberImgRepository.save(memberImg);
+
+        return memberImg;
+    }
+
 
     private List<Participant> createParticipantList() {
         Meeting meeting = createMeeting();
-        Member member = createMember();
+
+        MemberImg memberImg1 = createMemberImg();
+        Member member1 = memberImg1.getMember();
+
+        MemberImg memberImg2 = createMemberImg();
+        Member member2 = memberImg2.getMember();
+
+        MemberImg memberImg3 = createMemberImg();
+        Member member3 = memberImg3.getMember();
 
         Participant participant1 = Participant.builder()
                 .meeting(meeting)
-                .member(member)
+                .member(member1)
                 .req(false)
                 .build();
 
         Participant participant2 = Participant.builder()
                 .meeting(meeting)
-                .member(member)
+                .member(member2)
+                .req(true)
+                .build();
+
+        Participant participant3 = Participant.builder()
+                .meeting(meeting)
+                .member(member3)
                 .req(false)
                 .build();
 
         participantRepository.save(participant1);
         participantRepository.save(participant2);
+        participantRepository.save(participant3);
 
         List<Participant> participantList = new ArrayList<>();
 
         participantList.add(participant1);
         participantList.add(participant2);
+        participantList.add(participant3);
 
         return participantList;
     }
