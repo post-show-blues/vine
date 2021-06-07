@@ -22,7 +22,7 @@ public interface MeetingService {
 
     void remove(Long meetingId);
 
-    //PageResultDTO<MeetingDTO, Object[]> getList();
+    //PageResultDTO<MeetingDTO, Object[]> getMeetingList();
 
     MeetingDTO getMeeting(Long meetingId);
 

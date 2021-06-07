@@ -6,16 +6,18 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
+import com.post_show_blues.vine.dto.ParticipantDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +30,7 @@ class ParticipantServiceImplTest {
     @Autowired MemberRepository memberRepository;
     @Autowired CategoryRepository categoryRepository;
     @Autowired ParticipantRepository participantRepository;
+    @Autowired MemberImgRepository memberImgRepository;
 
 
     @Test
@@ -189,6 +192,92 @@ class ParticipantServiceImplTest {
                 () -> participantRepository.findById(participant.getId()).get());
 
         Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+
+    }
+
+    @Test
+    void 참여자_리스트() throws Exception{
+        //given
+
+        List<Participant> participantList = createParticipantList();
+
+        Participant participant = participantList.get(0);
+
+        Long meetingId = participant.getMeeting().getId();
+
+        //when
+        List<ParticipantDTO> result = participantService.getParticipantList(meetingId);
+
+        //then
+
+        //데이터수 체크
+        Assertions.assertThat(result.size())
+                .isEqualTo(participantRepository.participantCount(meetingId).intValue());
+
+        // req 변수 true 순서로 정렬
+        int count = participantRepository.participantCount(meetingId).intValue();
+
+        Assertions.assertThat(result.get(count-1).getReq()).isEqualTo(false);
+    }
+
+    private List<Participant> createParticipantList() {
+
+        Meeting meeting = createMeeting();
+
+        Member member1 = createMember();
+
+        MemberImg memberImg2 = createMemberImg();
+        Member member2 = memberImg2.getMember();
+
+        MemberImg memberImg3 = createMemberImg();
+        Member member3 = memberImg3.getMember();
+
+        Participant participant1 = Participant.builder()
+                .meeting(meeting)
+                .member(member1)
+                .req(false)
+                .build();
+
+        Participant participant2 = Participant.builder()
+                .meeting(meeting)
+                .member(member2)
+                .req(true)
+                .build();
+
+        Participant participant3 = Participant.builder()
+                .meeting(meeting)
+                .member(member3)
+                .req(false)
+                .build();
+
+        participantRepository.save(participant1);
+        participantRepository.save(participant2);
+        participantRepository.save(participant3);
+
+        List<Participant> participantList = new ArrayList<>();
+
+        participantList.add(participant1);
+        participantList.add(participant2);
+        participantList.add(participant3);
+
+        return participantList;
+
+    }
+
+    private MemberImg createMemberImg() {
+
+        Member member = createMember();
+
+        MemberImg memberImg = MemberImg.builder()
+                .member(member)
+                .fileName("MemberImg1")
+                .filePath("/hyeongwoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        memberImgRepository.save(memberImg);
+
+        return memberImg;
 
     }
 
