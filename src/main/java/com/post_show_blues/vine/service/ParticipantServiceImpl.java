@@ -4,15 +4,20 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
+import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.ParticipantDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -167,6 +172,25 @@ public class ParticipantServiceImpl implements ParticipantService{
             noticeRepository.save(memberNotice);
         }
          */
+    }
+
+    /**
+     * 참여자리스트(DTO)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParticipantDTO> getParticipantList(Long meetingId) {
+
+        List<Object[]> result = participantRepository.getListParticipantByMeetingId(meetingId);
+
+        List<ParticipantDTO> participantDTOList = result.stream().map(objects -> {
+            MemberImg memberImg = (MemberImg) objects[0];
+            Member member = (Member) objects[1];
+            Participant participant = (Participant) objects[2];
+            return entityToDTO(memberImg, member, participant);
+        }).collect(Collectors.toList());
+
+        return participantDTOList;
     }
 
     /**

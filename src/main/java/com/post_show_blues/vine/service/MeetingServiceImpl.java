@@ -115,6 +115,7 @@ public class MeetingServiceImpl implements MeetingService{
      * 모임조회 페이지
      */
     @Override
+    @Transactional(readOnly = true)
     public MeetingDTO getMeeting(Long meetingId) {
         List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
 

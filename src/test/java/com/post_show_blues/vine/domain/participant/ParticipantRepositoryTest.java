@@ -127,7 +127,7 @@ class ParticipantRepositoryTest {
 */
 
     @Test
-    void 참여자리스트() throws Exception{
+    void 참여자_리스트() throws Exception{
         //given
         List<Participant> participantList = createParticipantList();
 
@@ -136,12 +136,17 @@ class ParticipantRepositoryTest {
         Long meetingId = participant1.getMeeting().getId();
 
         //when
-        List<Object[]> result = participantRepository.getListParticipant(meetingId);
+        List<Object[]> result = participantRepository.getListParticipantByMeetingId(meetingId);
 
         //then
         for(Object[] arr : result){
             System.out.println(Arrays.toString(arr));
         }
+
+        //데이터수 체크
+        Assertions.assertThat(result.size())
+                .isEqualTo(participantRepository.participantCount(meetingId).intValue());
+
     }
 
     private MemberImg createMemberImg() {

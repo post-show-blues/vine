@@ -19,7 +19,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "left join Member me on me = p.member " +
             "left join MemberImg mi on mi.member = me " +
             "order by p.req desc ")
-    List<Object[]> getListParticipant(Long meetingId);
+    List<Object[]> getListParticipantByMeetingId(Long meetingId);
+
+    @Query("select count(p.id) from Participant p where p.meeting.id = :meetingId")
+    Long participantCount(Long meetingId);
 
     @Modifying
     @Query("delete from Participant p where p.meeting= :meeting")
