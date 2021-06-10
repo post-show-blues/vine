@@ -29,17 +29,18 @@ class ParticipantRepositoryTest {
     @Autowired CategoryRepository categoryRepository;
     @Autowired MemberImgRepository memberImgRepository;
 
-    /*
+   /*
     @Test
-    //TODO 2021.06.03.-@Query로 삭제가 안됨(Repository)-hyeongwoo
-    void 모임관련삭제() throws Exception{
+        //TODO 2021.06.03.-@Query로 삭제가 안됨(Repository)-hyeongwoo
+    void 모임관련삭제() throws Exception {
+
         //given
         List<Participant> participantList = createParticipantList();
 
         Participant participant = participantList.get(0);
-        Meeting meeting = participant.getMeeting();
+        Meeting meeting1 = participant.getMeeting();
 
-        List<Participant> result = participantRepository.findByMeeting(meeting);
+        List<Participant> result = participantRepository.findByMeeting(meeting1);
 
         for(Participant participant1 : result){
             System.out.println("==============================");
@@ -47,13 +48,13 @@ class ParticipantRepositoryTest {
         }
         //when
 
-        System.out.println(meeting.getId());
+        System.out.println(meeting1.getId());
 
-        participantRepository.deleteByMeeting(meeting);
+        participantRepository.deleteByMeeting(meeting1);
 
         //then
 
-        List<Participant> result2 = participantRepository.findByMeeting(meeting);
+        List<Participant> result2 = participantRepository.findByMeeting(meeting1);
 
         for(Participant participant2 : result){
             System.out.println("-------------------------------");
@@ -94,7 +95,7 @@ class ParticipantRepositoryTest {
 
         categoryRepository.save(category);
 
-        Meeting meeting = Meeting.builder()
+        Meeting meeting2 = Meeting.builder()
                 .category(category)
                 .member(member2)
                 .title("MeetingA")
@@ -106,16 +107,16 @@ class ParticipantRepositoryTest {
                 .currentNumber(3)
                 .build();
 
-        meetingRepository.save(meeting);
+        meetingRepository.save(meeting2);
 
         Participant participant1 = Participant.builder()
-                .meeting(meeting)
+                .meeting(meeting2)
                 .member(member1)
                 .req(false)
                 .build();
 
         Participant participant2 = Participant.builder()
-                .meeting(meeting)
+                .meeting(meeting2)
                 .member(member1)
                 .req(false)
                 .build();
@@ -124,10 +125,11 @@ class ParticipantRepositoryTest {
         participantRepository.save(participant2);
 
     }
+
 */
 
     @Test
-    void 참여자_리스트() throws Exception{
+    void 참여자_리스트 () throws Exception {
         //given
         List<Participant> participantList = createParticipantList();
 
@@ -139,7 +141,7 @@ class ParticipantRepositoryTest {
         List<Object[]> result = participantRepository.getListParticipantByMeetingId(meetingId);
 
         //then
-        for(Object[] arr : result){
+        for (Object[] arr : result) {
             System.out.println(Arrays.toString(arr));
         }
 
@@ -149,7 +151,7 @@ class ParticipantRepositoryTest {
 
     }
 
-    private MemberImg createMemberImg() {
+    private MemberImg createMemberImg () {
 
         Member member = createMember();
 
@@ -165,8 +167,7 @@ class ParticipantRepositoryTest {
         return memberImg;
     }
 
-
-    private List<Participant> createParticipantList() {
+    private List<Participant> createParticipantList () {
         Meeting meeting = createMeeting();
 
         MemberImg memberImg1 = createMemberImg();
@@ -200,11 +201,15 @@ class ParticipantRepositoryTest {
         participantRepository.save(participant2);
         participantRepository.save(participant3);
 
+
         List<Participant> participantList = new ArrayList<>();
+
 
         participantList.add(participant1);
         participantList.add(participant2);
         participantList.add(participant3);
+
+
 
         return participantList;
     }
@@ -230,7 +235,7 @@ class ParticipantRepositoryTest {
         return meeting;
     }
 
-    private Category createCategory() {
+    private Category createCategory () {
         Category category = Category.builder()
                 .name("categoryA")
                 .build();
@@ -240,7 +245,7 @@ class ParticipantRepositoryTest {
         return category;
     }
 
-    private Member createMember() {
+    private Member createMember(){
         Member member = Member.builder()
                 .name("memberA")
                 .email("member@kookmin.ac.kr")
@@ -254,5 +259,6 @@ class ParticipantRepositoryTest {
 
         return member;
     }
+
 
 }
