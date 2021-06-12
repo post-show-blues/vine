@@ -35,6 +35,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         this.categoryRepository = categoryRepository;
     }
 
+
+    //TODO 2021.06.12.-from절 서브쿼리 해결(수락요청리스트자만 있을 경우)-hyeongwoo
     @Override
     public Page<Object[]> searchPage(Category category, String keyword, Pageable pageable) {
 
@@ -43,12 +45,17 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         //객체 생성
         QMeeting meeting = QMeeting.meeting;
 
-        QMember member1 = QMember.member;
-        QMemberImg memberImg1 = QMemberImg.memberImg;
+        QMember member1 = new QMember("member1");
+        QMemberImg memberImg1 = new QMemberImg("memberImg1");
 
 
-        QMember member2 = QMember.member;
-        QMemberImg memberImg2 = QMemberImg.memberImg;
+        QMember member2 = new QMember("member2");
+        QMemberImg memberImg2 = new QMemberImg("memberImg2");
+
+        log.info("==============================");
+        log.info(memberImg1);
+        log.info(memberImg2);
+
 
         QParticipant participant = QParticipant.participant;
 
@@ -70,6 +77,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         BooleanExpression expression = meeting.id.gt(0L);
 
         builder.and(expression);
+
+
 
         if(category != null){
 

@@ -25,7 +25,6 @@ public class Notice extends BaseEntity {
     private String link;
 
     @Column(nullable = false)
-
     @Builder.Default
     private Boolean state=false;
 

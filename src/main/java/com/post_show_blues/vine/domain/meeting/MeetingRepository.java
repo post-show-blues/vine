@@ -32,7 +32,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
             "from meeting m " +
             "left join member me1 on me1.member_id = m.master_id " +
             "left join member_img mi1 on  mi1.member_id = me1.member_id " +
-            "left join participant p on p.meeting_id = m.meeting_id " +
+            "left join (select meeting_id, member_id from participant where req = true) p on p.meeting_id = m.meeting_id " +
             "left join member me2 on me2.member_id = p.member_id " +
             "left join member_img mi2 on mi2.member_id = me2.member_id " +
             "group by m.meeting_id",
