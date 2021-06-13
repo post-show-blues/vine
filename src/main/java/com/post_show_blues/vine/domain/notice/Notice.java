@@ -28,4 +28,8 @@ public class Notice extends BaseEntity {
     @Builder.Default
     private Boolean state=false;
 
+    public void changeState(){
+        this.state = true;
+    }
+
 }

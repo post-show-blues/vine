@@ -11,4 +11,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     @Query("select n from Notice n where n.memberId = :memberId")
     Page<Notice> getListPage(Pageable pageable, @Param("memberId") Long memberId);
+
+    @Query("select count(n.id) from Notice n where n.memberId = :memberId and n.state = false")
+    int getUnreadCount(Long memberId);
 }

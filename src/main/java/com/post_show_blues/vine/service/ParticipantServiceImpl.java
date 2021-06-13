@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,9 +45,25 @@ public class ParticipantServiceImpl implements ParticipantService{
         Optional<Member> findMember = memberRepository.findById(memberId);
         Member member = findMember.get();
 
-        //TODO 2021.06.03.-참여마감시간 < 현재시간 예외처리- hyeongwoo
-        //요청시간 체크
+
+        //요청마감일 체크
         String reqDeadline = meeting.getReqDeadline();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try{
+            Date deadlineDate = dateFormat.parse(reqDeadline);
+            Date now = new Date();
+            if(deadlineDate.before(now)){
+                throw new IllegalStateException("참여 가능일이 지났습니다.");
+            }
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalStateException("참여 가능일이 지났습니다.");
+        }
 
 
 
