@@ -51,6 +51,37 @@ class ParticipantServiceImplTest {
     }
 
     @Test
+    void 요청시_마감일초과() throws Exception{
+        //given
+        Member member1 = createMember();
+
+        //meeting 생성
+        Category category = createCategory();
+        Member member2 = createMember();
+
+        Meeting meeting = Meeting.builder()
+                .category(category)
+                .member(member2)
+                .title("MeetingA")
+                .text("meet")
+                .place("A")
+                .meetDate("2021-06-13")
+                .reqDeadline("2021-06-12") //현재 날짜 -1
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meeting);
+
+        //when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> participantService.request(meeting.getId(), member1.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("참여 가능일이 지났습니다.");
+    }
+    
+    @Test
     void 요청시_인원초과() throws Exception{
         //given
         Member member1 = createMember();
@@ -183,7 +214,7 @@ class ParticipantServiceImplTest {
 
         //when
         //추방일때
-        participantService.remove(participant.getId(), meeting.getId());
+        participantService.remove(participant.getId(), meeting.getId()); //로그인 ID = masterId
 
         //then
         Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber-1);

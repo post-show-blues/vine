@@ -1,5 +1,6 @@
 package com.post_show_blues.vine.dto;
 
+import com.post_show_blues.vine.domain.category.Category;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,10 @@ public class PageRequestDTO {
 
     private int size;
 
+    private Category category;
+
+    private String keyword;
+
     public PageRequestDTO(){
         this.page = 1;
         this.size = 10;
@@ -22,7 +27,7 @@ public class PageRequestDTO {
 
 
     public Pageable getPageable(Sort sort){
-        return PageRequest.of(page - 1, size, sort);
+        return PageRequest.of(this.page-1, this.size, sort);
     }
 
 }

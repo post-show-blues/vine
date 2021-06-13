@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 class ParticipantRepositoryTest {
 
-
     @Autowired
     ParticipantRepository participantRepository;
     @Autowired
@@ -35,7 +34,7 @@ class ParticipantRepositoryTest {
     @Autowired
     MemberImgRepository memberImgRepository;
 
-/*
+   /*
     @Test
         //TODO 2021.06.03.-@Query로 삭제가 안됨(Repository)-hyeongwoo
     void 모임관련삭제() throws Exception {
@@ -148,7 +147,9 @@ class ParticipantRepositoryTest {
 
         //then
         for (Object[] arr : result) {
-                System.out.println(Arrays.toString(arr));
+
+            System.out.println(Arrays.toString(arr));
+
         }
 
         //데이터수 체크
@@ -267,3 +268,5 @@ class ParticipantRepositoryTest {
     }
 
 }
+
+
