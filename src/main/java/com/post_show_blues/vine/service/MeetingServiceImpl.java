@@ -16,10 +16,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -37,6 +36,32 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Override
     public Long register(MeetingDTO meetingDTO) {
+
+        //활동날짜, 신청 마감날짜 비교교
+
+       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        String meetDate = meetingDTO.getMeetDate();
+        String reqDeadline = meetingDTO.getReqDeadline();
+
+        try{
+            Date meetDateType = dateFormat.parse(meetDate);
+            Date deadlineDateType = dateFormat.parse(reqDeadline);
+
+            if(meetDateType.before(deadlineDateType)){
+                throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+            }
+        }catch (ParseException e){
+            e.printStackTrace();
+            throw new IllegalStateException("형식에 맞게 입력해주세요.");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+        }
+
+
+
         Map<String, Object> result = dtoToEntity(meetingDTO);
 
         Meeting meeting = (Meeting) result.get("meeting");
@@ -79,7 +104,6 @@ public class MeetingServiceImpl implements MeetingService{
             meeting.changeReqDeadline(meetingDTO.getReqDeadline());
             meeting.changeChatLink(meetingDTO.getChatLink());
 
-            meetingRepository.save(meeting);
 
             /* 여기서부터 img 변경 */
             // meeting의 사진 모두 삭제

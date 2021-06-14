@@ -59,6 +59,7 @@ public class ParticipantServiceImpl implements ParticipantService{
             }
         }catch (ParseException e){
             e.printStackTrace();
+            throw new IllegalStateException("형식에 맞게 입력해주세요.");
         }
         catch (Exception e){
             e.printStackTrace();

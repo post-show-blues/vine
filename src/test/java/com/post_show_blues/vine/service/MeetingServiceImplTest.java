@@ -68,6 +68,31 @@ class MeetingServiceImplTest {
         Assertions.assertThat(category.getId()).isEqualTo(meeting.getCategory().getId());
 
     }
+    
+    @Test
+    void 등록시_meetDate_deadline_비교() throws Exception{
+        //given
+        Member member = createMember();
+        Category category = createCategory();
+
+        MeetingDTO meetingDTO = MeetingDTO.builder()
+                .categoryId(category.getId())
+                .masterId(member.getId())
+                .title("MeetingA")
+                .text("meet")
+                .place("A")
+                .meetDate("2021-06-03")
+                .reqDeadline("2021-06-04")
+                .maxNumber(4)
+                .build();
+        
+        //when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> meetingService.register(meetingDTO));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("활동일이 신청마감일보다 빠릅니다.");
+    }
 
     @Test
     //TODO 2021.06.02 - 사진변경 테스트는? -hyeongwoo
