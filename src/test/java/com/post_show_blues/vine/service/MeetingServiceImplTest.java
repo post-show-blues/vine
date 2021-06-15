@@ -8,9 +8,11 @@ import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
+import com.post_show_blues.vine.dto.MeetingImgDTO;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,14 +39,31 @@ class MeetingServiceImplTest {
     @Autowired MeetingImgRepository meetingImgRepository;
 
    @Test
-   //TODO 2021.06.02 - 사진등록 테스트는? -hyeongwoo
     void 모임등록() throws Exception{
         //given
+        Member member = createMember();
+        Category category = createCategory();
 
-       Member member = createMember();
-       Category category = createCategory();
+        List<MeetingImgDTO> meetingImgDTOList = new ArrayList<>();
 
-       MeetingDTO meetingDTO = MeetingDTO.builder()
+        //ImgDTO 생성 2개
+        MeetingImgDTO meetingImgDTOA = MeetingImgDTO.builder()
+                .fileName("MeetingImgA")
+                .filePath("/hyeongWoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        MeetingImgDTO meetingImgDTOB = MeetingImgDTO.builder()
+                .fileName("MeetingImgB")
+                .filePath("/hyeongWoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgDTOList.add(meetingImgDTOA);
+        meetingImgDTOList.add(meetingImgDTOB);
+
+
+        MeetingDTO meetingDTO = MeetingDTO.builder()
                 .categoryId(category.getId())
                 .masterId(member.getId())
                 .title("MeetingA")
@@ -56,6 +72,7 @@ class MeetingServiceImplTest {
                 .meetDate("2021-06-05")
                 .reqDeadline("2021-06-04")
                 .maxNumber(4)
+                .imgDTOList(meetingImgDTOList)
                 .build();
 
         //when
@@ -67,8 +84,11 @@ class MeetingServiceImplTest {
         Assertions.assertThat(member.getId()).isEqualTo(meeting.getMember().getId());
         Assertions.assertThat(category.getId()).isEqualTo(meeting.getCategory().getId());
 
+        List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
+        Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
+
     }
-    
+
     @Test
     void 등록시_meetDate_deadline_비교() throws Exception{
         //given
@@ -96,35 +116,67 @@ class MeetingServiceImplTest {
 
 
     @Test
-    //TODO 2021.06.02 - 사진변경 테스트는? -hyeongwoo
     void 모임수정() throws Exception{
         //given
         Meeting meeting = createMeeting();
 
+        MeetingImg memberImgA = MeetingImg.builder()
+                .meeting(meeting)
+                .filePath("/hyeonWoo")
+                .fileName("MemberImgA")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgRepository.save(memberImgA);
+
+        //수정 데이터
         Category category1 = createCategory();
         Member member1 = createMember();
 
+        List<MeetingImgDTO> meetingImgDTOList = new ArrayList<>();
+
+        MeetingImgDTO meetingImgDTOB = MeetingImgDTO.builder()
+                .fileName("MeetingImgB")
+                .filePath("/hyeongWoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        MeetingImgDTO meetingImgDTOC = MeetingImgDTO.builder()
+                .fileName("MeetingImgC")
+                .filePath("/hyeongWoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgDTOList.add(meetingImgDTOB);
+        meetingImgDTOList.add(meetingImgDTOC);
+
+        //MeetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
-                .meetingId(meeting.getId()) //변경
+                .meetingId(meeting.getId())
                 .categoryId(category1.getId()) //변경
-                .masterId(member1.getId())
+                .masterId(member1.getId()) //변경
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
                 .meetDate("2021-06-05")
                 .reqDeadline("2021-06-04")
                 .maxNumber(5) // 4 -> 5로 변경
+                .imgDTOList(meetingImgDTOList)
                 .build();
 
         //when
         meetingService.modify(meetingDTO);
 
         //then
-        Meeting result = meetingService.findOne(meeting.getId());
+        Optional<Meeting> result = meetingRepository.findById(meeting.getId());
+        Meeting findMeeting = result.get();
 
-        Assertions.assertThat(result.getTitle()).isEqualTo("MeetingB");
-        Assertions.assertThat(result.getMember().getId()).isEqualTo(member1.getId());
-        Assertions.assertThat(result.getCategory().getId()).isEqualTo(category1.getId());
+        Assertions.assertThat(findMeeting.getTitle()).isEqualTo("MeetingB");
+        Assertions.assertThat(findMeeting.getMember().getId()).isEqualTo(member1.getId());
+        Assertions.assertThat(findMeeting.getCategory().getId()).isEqualTo(category1.getId());
+
+        List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
+        Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
 
     }
 
@@ -156,12 +208,23 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
 
     }
-    
+
     @Test
     void 모임삭제() throws Exception{
         //given
         Participant participant = createParticipant();
-        Long meetingId = participant.getMeeting().getId();
+
+        Meeting meeting = participant.getMeeting();
+        Long meetingId = meeting.getId();
+
+        MeetingImg meetingImg = MeetingImg.builder()
+                .meeting(meeting)
+                .filePath("/hyeongWoo")
+                .fileName("MeetingImgA")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        meetingImgRepository.save(meetingImg);
 
         //when
         meetingService.remove(meetingId);
@@ -171,13 +234,18 @@ class MeetingServiceImplTest {
         NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
                 () -> (participantRepository.findById(participant.getId())).get());
 
-        //삭제된 모임방 검색
+        //삭전된 모임방의 사진 검색
         NoSuchElementException e2 = assertThrows(NoSuchElementException.class,
+                () -> meetingImgRepository.findById(meetingImg.getId()).get());
+
+        //삭제된 모임방 검색
+        NoSuchElementException e3 = assertThrows(NoSuchElementException.class,
                 () -> meetingRepository.findById(meetingId).get());
 
 
         Assertions.assertThat(e1.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e3.getMessage()).isEqualTo("No value present");
 
     }
 

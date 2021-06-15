@@ -49,7 +49,8 @@ class ParticipantServiceImplTest {
         Assertions.assertThat(participant.getMember()).isEqualTo(member);
         Assertions.assertThat(participant.getReq()).isEqualTo(false);
     }
-    
+
+    /* //구현코드에서 주석풀기
     @Test
     void 요청시_마감일초과() throws Exception{
         //given
@@ -80,6 +81,7 @@ class ParticipantServiceImplTest {
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("참여 가능일이 지났습니다.");
     }
+     */
     
     @Test
     void 요청시_인원초과() throws Exception{

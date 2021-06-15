@@ -13,9 +13,11 @@ import com.post_show_blues.vine.dto.MeetingImgDTO;
 import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,6 +27,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 public class MeetingServiceImpl implements MeetingService{
+
+    @Value("${org.zerock.upload.path}")
+    private String uploadPath;
 
     private final MeetingRepository meetingRepository;
     private final MeetingImgRepository meetingImgRepository;
@@ -107,11 +112,14 @@ public class MeetingServiceImpl implements MeetingService{
 
             /* 여기서부터 img 변경 */
             // meeting의 사진 모두 삭제
-            meetingImgRepository.deleteByMeeting(meeting);
+            List<MeetingImg> meetingImgResult = meetingImgRepository.findByMeeting(meeting);
+            if(meetingImgResult != null && meetingImgResult.size() > 0 ) {
+                meetingImgRepository.deleteByMeeting(meeting);
+            }
 
             List<MeetingImg> meetingImgList = getImgDtoToEntity(meetingDTO, meeting);
-            // 사진 첨부 유무 확인
 
+            // 사진 첨부 유무 확인
             if(meetingImgList != null && meetingImgList.size() > 0){
                 for(MeetingImg meetingImg : meetingImgList){
                     meetingImgRepository.save(meetingImg);
@@ -131,7 +139,26 @@ public class MeetingServiceImpl implements MeetingService{
 
         // participant -> meetingImg -> meeting 순으로 삭제
         participantRepository.deleteByMeeting(meeting);
+
+
+        //서버 컴퓨터에 저장된 사진파일 삭제
+        //TODO 2021.06.16-실제 테스트 필요-hyeongwoo
+        List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
+
+        if(meetingImgList != null && meetingImgList.size() > 0 ){
+            for(MeetingImg meetingImg: meetingImgList){
+                String srcFileName = meetingImg.getFilePath() + File.separator + meetingImg.getFileName();
+                File file = new File(uploadPath, srcFileName);
+                file.delete();
+
+                File thumbnail = new File(uploadPath + File.separator +
+                        "s_" + File.separator + srcFileName);
+                thumbnail.delete();
+            }
+        }
+
         meetingImgRepository.deleteByMeeting(meeting);
+
         meetingRepository.deleteById(meetingId);
     }
 

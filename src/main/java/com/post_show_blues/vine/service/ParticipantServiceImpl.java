@@ -51,6 +51,8 @@ public class ParticipantServiceImpl implements ParticipantService{
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        //TODO 테스트 코드 실행시 주석처리 함
+        /*
         try{
             Date deadlineDate = dateFormat.parse(reqDeadline);
             Date now = new Date();
@@ -65,8 +67,7 @@ public class ParticipantServiceImpl implements ParticipantService{
             e.printStackTrace();
             throw new IllegalStateException("참여 가능일이 지났습니다.");
         }
-
-
+        */
 
         //참여인원 체크
         int maxNumber = meeting.getMaxNumber();

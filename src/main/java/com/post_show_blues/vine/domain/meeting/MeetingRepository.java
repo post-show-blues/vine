@@ -45,4 +45,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
             "left join MeetingImg mi on mi.meeting = m " +
             "where m.id = :meetingId")
     List<Object[]> getMeetingWithAll(Long meetingId);
+
 }
