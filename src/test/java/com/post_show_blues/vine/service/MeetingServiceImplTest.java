@@ -94,6 +94,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e.getMessage()).isEqualTo("활동일이 신청마감일보다 빠릅니다.");
     }
 
+
     @Test
     //TODO 2021.06.02 - 사진변경 테스트는? -hyeongwoo
     void 모임수정() throws Exception{
@@ -104,8 +105,8 @@ class MeetingServiceImplTest {
         Member member1 = createMember();
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
-                .meetingId(meeting.getId())
-                .categoryId(category1.getId())
+                .meetingId(meeting.getId()) //변경
+                .categoryId(category1.getId()) //변경
                 .masterId(member1.getId())
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
@@ -156,7 +157,7 @@ class MeetingServiceImplTest {
 
     }
     
-    /*@Test
+    @Test
     void 모임삭제() throws Exception{
         //given
         Participant participant = createParticipant();
@@ -166,21 +167,19 @@ class MeetingServiceImplTest {
         meetingService.remove(meetingId);
 
         //then
-
-        System.out.println(participantRepository.findById(participant.getId()));
+        //삭제된 모임에 참여한 레코드 검색
+        NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
+                () -> (participantRepository.findById(participant.getId())).get());
 
         //삭제된 모임방 검색
         NoSuchElementException e2 = assertThrows(NoSuchElementException.class,
-                () -> meetingService.findOne(meetingId));
-
-        NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
-                () -> (participantRepository.findById(participant.getId())).get());
+                () -> meetingRepository.findById(meetingId).get());
 
 
         Assertions.assertThat(e1.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
 
-    }*/
+    }
 
     @Test
     void 모임_조회페이지DTO() throws Exception{

@@ -24,11 +24,9 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     @Query("select count(p.id) from Participant p where p.meeting.id = :meetingId")
     Long participantCount(Long meetingId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true) //쿼리 실행시 JPA 캐싱 clear
     @Query("delete from Participant p where p.meeting= :meeting")
     void deleteByMeeting(Meeting meeting);
 
-
-    //void deleteByMeeting(Meeting meeting);
 
 }
