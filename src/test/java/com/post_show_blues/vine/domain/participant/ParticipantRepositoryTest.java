@@ -34,104 +34,31 @@ class ParticipantRepositoryTest {
     @Autowired
     MemberImgRepository memberImgRepository;
 
-   /*
+
     @Test
-        //TODO 2021.06.03.-@Query로 삭제가 안됨(Repository)-hyeongwoo
     void 모임관련삭제() throws Exception {
 
         //given
         List<Participant> participantList = createParticipantList();
 
         Participant participant = participantList.get(0);
-        Meeting meeting1 = participant.getMeeting();
 
-        List<Participant> result = participantRepository.findByMeeting(meeting1);
+        Meeting meeting = participant.getMeeting();
 
-        for(Participant participant1 : result){
-            System.out.println("==============================");
-            System.out.println(participant1);
-        }
+
         //when
-
-        System.out.println(meeting1.getId());
-
-        participantRepository.deleteByMeeting(meeting1);
+        participantRepository.deleteByMeeting(meeting);
 
         //then
-
-        List<Participant> result2 = participantRepository.findByMeeting(meeting1);
-
-        for(Participant participant2 : result){
-            System.out.println("-------------------------------");
-            System.out.println(participant2);
-            System.out.println(participant2.getMeeting().getId());
-        }
-
         NoSuchElementException e = assertThrows(NoSuchElementException.class,
                 () -> participantRepository.findById(participant.getId()).get());
 
         Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
 
-
-        Member member1 = Member.builder()
-                .name("memberA")
-                .email("member@kookmin.ac.kr")
-                .nickname("memberNickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-
-        Member member2 = Member.builder()
-                .name("memberA")
-                .email("member@kookmin.ac.kr")
-                .nickname("memberNickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-
-        memberRepository.save(member1);
-        memberRepository.save(member2);
-
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        Meeting meeting2 = Meeting.builder()
-                .category(category)
-                .member(member2)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
-                .maxNumber(4)
-                .currentNumber(3)
-                .build();
-
-        meetingRepository.save(meeting2);
-
-        Participant participant1 = Participant.builder()
-                .meeting(meeting2)
-                .member(member1)
-                .req(false)
-                .build();
-
-        Participant participant2 = Participant.builder()
-                .meeting(meeting2)
-                .member(member1)
-                .req(false)
-                .build();
-
-        participantRepository.save(participant1);
-        participantRepository.save(participant2);
+        Assertions.assertThat(participantRepository.findByMeeting(meeting).isEmpty()).isTrue();
 
     }
 
-*/
 
     @Test
     void 참여자_리스트 () throws Exception {
@@ -215,8 +142,6 @@ class ParticipantRepositoryTest {
         participantList.add(participant1);
         participantList.add(participant2);
         participantList.add(participant3);
-
-
 
         return participantList;
     }
