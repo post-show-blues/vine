@@ -50,10 +50,8 @@ class ParticipantServiceImplTest {
         Assertions.assertThat(participant.getReq()).isEqualTo(false);
     }
 
-<<<<<<< HEAD
-=======
+
     /* //구현코드에서 주석풀기
->>>>>>> hyeongwoo
     @Test
     void 요청시_마감일초과() throws Exception{
         //given
