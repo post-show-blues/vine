@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.authorizeRequests()
 //
 //                //antMatchers() 안의 경로들은 인증이 필요하다
-//                .antMatchers("/", "/user/**", "/image/**", "/subscribe/**", "/coments/**").authenticated()
+//                .antMatchers("/", "/user/**", "/image/**", "/subscribe/**", "/coments/**", "/api/**").authenticated()
 //
 //                //다른 request 들은 모두 허용한다
 //                .anyRequest().permitAll()
