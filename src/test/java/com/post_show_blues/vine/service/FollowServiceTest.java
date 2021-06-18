@@ -4,11 +4,11 @@ import com.post_show_blues.vine.domain.follow.Follow;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,7 +16,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class FollowServiceTest {
@@ -27,6 +26,9 @@ public class FollowServiceTest {
     FollowRepository followRepository;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    NoticeRepository noticeRepository;
+
 
     @Test
     public void 팔로우() throws Exception {
@@ -34,11 +36,11 @@ public class FollowServiceTest {
         //인원 두 명 만들어주기
         Member memberA = memberA();
         Member memberB = memberB();
-        followRepository.rFollow(memberA.getId(), memberB.getId());
+        followService.isFollow(memberA.getId(), memberB.getId());
 
         //when
         List<Follow> followList = followRepository.findAll();
-        Follow follow = followList.get(0);
+        Follow follow = followList.get(followList.size()-1);
 
         System.out.println("follow = " + follow);
         System.out.println(followList.contains(follow));
@@ -49,16 +51,33 @@ public class FollowServiceTest {
     }
 
     @Test
+    public void 알람테이블() throws Exception {
+        //given
+        Member memberA = memberA();
+        Member memberB = memberB();
+        followService.isFollow(memberA.getId(), memberB.getId());
+
+        //when
+        List<Notice> noticeList = noticeRepository.findAll();
+        Notice notice = noticeList.get(noticeList.size() - 1);
+
+        //then
+        assertThat(notice.getMemberId()).isEqualTo(memberB.getId());
+
+    }
+
+
+    @Test
     public void 언팔로우() throws Exception {
         //given
         Member memberA = memberA();
         Member memberB = memberB();
-        followRepository.rFollow(memberA.getId(), memberB.getId());
-        List<Follow> follows = followRepository.findAll();
-        Follow follow = follows.get(follows.size()-1);
+        followService.isFollow(memberA.getId(), memberB.getId());
+        List<Follow> followList = followRepository.findAll();
+        Follow follow = followList.get(followList.size()-1);
 
         //when
-        followRepository.rUnFollow(memberA.getId(), memberB.getId());
+        followService.isUnFollow(memberA.getId(), memberB.getId());
         List<Follow> unFollow = followRepository.findAll();
 
         unFollow.contains(follow);
