@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,14 +30,23 @@ public class FollowServiceTest {
     @Autowired
     NoticeRepository noticeRepository;
 
+    Member memberA;
+    Member memberB;
+
+
+    @BeforeEach
+    public void setup(){
+        memberA = memberA();
+        memberB = memberB();
+        followService.isFollow(memberA.getId(), memberB.getId());
+    }
+
 
     @Test
     public void 팔로우() throws Exception {
         //given
-        //인원 두 명 만들어주기
-        Member memberA = memberA();
-        Member memberB = memberB();
-        followService.isFollow(memberA.getId(), memberB.getId());
+        //setup()에서 함
+        System.out.println("memberA = " + memberA);
 
         //when
         List<Follow> followList = followRepository.findAll();
@@ -53,9 +63,7 @@ public class FollowServiceTest {
     @Test
     public void 알람테이블() throws Exception {
         //given
-        Member memberA = memberA();
-        Member memberB = memberB();
-        followService.isFollow(memberA.getId(), memberB.getId());
+        //setup()에서 함
 
         //when
         List<Notice> noticeList = noticeRepository.findAll();
@@ -70,9 +78,7 @@ public class FollowServiceTest {
     @Test
     public void 언팔로우() throws Exception {
         //given
-        Member memberA = memberA();
-        Member memberB = memberB();
-        followService.isFollow(memberA.getId(), memberB.getId());
+        System.out.println("memberA = " + memberA);
         List<Follow> followList = followRepository.findAll();
         Follow follow = followList.get(followList.size()-1);
 
@@ -80,7 +86,6 @@ public class FollowServiceTest {
         followService.isUnFollow(memberA.getId(), memberB.getId());
         List<Follow> unFollow = followRepository.findAll();
 
-        unFollow.contains(follow);
         //then
         assertThat(unFollow.contains(follow)).isEqualTo(false);
     }

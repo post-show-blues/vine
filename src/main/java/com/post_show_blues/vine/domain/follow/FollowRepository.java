@@ -9,7 +9,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     @Modifying //INSERT, DELETE, UPDATE 를 네이티브 쿼리로 작성하려면 해당 어노테이션 필요
     @Query(value="INSERT INTO follow (from_member_id, to_member_id) VALUES (:fromMemberId, :toMemberId)", nativeQuery = true)
-    void rFollow(@Param("fromMemberId") long fromMemberId,@Param("toMemberId") long toMemberId); //성공 1, 실패 -1
+    void rFollow(@Param("fromMemberId") long fromMemberId,@Param("toMemberId") long toMemberId);
 
     @Modifying
     @Query(value="DELETE FROM follow WHERE from_member_id=:fromMemberId AND to_member_id=:toMemberId", nativeQuery = true)
