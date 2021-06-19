@@ -99,8 +99,8 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(4)
                 .currentNumber(4) // maxNumber == currentNumber
                 .build();
@@ -154,8 +154,8 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(4)
                 .currentNumber(4) // maxNumber == currentNumber
                 .build();
@@ -325,8 +325,8 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

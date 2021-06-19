@@ -44,7 +44,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //활동날짜, 신청 마감날짜 비교교
 
-       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
         String meetDate = meetingDTO.getMeetDate();
         String reqDeadline = meetingDTO.getReqDeadline();

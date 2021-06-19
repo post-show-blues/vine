@@ -70,8 +70,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05 16:30")
+                .reqDeadline("2021/06/05 16:00")
                 .maxNumber(4)
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -102,8 +102,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-03")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/04 16:30")
+                .reqDeadline("2021/06/04 17:00")
                 .maxNumber(4)
                 .build();
         
@@ -159,8 +159,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(5) // 4 -> 5로 변경
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -196,8 +196,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -323,8 +323,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05")
+                .reqDeadline("2021/06/04")
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

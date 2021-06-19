@@ -69,7 +69,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         jpqlQuery.leftJoin(member2).on(participant.member.eq(member2));
         jpqlQuery.leftJoin(memberImg2).on(memberImg2.member.eq(member2));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select( meeting, memberImg1, memberImg2);
+        JPQLQuery<Tuple> tuple = jpqlQuery.select( meeting, memberImg1, memberImg2.id.min());
 
         //where문
         BooleanBuilder builder = new BooleanBuilder();
@@ -110,7 +110,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         });
 
         //group by절
-
+        tuple.groupBy(meeting);
 
         //page 처리
         tuple.offset(pageable.getOffset()); //RequestDTO.page

@@ -28,7 +28,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
 
     @Query(value = "select mi1.member_img_id, min(mi2.member_img_id), " +
             "m.meeting_id, m.title, m.text, m.meet_date, m.current_number, m.max_number, " +
-            "cast(substr(to_date(formatdatetime(now(),'yy/MM/dd'),'yy/MM/dd') - to_date(m.req_deadline,'yyyy-MM-dd'),11,1) as int)" +
+            "cast(substr(to_date(formatdatetime(now(),'yy/MM/dd'),'yy/MM/dd') - to_date(m.req_deadline,'yyyy/MM/dd'),11,1) as int)" +
             "from meeting m " +
             "left join member me1 on me1.member_id = m.master_id " +
             "left join member_img mi1 on  mi1.member_id = me1.member_id " +
