@@ -2,9 +2,11 @@ package com.post_show_blues.vine.controller;
 
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.domain.meeting.Meeting;
+import com.post_show_blues.vine.dto.CategoryDTO;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.PageRequestDTO;
 import com.post_show_blues.vine.dto.PageResultDTO;
+import com.post_show_blues.vine.service.CategoryService;
 import com.post_show_blues.vine.service.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/meetings")
@@ -24,9 +28,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MeetingController {
 
     private final MeetingService meetingService;
+    private final CategoryService categoryService;
 
     @GetMapping("/register")
-    public String registerMeeting(){
+    public String registerMeeting(Model model){
+
+        List<CategoryDTO> categoryListDTO = categoryService.getCategoryList();
+
+        model.addAttribute("categoryListDTO", categoryListDTO);
+
         return "";
     }
 
@@ -47,9 +57,7 @@ public class MeetingController {
     }*/
 
     @GetMapping("/{id}")
-    public String readMeeting(@PathVariable("id") Long meetingId,
-                       @AuthenticationPrincipal PrincipalDetails principalDetails,
-                       Model model){
+    public String readMeeting(@PathVariable("id") Long meetingId, Model model){
 
         MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
 
@@ -62,8 +70,11 @@ public class MeetingController {
     public String modifyMeeting(@PathVariable("id") Long meetingId, Model model){
 
         MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
+        List<CategoryDTO> categoryListDTO = categoryService.getCategoryList();
 
         model.addAttribute("meetingDTO", meetingDTO);
+        model.addAttribute("categoryListDTO", categoryListDTO);
+
         return "";
     }
 
