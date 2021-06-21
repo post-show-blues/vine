@@ -1,14 +1,24 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.member.Member;
-import com.post_show_blues.vine.dto.Auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.member.MemberUpdateDto;
+import com.post_show_blues.vine.dto.memberImg.MemberImgUploadDto;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class MemberServiceTest {
@@ -19,7 +29,9 @@ public class MemberServiceTest {
     public void 회원정보수정() throws Exception {
         //given
         SignupDto memberEntityA = createSignupDto();
-        Member memberA = authService.join(memberEntityA.toEntity());
+        MemberImgUploadDto memberImgEntityA = memberImgUploadDto();
+        Object[] join = authService.join(memberEntityA.toEntity(), memberImgEntityA);
+        Member memberA = (Member)join[0];
         MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
 
 
@@ -50,5 +62,13 @@ public class MemberServiceTest {
                 .twitterurl("https://twitter.com/BTS_twt?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor")
                 .build();
         }
+
+    MemberImgUploadDto memberImgUploadDto() throws IOException {
+        MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
+
+        return MemberImgUploadDto.builder()
+                .file(file1)
+                .build();
+    }
 
 }
