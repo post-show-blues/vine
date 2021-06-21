@@ -37,12 +37,12 @@ public class FollowService {
     private void noticeSave(long fromMemberId, long toMemberId){
         String fromMemberNickname = memberRepository.findById(fromMemberId).get().getNickname();
 
-        NoticeResultDTO noticeResDTO = NoticeResultDTO.builder()
+        NoticeResultDTO noticeResultDTO = NoticeResultDTO.builder()
                 .memberId(toMemberId)
                 .text(fromMemberNickname + "님이 회원님을 팔로잉 했습니다.")
                 .link("/member/"+fromMemberId)
                 .build();
 
-        noticeRepository.save(noticeResDTO.toEntity());
+        noticeRepository.save(noticeResultDTO.toEntity());
     }
 }
