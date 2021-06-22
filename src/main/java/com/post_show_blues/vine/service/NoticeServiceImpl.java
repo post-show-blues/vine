@@ -59,7 +59,7 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     @Override
-    public int unreadCount(Long memberId) {
+    public int unReadCount(Long memberId) {
         int count = noticeRepository.getUnreadCount(memberId);
 
         return count;

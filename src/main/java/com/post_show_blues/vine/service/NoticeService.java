@@ -14,7 +14,7 @@ public interface NoticeService {
 
     void changeRead(Long noticeId);
 
-    int unreadCount(Long memberId);
+    int unReadCount(Long memberId);
 
     default NoticeDTO entityToDTO(Notice notice){
 

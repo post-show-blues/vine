@@ -33,9 +33,9 @@ public class MeetingController {
     @GetMapping("/register")
     public String registerMeeting(Model model){
 
-        List<CategoryDTO> categoryListDTO = categoryService.getCategoryList();
+        List<CategoryDTO> categoryDTOList = categoryService.getCategoryList();
 
-        model.addAttribute("categoryListDTO", categoryListDTO);
+        model.addAttribute("categoryListDTO", categoryDTOList);
 
         return "";
     }
@@ -70,10 +70,10 @@ public class MeetingController {
     public String modifyMeeting(@PathVariable("id") Long meetingId, Model model){
 
         MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
-        List<CategoryDTO> categoryListDTO = categoryService.getCategoryList();
+        List<CategoryDTO> categoryDTOList = categoryService.getCategoryList();
 
         model.addAttribute("meetingDTO", meetingDTO);
-        model.addAttribute("categoryListDTO", categoryListDTO);
+        model.addAttribute("categoryListDTO", categoryDTOList);
 
         return "";
     }
