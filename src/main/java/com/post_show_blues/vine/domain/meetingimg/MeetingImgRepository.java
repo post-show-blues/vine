@@ -18,4 +18,7 @@ public interface MeetingImgRepository extends JpaRepository<MeetingImg, Long> {
     @Query("delete from MeetingImg mi where mi.meeting = :meeting")
     void deleteByMeeting(@Param("meeting") Meeting meeting);
 
+    @Query("select mi from MeetingImg mi")
+    List<MeetingImg> findAll();
+
 }

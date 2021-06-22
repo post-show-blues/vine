@@ -54,8 +54,8 @@ class MeetingRepositoryTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05 14:00")
+                .reqDeadline("2021/06/04 00:00")
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
@@ -193,8 +193,8 @@ class MeetingRepositoryTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate("2021/06/05 12:00")
+                .reqDeadline("2021/06/04 14:00")
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
