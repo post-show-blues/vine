@@ -102,6 +102,28 @@ class SearchMeetingRepositoryImplTest {
         }
     }
 
+    @Test
+    void 리스트조회_검색x() throws Exception{
+        //given
+        Meeting meeting1 = createMeeting();
+        Meeting meeting2 = createMeeting();
+        Meeting meeting3 = createMeeting();
+        Meeting meeting4 = createMeeting();
+        Meeting meeting5 = createMeeting();
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(1).size(3).build();
+
+        //when
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
+                pageRequestDTO.getKeyword(),
+                pageRequestDTO.getPageable(Sort.by("id").descending()));
+
+        //then
+        for (Object[] arr : result.getContent()){
+            System.out.println(Arrays.toString(arr));
+        }
+    }
+
     private Meeting createMeeting() {
         Category category = createCategory();
         MemberImg memberImg = createMemberImg();

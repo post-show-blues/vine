@@ -10,10 +10,15 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
+import com.post_show_blues.vine.dto.PageRequestDTO;
+import com.post_show_blues.vine.dto.PageResultDTO;
 import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -161,6 +167,27 @@ public class MeetingServiceImpl implements MeetingService{
 
         meetingRepository.deleteById(meetingId);
     }
+
+    /**
+     * 모임리스트 조회
+     */
+    /*
+    @Override
+    @Transactional(readOnly = true)
+    public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+
+        Page<Object[]> result = meetingRepository.getListPage(pageable);
+
+
+
+        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+
+        ))
+
+        return new PageResultDTO<>(result, fn);
+    }*/
 
     /**
      * 모임조회 페이지

@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
+import com.post_show_blues.vine.dto.PageRequestDTO;
 import com.post_show_blues.vine.dto.PageResultDTO;
 import lombok.Builder;
 
@@ -22,7 +23,7 @@ public interface MeetingService {
 
     void remove(Long meetingId);
 
-    //PageResultDTO<MeetingDTO, Object[]> getMeetingList();
+   // PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO);
 
     MeetingDTO getMeeting(Long meetingId);
 
