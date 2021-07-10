@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +48,7 @@ public class ParticipantServiceImpl implements ParticipantService{
 
 
         //요청마감일 체크
-        String reqDeadline = meeting.getReqDeadline();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDateTime reqDeadline = meeting.getReqDeadline();
 
         //TODO 테스트 코드 실행시 주석처리 함
         /*

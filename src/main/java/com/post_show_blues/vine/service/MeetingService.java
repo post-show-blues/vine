@@ -10,6 +10,10 @@ import com.post_show_blues.vine.dto.PageRequestDTO;
 import com.post_show_blues.vine.dto.PageResultDTO;
 import lombok.Builder;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +48,7 @@ public interface MeetingService {
                 .currentNumber(meetingDTO.getCurrentNumber())
                 .meetDate(meetingDTO.getMeetDate())
                 .reqDeadline(meetingDTO.getReqDeadline())
+                .dDay(Period.between(LocalDate.now(), meetingDTO.getMeetDate().toLocalDate()).getDays())
                 .chatLink(meetingDTO.getChatLink())
                 .build();
 
@@ -98,6 +103,7 @@ public interface MeetingService {
                 .currentNumber(meeting.getCurrentNumber())
                 .meetDate(meeting.getMeetDate())
                 .reqDeadline(meeting.getReqDeadline())
+                .dDay(meeting.getDDay())
                 .chatLink(meeting.getChatLink())
                 .regDate(meeting.getRegDate())
                 .modDate(meeting.getModDate())
