@@ -1,6 +1,5 @@
 package com.post_show_blues.vine.dto;
 
-import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.notice.Notice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
