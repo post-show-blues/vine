@@ -8,6 +8,7 @@ import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
+import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
 import com.post_show_blues.vine.dto.PageRequestDTO;
@@ -41,6 +42,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final MeetingImgRepository meetingImgRepository;
     private final NoticeRepository noticeRepository;
     private final ParticipantRepository participantRepository;
+    private final RequestParticipantRepository requestParticipantRepository;
 
     /**
      * 모임등록
@@ -152,9 +154,10 @@ public class MeetingServiceImpl implements MeetingService{
         Optional<Meeting> result = meetingRepository.findById(meetingId);
         Meeting meeting = result.get();
 
-        // participant -> meetingImg -> meeting 순으로 삭제
+        // participant -> requestParticipant -> meetingImg -> meeting 순으로 삭제
         participantRepository.deleteByMeeting(meeting);
 
+        requestParticipantRepository.deleteByMeeting(meeting);
 
         //서버 컴퓨터에 저장된 사진파일 삭제
         //TODO 2021.06.16-실제 테스트 필요-hyeongwoo

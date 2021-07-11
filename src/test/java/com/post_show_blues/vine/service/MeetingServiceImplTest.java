@@ -11,6 +11,8 @@ import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
+import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
+import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.MeetingDTO;
 import com.post_show_blues.vine.dto.MeetingImgDTO;
 import lombok.extern.java.Log;
@@ -42,6 +44,7 @@ class MeetingServiceImplTest {
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
+    @Autowired RequestParticipantRepository requestParticipantRepository;
 
    @Test
     void 모임등록() throws Exception{
@@ -254,26 +257,48 @@ class MeetingServiceImplTest {
 
         meetingImgRepository.save(meetingImg);
 
+        //meeting 에 요청자 생성
+        Member member =Member.builder()
+                .name("member")
+                .email("memberB@kookmin.ac.kr")
+                .nickname("memberBNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
+
+        RequestParticipant requestParticipant = RequestParticipant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+        requestParticipantRepository.save(requestParticipant);
+
         //when
         meetingService.remove(meetingId);
 
         //then
-        //삭제된 모임에 참여한 레코드 검색
+        //삭제된 모임에 참여된 레코드 검색
         NoSuchElementException e1 = assertThrows(NoSuchElementException.class,
                 () -> (participantRepository.findById(participant.getId())).get());
 
-        //삭전된 모임방의 사진 검색
+        //삭제된 모임에 참여요청한 레코드 검색
         NoSuchElementException e2 = assertThrows(NoSuchElementException.class,
+                () -> (requestParticipantRepository.findById(requestParticipant.getId())).get());
+
+        //삭제된 모임방의 사진 검색
+        NoSuchElementException e3 = assertThrows(NoSuchElementException.class,
                 () -> meetingImgRepository.findById(meetingImg.getId()).get());
 
         //삭제된 모임방 검색
-        NoSuchElementException e3 = assertThrows(NoSuchElementException.class,
+        NoSuchElementException e4 = assertThrows(NoSuchElementException.class,
                 () -> meetingRepository.findById(meetingId).get());
 
 
         Assertions.assertThat(e1.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e3.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e4.getMessage()).isEqualTo("No value present");
 
     }
 
@@ -341,7 +366,6 @@ class MeetingServiceImplTest {
         Participant participant = Participant.builder()
                 .meeting(meeting)
                 .member(member)
-                .req(false)
                 .build();
 
         participantRepository.save(participant);

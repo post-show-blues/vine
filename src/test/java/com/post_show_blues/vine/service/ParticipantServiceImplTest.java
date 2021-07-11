@@ -34,220 +34,6 @@ class ParticipantServiceImplTest {
     @Autowired ParticipantRepository participantRepository;
     @Autowired MemberImgRepository memberImgRepository;
 
-
-    @Test
-    void 참여요청() throws Exception{
-        //given
-        Meeting meeting = createMeeting();
-        Member member =Member.builder()
-                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-
-        memberRepository.save(member);
-
-        //when
-        Long saveId = participantService.request(meeting.getId(), member.getId());
-
-        //then
-        Participant participant = participantService.findOne(saveId);
-
-        Assertions.assertThat(participant.getMeeting()).isEqualTo(meeting);
-        Assertions.assertThat(participant.getMember()).isEqualTo(member);
-        Assertions.assertThat(participant.getReq()).isEqualTo(false);
-    }
-
-
-    /* //구현코드에서 주석풀기
-    @Test
-    void 요청시_마감일초과() throws Exception{
-        //given
-        Member member1 = createMember();
-
-        //meeting 생성
-        Category category = createCategory();
-        Member member2 = createMember();
-
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member2)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate("2021-06-13")
-                .reqDeadline("2021-06-12") //현재 날짜 -1
-                .maxNumber(4)
-                .currentNumber(3)
-                .build();
-
-        meetingRepository.save(meeting);
-
-        //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> participantService.request(meeting.getId(), member1.getId()));
-
-        //then
-        Assertions.assertThat(e.getMessage()).isEqualTo("참여 가능일이 지났습니다.");
-    }
-     */
-    
-    @Test
-    void 요청시_인원초과() throws Exception{
-        //given
-        Member member1 = createMember();
-
-        //meeting 생성
-        Category category = createCategory();
-        Member member2 =Member.builder()
-                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-        memberRepository.save(member2);
-
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member2)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate(LocalDateTime.of(2021,06,05,00,00))
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
-                        LocalDateTime.of(2021,06,04,00,00)).toDays())
-                .maxNumber(4)
-                .currentNumber(4) // maxNumber == currentNumber
-                .build();
-
-        meetingRepository.save(meeting);
-
-        //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> participantService.request(meeting.getId(), member1.getId()));
-
-        //then
-        Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
-    }
-
-    @Test
-    void 참여수락() throws Exception{
-        //given
-        Meeting meeting = createMeeting();
-        Member member =Member.builder()
-                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-        memberRepository.save(member);
-
-        //수락전 참여 현재인원
-        int beforeNumber = meeting.getCurrentNumber();
-
-        Participant participant = Participant.builder()
-                .meeting(meeting)
-                .member(member)
-                .build();
-
-        participantRepository.save(participant);
-
-        //when
-        participantService.accept(participant.getId());
-
-        //then
-        Assertions.assertThat(participant.getReq()).isEqualTo(true);
-        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber+1);
-    }
-
-    @Test
-    void 수락시_인원초과() throws Exception{
-        //given
-        Member member1 = createMember();
-
-        //meeting 생성
-        Category category = createCategory();
-        Member member2 =Member.builder()
-                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-        memberRepository.save(member2);
-
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member2)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate(LocalDateTime.of(2021,06,05,00,00))
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
-                        LocalDateTime.of(2021,06,04,00,00)).toDays())
-                .maxNumber(4)
-                .currentNumber(4) // maxNumber == currentNumber
-                .build();
-
-        meetingRepository.save(meeting);
-
-        //participant 생성
-        Participant participant = Participant.builder()
-                .member(member1)
-                .meeting(meeting)
-                .build();
-
-        participantRepository.save(participant);
-
-        //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> participantService.accept(participant.getId()));
-
-        //then
-        Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
-    }
-
-    @Test
-    void 참여거절() throws Exception{
-        //given
-        Meeting meeting = createMeeting();
-        Member member =Member.builder()
-                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-        memberRepository.save(member);
-
-        Participant participant = Participant.builder()
-                .member(member)
-                .meeting(meeting)
-                .build();
-
-        participantRepository.save(participant);
-
-        //when
-        participantService.reject(participant.getId());
-
-        //then
-        NoSuchElementException e = assertThrows(NoSuchElementException.class,
-                () -> participantRepository.findById(participant.getId()).get());
-
-        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
-    }
-
     @Test
     void 추방_나가기_기능() throws Exception{
         //given
@@ -303,11 +89,6 @@ class ParticipantServiceImplTest {
         //데이터수 체크
         Assertions.assertThat(result.size())
                 .isEqualTo(participantRepository.participantCount(meetingId).intValue());
-
-        // req 변수 true 순서로 정렬
-        int count = participantRepository.participantCount(meetingId).intValue();
-
-        Assertions.assertThat(result.get(count-1).getReq()).isEqualTo(false);
     }
 
     private List<Participant> createParticipantList() {
@@ -353,19 +134,16 @@ class ParticipantServiceImplTest {
         Participant participant1 = Participant.builder()
                 .meeting(meeting)
                 .member(member1)
-                .req(false)
                 .build();
 
         Participant participant2 = Participant.builder()
                 .meeting(meeting)
                 .member(member2)
-                .req(true)
                 .build();
 
         Participant participant3 = Participant.builder()
                 .meeting(meeting)
                 .member(member3)
-                .req(false)
                 .build();
 
         participantRepository.save(participant1);

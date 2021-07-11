@@ -72,15 +72,15 @@ class SearchMeetingRepositoryImplTest {
         //participant 생성
         MemberImg memberImg1 = createMemberImg();
         Member member1 = memberImg1.getMember();
-        Participant participant1 = Participant.builder().meeting(meeting2).member(member1).req(false).build();
+        Participant participant1 = Participant.builder().meeting(meeting2).member(member1).build();
 
         MemberImg memberImg2 = createMemberImg();
         Member member2 = memberImg2.getMember();
-        Participant participant2 = Participant.builder().meeting(meeting2).member(member2).req(true).build();
+        Participant participant2 = Participant.builder().meeting(meeting2).member(member2).build();
 
         MemberImg memberImg3 = createMemberImg();
         Member member3 = memberImg3.getMember();
-        Participant participant3 = Participant.builder().meeting(meeting2).member(member3).req(true).build();
+        Participant participant3 = Participant.builder().meeting(meeting2).member(member3).build();
 
         participantRepository.save(participant1);
         participantRepository.save(participant2);
