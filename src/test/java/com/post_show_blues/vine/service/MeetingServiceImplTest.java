@@ -28,7 +28,9 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,6 +81,9 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,07,13,16,00))
                 .reqDeadline(LocalDateTime.of(2021,06,05,16,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(4)
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -112,6 +117,9 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,04,16,30))
                 .reqDeadline(LocalDateTime.of(2021,06,04,17,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(4)
                 .build();
         
@@ -180,6 +188,9 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,07,14,00,00)) //5 -> 6일로 변경
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(5) // 4 -> 5로 변경
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -228,6 +239,9 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -385,8 +399,9 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
-                        LocalDateTime.of(2021,06,04,00,00)).toDays())
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

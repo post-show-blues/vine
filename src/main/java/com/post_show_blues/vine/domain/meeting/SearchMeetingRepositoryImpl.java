@@ -36,7 +36,6 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
     }
 
 
-    //TODO 2021.06.12.-from절 서브쿼리 해결(수락요청리스트자만 있을 경우)-hyeongwoo
     @Override
     public Page<Object[]> searchPage(Category category, String keyword, Pageable pageable) {
 
@@ -62,16 +61,18 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         //쿼리 작성
         JPQLQuery<Meeting> jpqlQuery = from(meeting);
 
+        //방장
         jpqlQuery.leftJoin(member1).on(meeting.member.eq(member1));
         jpqlQuery.leftJoin(memberImg1).on(memberImg1.member.eq(member1));
 
+        //참여자들
         jpqlQuery.leftJoin(participant).on(participant.meeting.eq(meeting));
         jpqlQuery.leftJoin(member2).on(participant.member.eq(member2));
         jpqlQuery.leftJoin(memberImg2).on(memberImg2.member.eq(member2));
 
         JPQLQuery<Tuple> tuple = jpqlQuery.select( meeting, memberImg1, memberImg2.id.min());
 
-        //where문
+        //where 문
         BooleanBuilder builder = new BooleanBuilder();
 
         BooleanExpression expression = meeting.id.gt(0L);
@@ -79,7 +80,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(expression);
 
 
-
+        //카테고리 검색
         if(category != null){
 
             List<Category> result = categoryRepository.findAll();
@@ -93,6 +94,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
                 }
             }
+        }else{
+            builder.and(meeting.title.contains(keyword));
         }
 
         tuple.where(builder);

@@ -19,7 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,6 +59,9 @@ class MeetingRepositoryTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,14,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
@@ -196,6 +201,9 @@ class MeetingRepositoryTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,12,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,14,00))
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                                .toLocalDate()).getDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
