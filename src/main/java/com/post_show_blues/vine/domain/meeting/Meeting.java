@@ -7,6 +7,11 @@ import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Builder
@@ -45,13 +50,17 @@ public class Meeting extends BaseEntity {
     private int currentNumber=0;
 
     @Column(nullable = false)
-    private String meetDate;
+    private LocalDateTime meetDate;
 
     @Column(nullable = false)
-    private String reqDeadline;
+    private LocalDateTime reqDeadline;
 
+    @Column(nullable = false)
+    private int dDay;
 
     private String chatLink;
+
+
 
     public void changeCategory(Category category){
         this.category = category;
@@ -82,11 +91,12 @@ public class Meeting extends BaseEntity {
         }
     }
 
-    public void changeMeetDate (String meetDate){
+    public void changeMeetDate (LocalDateTime meetDate){
         this.meetDate = meetDate;
+        this.dDay = Period.between(LocalDate.now(), meetDate.toLocalDate()).getDays();
     }
 
-    public void changeReqDeadline (String reqDeadline){
+    public void changeReqDeadline (LocalDateTime reqDeadline){
         this.reqDeadline = reqDeadline;
     }
 

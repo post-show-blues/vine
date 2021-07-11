@@ -48,8 +48,8 @@ public class MeetingServiceImpl implements MeetingService{
     @Override
     public Long register(MeetingDTO meetingDTO) {
 
-        //활동날짜, 신청 마감날짜 비교교
-
+        //활동날짜, 신청 마감날짜 비교
+        /*
        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
         String meetDate = meetingDTO.getMeetDate();
@@ -71,7 +71,11 @@ public class MeetingServiceImpl implements MeetingService{
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
         }
 
+         */
 
+        if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
+            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+        }
 
         Map<String, Object> result = dtoToEntity(meetingDTO);
 
@@ -102,6 +106,11 @@ public class MeetingServiceImpl implements MeetingService{
         Optional<Meeting> result = meetingRepository.findById(meetingDTO.getMeetingId());
 
         if(result.isPresent()){
+            //수정한 meetDate, reqDeadline 체크
+            if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
+                throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+            }
+
             Meeting meeting = result.get();
 
             //변경

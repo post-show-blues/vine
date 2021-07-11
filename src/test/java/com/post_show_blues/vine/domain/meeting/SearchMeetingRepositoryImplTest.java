@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -135,8 +136,8 @@ class SearchMeetingRepositoryImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

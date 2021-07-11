@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +39,16 @@ class ParticipantServiceImplTest {
     void 참여요청() throws Exception{
         //given
         Meeting meeting = createMeeting();
-        Member member = createMember();
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(member);
 
         //when
         Long saveId = participantService.request(meeting.getId(), member.getId());
@@ -91,7 +102,15 @@ class ParticipantServiceImplTest {
 
         //meeting 생성
         Category category = createCategory();
-        Member member2 = createMember();
+        Member member2 =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member2);
 
         Meeting meeting = Meeting.builder()
                 .category(category)
@@ -99,8 +118,10 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
+                        LocalDateTime.of(2021,06,04,00,00)).toDays())
                 .maxNumber(4)
                 .currentNumber(4) // maxNumber == currentNumber
                 .build();
@@ -119,7 +140,15 @@ class ParticipantServiceImplTest {
     void 참여수락() throws Exception{
         //given
         Meeting meeting = createMeeting();
-        Member member = createMember();
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
 
         //수락전 참여 현재인원
         int beforeNumber = meeting.getCurrentNumber();
@@ -146,7 +175,15 @@ class ParticipantServiceImplTest {
 
         //meeting 생성
         Category category = createCategory();
-        Member member2 = createMember();
+        Member member2 =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member2);
 
         Meeting meeting = Meeting.builder()
                 .category(category)
@@ -154,8 +191,10 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
+                        LocalDateTime.of(2021,06,04,00,00)).toDays())
                 .maxNumber(4)
                 .currentNumber(4) // maxNumber == currentNumber
                 .build();
@@ -181,8 +220,16 @@ class ParticipantServiceImplTest {
     @Test
     void 참여거절() throws Exception{
         //given
-        Member member = createMember();
         Meeting meeting = createMeeting();
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
 
         Participant participant = Participant.builder()
                 .member(member)
@@ -204,7 +251,16 @@ class ParticipantServiceImplTest {
     @Test
     void 추방_나가기_기능() throws Exception{
         //given
-        Member member = createMember();
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
+
         Meeting meeting = createMeeting();
         int beforeNumber = meeting.getCurrentNumber();
 
@@ -258,13 +314,41 @@ class ParticipantServiceImplTest {
 
         Meeting meeting = createMeeting();
 
-        Member member1 = createMember();
+        Member member1 =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member1);
 
         MemberImg memberImg2 = createMemberImg();
         Member member2 = memberImg2.getMember();
 
-        MemberImg memberImg3 = createMemberImg();
+        //member3 만들기
+        Member memberC =Member.builder()
+                .name("member")
+                .email("memberC@kookmin.ac.kr")
+                .nickname("memberCNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberC);
+
+        MemberImg memberImg3 = MemberImg.builder()
+                .member(memberC)
+                .fileName("MemberImg1")
+                .filePath("/hyeongwoo")
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        memberImgRepository.save(memberImg3);
+
         Member member3 = memberImg3.getMember();
+
 
         Participant participant1 = Participant.builder()
                 .meeting(meeting)
@@ -300,10 +384,18 @@ class ParticipantServiceImplTest {
 
     private MemberImg createMemberImg() {
 
-        Member member = createMember();
+        Member memberB =Member.builder()
+                .name("member")
+                .email("memberB@kookmin.ac.kr")
+                .nickname("memberBNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberB);
 
         MemberImg memberImg = MemberImg.builder()
-                .member(member)
+                .member(memberB)
                 .fileName("MemberImg1")
                 .filePath("/hyeongwoo")
                 .uuid(UUID.randomUUID().toString())
@@ -325,8 +417,10 @@ class ParticipantServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay((int) Duration.between(LocalDateTime.of(2021,06,05,00,00),
+                        LocalDateTime.of(2021,06,04,00,00)).toDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

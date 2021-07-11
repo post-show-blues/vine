@@ -17,11 +17,16 @@ import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +42,6 @@ class MeetingServiceImplTest {
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
-
 
    @Test
     void 모임등록() throws Exception{
@@ -70,8 +74,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/05 16:30")
-                .reqDeadline("2021/06/05 16:00")
+                .meetDate(LocalDateTime.of(2021,07,13,16,00))
+                .reqDeadline(LocalDateTime.of(2021,06,05,16,00))
                 .maxNumber(4)
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -81,9 +85,10 @@ class MeetingServiceImplTest {
 
         //then
         Meeting meeting = meetingService.findOne(saveId);
-        Assertions.assertThat("MeetingA").isEqualTo(meeting.getTitle());
-        Assertions.assertThat(member.getId()).isEqualTo(meeting.getMember().getId());
-        Assertions.assertThat(category.getId()).isEqualTo(meeting.getCategory().getId());
+        Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
+        Assertions.assertThat(meeting.getMember().getId()).isEqualTo(member.getId());
+        Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
+        //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
         Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
@@ -102,8 +107,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/04 16:30")
-                .reqDeadline("2021/06/04 17:00")
+                .meetDate(LocalDateTime.of(2021,06,04,16,30))
+                .reqDeadline(LocalDateTime.of(2021,06,04,17,00))
                 .maxNumber(4)
                 .build();
         
@@ -132,7 +137,18 @@ class MeetingServiceImplTest {
 
         //수정 데이터
         Category category1 = createCategory();
-        Member member1 = createMember();
+
+        Member member1 = Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(member1);
+
 
         List<MeetingImgDTO> meetingImgDTOList = new ArrayList<>();
 
@@ -159,8 +175,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,07,14,00,00)) //5 -> 6일로 변경
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
                 .maxNumber(5) // 4 -> 5로 변경
                 .imgDTOList(meetingImgDTOList)
                 .build();
@@ -175,6 +191,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(findMeeting.getTitle()).isEqualTo("MeetingB");
         Assertions.assertThat(findMeeting.getMember().getId()).isEqualTo(member1.getId());
         Assertions.assertThat(findMeeting.getCategory().getId()).isEqualTo(category1.getId());
+        //Assertions.assertThat(findMeeting.getDDay()).isEqualTo(3);
 
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
         Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
@@ -186,8 +203,18 @@ class MeetingServiceImplTest {
         //given
         Meeting meeting = createMeeting();
 
+        //수정 데이터
         Category category1 = createCategory();
-        Member member1 = createMember();
+        Member member1 = Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(member1);
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
@@ -196,8 +223,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -300,7 +327,16 @@ class MeetingServiceImplTest {
 
     private Participant createParticipant() {
         Meeting meeting = createMeeting();
-        Member member = createMember();
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(member);
 
         Participant participant = Participant.builder()
                 .meeting(meeting)
@@ -323,8 +359,10 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021/06/05")
-                .reqDeadline("2021/06/04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                .dDay((int)Duration.between(LocalDateTime.of(2021,06,05,00,00),
+                        LocalDateTime.of(2021,06,04,00,00)).toDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
@@ -346,7 +384,7 @@ class MeetingServiceImplTest {
 
     private Member createMember() {
         Member member = Member.builder()
-                .name("memberA")
+                .name("member")
                 .email("member@kookmin.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")

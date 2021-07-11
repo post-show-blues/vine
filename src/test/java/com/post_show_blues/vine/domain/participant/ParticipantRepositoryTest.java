@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -156,8 +157,8 @@ class ParticipantRepositoryTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate("2021-06-05")
-                .reqDeadline("2021-06-04")
+                .meetDate(LocalDateTime.of(2021,06,05,00,00))
+                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
