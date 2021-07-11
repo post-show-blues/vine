@@ -6,6 +6,8 @@ import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
@@ -43,6 +45,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final NoticeRepository noticeRepository;
     private final ParticipantRepository participantRepository;
     private final RequestParticipantRepository requestParticipantRepository;
+    private final MemberImgService memberImgService;
 
     /**
      * 모임등록
@@ -128,7 +131,7 @@ public class MeetingServiceImpl implements MeetingService{
 
 
             /* 여기서부터 img 변경 */
-            // meeting의 사진 모두 삭제
+            // meeting 의 사진 모두 삭제
             List<MeetingImg> meetingImgResult = meetingImgRepository.findByMeeting(meeting);
             if(meetingImgResult != null && meetingImgResult.size() > 0 ) {
                 meetingImgRepository.deleteByMeeting(meeting);
@@ -180,26 +183,28 @@ public class MeetingServiceImpl implements MeetingService{
         meetingRepository.deleteById(meetingId);
     }
 
+
+
     /**
      * 모임리스트 조회
      */
-    /*
     @Override
     @Transactional(readOnly = true)
     public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        Page<Object[]> result = meetingRepository.getListPage(pageable);
-
-
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
+                                                                pageRequestDTO.getKeyword(), pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
-
-        ))
+                (Meeting)arr[0],
+                (MemberImg)arr[1],
+                memberImgService.findOne((Long)arr[2]))
+        );
 
         return new PageResultDTO<>(result, fn);
-    }*/
+    }
 
     /**
      * 모임조회 페이지

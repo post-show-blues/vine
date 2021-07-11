@@ -4,10 +4,8 @@ import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
-import com.post_show_blues.vine.dto.MeetingDTO;
-import com.post_show_blues.vine.dto.MeetingImgDTO;
-import com.post_show_blues.vine.dto.PageRequestDTO;
-import com.post_show_blues.vine.dto.PageResultDTO;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.dto.*;
 import lombok.Builder;
 
 import java.time.Duration;
@@ -27,7 +25,7 @@ public interface MeetingService {
 
     void remove(Long meetingId);
 
-   // PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO);
+    PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO);
 
     MeetingDTO getMeeting(Long meetingId);
 
@@ -85,8 +83,45 @@ public interface MeetingService {
     }
 
 
-    default MeetingDTO listEntityToDTO(){
-        return null;
+    default MeetingDTO listEntityToDTO(Meeting meeting, MemberImg masterImg, MemberImg participantImg){
+
+        MeetingDTO meetingDTO = MeetingDTO.builder()
+                .meetingId(meeting.getId())
+                .masterId(meeting.getMember().getId())
+                .categoryId(meeting.getCategory().getId())
+                .title(meeting.getTitle())
+                .text(meeting.getText())
+                .place(meeting.getPlace())
+                .maxNumber(meeting.getMaxNumber())
+                .currentNumber(meeting.getCurrentNumber())
+                .meetDate(meeting.getMeetDate())
+                .reqDeadline(meeting.getReqDeadline())
+                .dDay(meeting.getDDay())
+                .chatLink(meeting.getChatLink())
+                .regDate(meeting.getRegDate())
+                .modDate(meeting.getModDate())
+                .build();
+
+        if(masterImg != null){
+            MemberImgDTO masterImgDTO = MemberImgDTO.builder()
+                    .filePath(masterImg.getFilePath())
+                    .fileName(masterImg.getFileName())
+                    .uuid(masterImg.getUuid())
+                    .build();
+
+            meetingDTO.setMasterImg(masterImgDTO);
+        }
+
+        if(participantImg != null){
+            MemberImgDTO participantImgDTO = MemberImgDTO.builder()
+                    .filePath(participantImg.getFilePath())
+                    .fileName(participantImg.getFileName())
+                    .uuid(participantImg.getUuid())
+                    .build();
+
+            meetingDTO.setParticipantImg(participantImgDTO);
+        }
+        return meetingDTO;
     }
 
     default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,

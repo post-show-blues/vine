@@ -380,28 +380,6 @@ class SearchMeetingRepositoryImplTest {
         Assertions.assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
-    private Meeting createMeeting() {
-        Category category = createCategory();
-        MemberImg memberImg = createMemberImg();
-        Member member = memberImg.getMember();
-
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate(LocalDateTime.of(2021,06,05,00,00))
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .maxNumber(4)
-                .currentNumber(3)
-                .build();
-
-        meetingRepository.save(meeting);
-
-        return meeting;
-    }
-
     private Category createCategory() {
         Category category = Category.builder()
                 .name("categoryA")
@@ -410,37 +388,6 @@ class SearchMeetingRepositoryImplTest {
         categoryRepository.save(category);
 
         return category;
-    }
-
-    private Member createMember() {
-        Member member = Member.builder()
-                .name("memberA")
-                .email("member@kookmin.ac.kr")
-                .nickname("memberNickname")
-                .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
-                .build();
-
-        memberRepository.save(member);
-
-        return member;
-    }
-
-    private MemberImg createMemberImg() {
-
-        Member member = createMember();
-
-        MemberImg memberImg = MemberImg.builder()
-                .member(member)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
-                .build();
-
-        memberImgRepository.save(memberImg);
-
-        return memberImg;
     }
 
 

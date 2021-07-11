@@ -53,4 +53,8 @@ public class MeetingDTO {
     @Builder.Default
     private List<MeetingImgDTO> imgDTOList = new ArrayList<>();
 
+    private MemberImgDTO masterImg;
+
+    private MemberImgDTO participantImg;
+
 }
