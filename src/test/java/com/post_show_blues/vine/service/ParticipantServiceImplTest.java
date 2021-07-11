@@ -18,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -197,8 +199,9 @@ class ParticipantServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay((int) Duration.between(LocalDateTime.of(2021,06,05,00,00),
-                        LocalDateTime.of(2021,06,04,00,00)).toDays())
+                .dDay(Period.between(LocalDate.now(),
+                        LocalDateTime.of(2021,06,05,00,00)
+                            .toLocalDate()).getDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();
