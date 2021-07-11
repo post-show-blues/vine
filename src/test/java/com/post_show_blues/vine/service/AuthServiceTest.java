@@ -56,7 +56,7 @@ public class AuthServiceTest {
 
         //then
         assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
-        log.info("===========");
+
         assertThat(memberAImg.getFileName().split("_")[1]).isEqualTo(memberImgEntityA.getFile().getOriginalFilename());
 
     }

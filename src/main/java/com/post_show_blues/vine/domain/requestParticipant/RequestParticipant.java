@@ -1,10 +1,10 @@
-package com.post_show_blues.vine.domain.participant;
+package com.post_show_blues.vine.domain.requestParticipant;
+
 
 import com.post_show_blues.vine.domain.BaseEntity;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -14,10 +14,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @ToString(exclude = {"member","meeting"})
-public class Participant extends BaseEntity {
+public class RequestParticipant extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participant_id", nullable = false)
+    @Column(name = "request_participant_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,5 +27,6 @@ public class Participant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id",nullable = false)
     private Meeting meeting;
+
 
 }

@@ -117,19 +117,16 @@ class ParticipantRepositoryTest {
         Participant participant1 = Participant.builder()
                 .meeting(meeting)
                 .member(member1)
-                .req(false)
                 .build();
 
         Participant participant2 = Participant.builder()
                 .meeting(meeting)
                 .member(member2)
-                .req(true)
                 .build();
 
         Participant participant3 = Participant.builder()
                 .meeting(meeting)
                 .member(member3)
-                .req(false)
                 .build();
 
         participantRepository.save(participant1);
