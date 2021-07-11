@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.dto.Auth;
+package com.post_show_blues.vine.dto.auth;
 
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.Builder;
