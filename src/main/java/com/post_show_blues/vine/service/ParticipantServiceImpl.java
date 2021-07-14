@@ -1,24 +1,15 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
-import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
-import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
-import com.post_show_blues.vine.domain.notice.Notice;
-import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
-import com.post_show_blues.vine.dto.MemberImgDTO;
-import com.post_show_blues.vine.dto.ParticipantDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

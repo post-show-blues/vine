@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.dto;
+package com.post_show_blues.vine.dto.meetingImg;
 
 
 import lombok.AllArgsConstructor;

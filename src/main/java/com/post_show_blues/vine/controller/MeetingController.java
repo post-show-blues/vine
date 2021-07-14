@@ -1,23 +1,17 @@
 package com.post_show_blues.vine.controller;
 
-import com.post_show_blues.vine.config.auth.PrincipalDetails;
-import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.dto.CategoryDTO;
-import com.post_show_blues.vine.dto.MeetingDTO;
-import com.post_show_blues.vine.dto.PageRequestDTO;
-import com.post_show_blues.vine.dto.PageResultDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.service.CategoryService;
 import com.post_show_blues.vine.service.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 

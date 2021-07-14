@@ -1,6 +1,6 @@
-package com.post_show_blues.vine.dto;
+package com.post_show_blues.vine.dto.requestParticipant;
 
-import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.dto.MemberImgDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParticipantDTO {
+public class RequestParticipantDTO {
 
-    private Long participantId;
+    private Long requestParticipantId;
 
     private Long meetingId;
 
@@ -29,5 +28,4 @@ public class ParticipantDTO {
     private MemberImgDTO memberImgDTO;
 
     private LocalDateTime regDate, modDate;
-
 }

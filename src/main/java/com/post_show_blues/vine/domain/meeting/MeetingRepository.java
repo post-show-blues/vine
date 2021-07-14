@@ -10,11 +10,7 @@ import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchMeetingRepository {
 
-    //TODO 2021.06.05
-    // -(D-?)부분 추가
-    // meeting.reqDeadline - now() = D-?
-    // meeting.reqDeadline -> string, now() -> date 타입
-    // -hyeongwoo
+
     /*@Query("select m , mi1, min(mi2), CURRENT_DATE from Meeting m " +
             "left join Member me1 on me1.id =m.member.id " +
             "left join MemberImg mi1 on mi1.member.id = me1.id " +
@@ -25,7 +21,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
     Page<Object[]> getListPage(Pageable pageable);
     */
 
-
+    
     @Query(value = "select mi1.member_img_id, min(mi2.member_img_id), " +
             "m.meeting_id, m.title, m.text, m.meet_date, m.current_number, m.max_number, " +
             "cast(substr(to_date(formatdatetime(now(),'yy/MM/dd'),'yy/MM/dd') - to_date(m.req_deadline,'yyyy/MM/dd'),11,1) as int)" +

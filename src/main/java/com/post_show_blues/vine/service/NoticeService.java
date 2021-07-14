@@ -1,10 +1,9 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.notice.Notice;
-import com.post_show_blues.vine.dto.NoticeDTO;
-import com.post_show_blues.vine.dto.PageRequestDTO;
-import com.post_show_blues.vine.dto.PageResultDTO;
-import org.springframework.data.domain.Page;
+import com.post_show_blues.vine.dto.notice.NoticeDTO;
+import com.post_show_blues.vine.dto.page.PageRequestDTO;
+import com.post_show_blues.vine.dto.page.PageResultDTO;
 
 public interface NoticeService {
 

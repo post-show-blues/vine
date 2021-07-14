@@ -1,7 +1,9 @@
-package com.post_show_blues.vine.dto;
+package com.post_show_blues.vine.dto.meeting;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
+import com.post_show_blues.vine.dto.MemberImgDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.dto;
+package com.post_show_blues.vine.dto.page;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;

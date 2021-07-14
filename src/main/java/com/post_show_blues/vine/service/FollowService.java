@@ -3,7 +3,7 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
-import com.post_show_blues.vine.dto.NoticeResultDTO;
+import com.post_show_blues.vine.dto.notice.NoticeResultDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

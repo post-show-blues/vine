@@ -2,9 +2,9 @@ package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
-import com.post_show_blues.vine.dto.NoticeDTO;
-import com.post_show_blues.vine.dto.PageRequestDTO;
-import com.post_show_blues.vine.dto.PageResultDTO;
+import com.post_show_blues.vine.dto.notice.NoticeDTO;
+import com.post_show_blues.vine.dto.page.PageRequestDTO;
+import com.post_show_blues.vine.dto.page.PageResultDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

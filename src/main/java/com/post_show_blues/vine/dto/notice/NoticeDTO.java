@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.dto;
+package com.post_show_blues.vine.dto.notice;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
