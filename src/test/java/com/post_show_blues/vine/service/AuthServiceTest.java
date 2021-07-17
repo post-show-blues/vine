@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +34,7 @@ public class AuthServiceTest {
         MemberImgUploadDto memberImgEntityA= memberImgUploadDto();
 
         //when
-        authService.join(memberEntityA.toEntity(), memberImgEntityA);
+        authService.join(memberEntityA.toEntity(), Optional.of(memberImgEntityA));
 
         //then
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> authService.isDuplicateNickname(nickname));
@@ -43,14 +44,14 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void 회원가입() throws Exception {
+    public void 회원가입_사진o() throws Exception {
         //given
         SignupDto memberEntityA = createSignupDto();
 
         MemberImgUploadDto memberImgEntityA= memberImgUploadDto();
 
         //when
-        Object[] join = authService.join(memberEntityA.toEntity(), memberImgEntityA);
+        Object[] join = authService.join(memberEntityA.toEntity(), Optional.of(memberImgEntityA));
         Member memberA = (Member) join[0];
         MemberImg memberAImg = (MemberImg) join[1];
 
@@ -59,6 +60,21 @@ public class AuthServiceTest {
 
         assertThat(memberAImg.getFileName().split("_")[1]).isEqualTo(memberImgEntityA.getFile().getOriginalFilename());
 
+    }
+
+    @Test
+    public void 회원가입_사진x() throws Exception {
+        //given
+        SignupDto memberEntityA = createSignupDto();
+
+        //when
+        Object[] join = authService.join(memberEntityA.toEntity(), Optional.empty());
+        Member memberA = (Member) join[0];
+        MemberImg memberAImg = (MemberImg) join[1];
+
+        //then
+        assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
+        assertThat(memberAImg.getFileName()).isEqualTo("");
     }
 
 

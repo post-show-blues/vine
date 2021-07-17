@@ -1,13 +1,20 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.follow.FollowRepository;
+import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.dto.NoticeResultDTO;
+import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
+import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -44,5 +51,53 @@ public class FollowService {
                 .build();
 
         noticeRepository.save(noticeResultDTO.toEntity());
+    }
+
+    /**
+     * 내가 팔로우하는 멤버 출력
+     */
+    public List<FollowMemberResultDTO> followMember(Long id) {
+        List<Object[]> followMembers = followRepository.findFollowMembers(id);
+        if (followMembers==null){
+            return Collections.emptyList();
+        }
+
+        return followMembers.stream().map(fm -> {
+            Member member = (Member) fm[0];
+            MemberImg memberImg = (MemberImg) fm[1];
+
+            return FollowMemberResultDTO.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .text(member.getText())
+                    .imgFileName(memberImg.getFileName())
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+
+    /**
+     * 나를 팔로우하는 멤버 출력
+     */
+    public List<FollowerMemberResultDTO> followerMember(Long id){
+        List<Object[]> followerMembers = followRepository.findFollowerMembers(id);
+
+        if (followerMembers==null){
+            return Collections.emptyList();
+        }
+
+        return followerMembers.stream().map(fm -> {
+            Member member = (Member) fm[0];
+            MemberImg memberImg = (MemberImg) fm[1];
+            Boolean isFollow = followRepository.existsByFromMemberIdAndToMemberId(member.getId(), id);
+
+            return FollowerMemberResultDTO.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .text(member.getText())
+                    .imgFileName(memberImg.getFileName())
+                    .isFollow(isFollow)
+                    .build();
+        }).collect(Collectors.toList());
     }
 }

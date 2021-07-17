@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup") //데이터 전달
-    public String singup(@Valid SignupDto signupDto, MemberImgUploadDto memberImgUploadDto){
+    public String singup(@Valid SignupDto signupDto, Optional<MemberImgUploadDto> memberImgUploadDto){
         Member member = signupDto.toEntity();
         authService.join(member, memberImgUploadDto);
         return "";

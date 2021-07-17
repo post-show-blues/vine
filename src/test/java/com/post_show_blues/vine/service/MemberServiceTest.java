@@ -5,20 +5,16 @@ import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.member.MemberUpdateDto;
 import com.post_show_blues.vine.dto.memberImg.MemberImgUploadDto;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @Transactional
 public class MemberServiceTest {
@@ -30,7 +26,7 @@ public class MemberServiceTest {
         //given
         SignupDto memberEntityA = createSignupDto();
         MemberImgUploadDto memberImgEntityA = memberImgUploadDto();
-        Object[] join = authService.join(memberEntityA.toEntity(), memberImgEntityA);
+        Object[] join = authService.join(memberEntityA.toEntity(), Optional.of(memberImgEntityA));
         Member memberA = (Member)join[0];
         MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
 
