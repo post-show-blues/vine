@@ -106,6 +106,7 @@ public class MeetingServiceImpl implements MeetingService{
         Optional<Meeting> result = meetingRepository.findById(meetingDTO.getMeetingId());
 
         if(result.isPresent()){
+
             //수정한 meetDate, reqDeadline 체크
             if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
                 throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
