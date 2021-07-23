@@ -8,6 +8,7 @@ import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.*;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
+import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 
@@ -16,11 +17,12 @@ import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface MeetingService {
 
-    Long register(MeetingDTO meetingDTO);
+    Long register(MeetingDTO meetingDTO, Optional<MeetingImgUploadDTO> meetingImgUploadDTO);
 
     void modify(MeetingDTO meetingDTO);
 

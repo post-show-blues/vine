@@ -47,7 +47,7 @@ public class MeetingController {
     @PostMapping("/new") //모임등록
     public String registerMeeting(MeetingDTO meetingDTO){
 
-        meetingService.register(meetingDTO);
+        //meetingService.register(meetingDTO);
 
         return "";
     }

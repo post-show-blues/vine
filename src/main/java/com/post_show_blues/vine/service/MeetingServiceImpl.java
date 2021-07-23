@@ -11,6 +11,7 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 
@@ -45,8 +52,10 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임등록
      */
+    @Transactional
     @Override
-    public Long register(MeetingDTO meetingDTO) {
+    public Long register(MeetingDTO meetingDTO,
+                         Optional<MeetingImgUploadDTO> meetingImgUploadDTO) {
 
         //활동날짜, 신청 마감날짜 비교
         /*
@@ -92,10 +101,79 @@ public class MeetingServiceImpl implements MeetingService{
             }
         }
 
+        if(meetingImgUploadDTO.isPresent()){
+            
+            MultipartFile[] uploadFiles = meetingImgUploadDTO.get().getUploadFiles();
+            
+            for(MultipartFile uploadFile : uploadFiles){
+
+                if(uploadFile.getContentType().startsWith("image") == false){
+                    throw new IllegalStateException("이미지 파일이 아닙니다.");
+                }
+
+
+                String originalName = uploadFile.getOriginalFilename();
+
+                System.out.println("originalName: " + originalName);
+
+                String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
+                
+                log.info("fileName: " + fileName);
+
+                String folderPath = makeFolder();
+
+                String uuid = UUID.randomUUID().toString();
+
+                String saveName = uploadPath + File.separator + folderPath + File.separator +
+                        uuid + "_" + fileName;
+
+
+                Path savePath = Paths.get(saveName);
+
+                try{
+                    uploadFile.transferTo(savePath);
+
+                    //섬네일
+                    String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator +
+                            "s_" + uuid + "_" + fileName;
+
+                    File thumbnailFile = new File(thumbnailSaveName);
+
+                    Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
+
+                    resultDTOList.add(new UploadResultDTO(fileName, uuid, folderPath));
+
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        
+
+
 
         //TODO 2021.06.02. 모임 등록시 자신의 팔로워들에게 알림 생성 - hyeongwoo
 
         return meeting.getId();
+    }
+
+    private String makeFolder() {
+
+        String folderPath = "vine" + File.separator;
+
+        String str = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+        folderPath += str.replace("//", File.separator);
+
+        File uploadPathFolder = new File(uploadPath, folderPath);
+
+        if(uploadPathFolder.exists() == false){
+            uploadPathFolder.mkdirs();
+        }
+
+        return folderPath;
+
     }
 
     /**
