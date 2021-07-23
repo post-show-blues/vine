@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 //회원가입
@@ -43,25 +44,33 @@ public class AuthService {
      * 회원가입
      */
     @Transactional
-    public Object[] join(Member member, MemberImgUploadDto memberImgUploadDto) {
+    public Object[] join(Member member, Optional<MemberImgUploadDto> memberImgUploadDto) {
         //회원 정보
         String rawPassword = member.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
         member.setPassword(encPassword);
         Member memberEntity = memberRepository.save(member);
+        MemberImg memberImg;
 
-        //회원 이미지
-        UUID uuid = UUID.randomUUID(); //이미지 고유성 보장
-        String imageFileName = uuid+"_"+memberImgUploadDto.getFile().getOriginalFilename();
-        Path imageFilePath = Paths.get(uploadFolder + "/" + imageFileName);
 
-        try{
-            Files.write(imageFilePath, memberImgUploadDto.getFile().getBytes());
-        }catch(Exception e){
-            e.printStackTrace();
+        if (memberImgUploadDto.isEmpty()) {
+            memberImg=MemberImg.builder()
+                    .member(member)
+                    .build();
+        } else {
+            //회원 이미지
+            UUID uuid = UUID.randomUUID(); //이미지 고유성 보장
+            String imageFileName = uuid + "_" + memberImgUploadDto.get().getFile().getOriginalFilename();
+            Path imageFilePath = Paths.get(uploadFolder + "/" + imageFileName);
+
+            try {
+                Files.write(imageFilePath, memberImgUploadDto.get().getFile().getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            memberImg = memberImgUploadDto.get().toEntity(imageFileName, member);
         }
 
-        MemberImg memberImg = memberImgUploadDto.toEntity(imageFileName, member);
         MemberImg memberImgEntity = memberImgRepository.save(memberImg);
 
         return new Object[]{memberEntity, memberImgEntity};
@@ -76,7 +85,7 @@ public class AuthService {
 
     private void validateDuplicateMember(String nickname) {
         Member findMember = memberRepository.findByNickname(nickname);
-        if (findMember!=null) {
+        if (findMember != null) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }

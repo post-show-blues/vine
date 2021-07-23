@@ -23,10 +23,10 @@ public class MemberImg {
 //    @Column(nullable = false)
     private String uuid;
 
-    @Column(nullable = false)
-    private String fileName;
+    @Builder.Default
+    private String fileName="";
 
 //    @Column(nullable = false)
-    private String filePath;
+    private String filePath="";
 
 }
