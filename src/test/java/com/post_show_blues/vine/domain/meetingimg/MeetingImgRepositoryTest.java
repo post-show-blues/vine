@@ -44,9 +44,8 @@ class MeetingImgRepositoryTest {
         Meeting meeting = createMeeting();
 
         MeetingImg meetingImg = MeetingImg.builder()
-                .uuid(UUID.randomUUID().toString())
-                .filePath("/hyeongwoo")
-                .fileName("/MeetingImgA")
+                .storeFileName(UUID.randomUUID().toString() + "_MeetingImgA")
+                .folderPath("/hyeongwoo1")
                 .meeting(meeting)
                 .build();
 

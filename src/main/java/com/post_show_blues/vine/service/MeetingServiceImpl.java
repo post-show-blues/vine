@@ -14,6 +14,8 @@ import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.file.FileStore;
+import com.post_show_blues.vine.file.ResultFileStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,7 @@ public class MeetingServiceImpl implements MeetingService{
 
     @Value("${org.zerock.upload.path}")
     private String uploadPath;
+    private final FileStore fileStore;
 
     private final MeetingRepository meetingRepository;
     private final MeetingImgRepository meetingImgRepository;
@@ -54,8 +57,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional
     @Override
-    public Long register(MeetingDTO meetingDTO,
-                         Optional<MeetingImgUploadDTO> meetingImgUploadDTO) {
+    public Long register(MeetingDTO meetingDTO) throws IOException {
 
         //활동날짜, 신청 마감날짜 비교
         /*
@@ -86,71 +88,26 @@ public class MeetingServiceImpl implements MeetingService{
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
         }
 
-        Map<String, Object> result = dtoToEntity(meetingDTO);
 
-        Meeting meeting = (Meeting) result.get("meeting");
-
+        //모임저장
+        Meeting meeting = dtoToEntity(meetingDTO);
         meetingRepository.save(meeting);
 
-        List<MeetingImg> meetingImgList = (List<MeetingImg>) result.get("meetingImgList");
 
-        // 사진 첨부 유무 확인
-        if(meetingImgList != null && meetingImgList.size() > 0){
-            for(MeetingImg meetingImg : meetingImgList){
+        List<MultipartFile> imageFiles = meetingDTO.getImageFiles();
+
+        if(imageFiles != null && imageFiles.size() > 0){
+            List<ResultFileStore> resultFileStores = fileStore.storeFiles(imageFiles);
+
+            //모임사진 저장
+            for(ResultFileStore resultFileStore : resultFileStores){
+
+                MeetingImg meetingImg = toMeetingImg(meeting, resultFileStore);
+
                 meetingImgRepository.save(meetingImg);
+
             }
         }
-
-        if(meetingImgUploadDTO.isPresent()){
-            
-            MultipartFile[] uploadFiles = meetingImgUploadDTO.get().getUploadFiles();
-            
-            for(MultipartFile uploadFile : uploadFiles){
-
-                if(uploadFile.getContentType().startsWith("image") == false){
-                    throw new IllegalStateException("이미지 파일이 아닙니다.");
-                }
-
-
-                String originalName = uploadFile.getOriginalFilename();
-
-                System.out.println("originalName: " + originalName);
-
-                String fileName = originalName.substring(originalName.lastIndexOf("//") + 1);
-                
-                log.info("fileName: " + fileName);
-
-                String folderPath = makeFolder();
-
-                String uuid = UUID.randomUUID().toString();
-
-                String saveName = uploadPath + File.separator + folderPath + File.separator +
-                        uuid + "_" + fileName;
-
-
-                Path savePath = Paths.get(saveName);
-
-                try{
-                    uploadFile.transferTo(savePath);
-
-                    //섬네일
-                    String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator +
-                            "s_" + uuid + "_" + fileName;
-
-                    File thumbnailFile = new File(thumbnailSaveName);
-
-                    Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
-
-                    resultDTOList.add(new UploadResultDTO(fileName, uuid, folderPath));
-
-                } catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        
-
 
 
         //TODO 2021.06.02. 모임 등록시 자신의 팔로워들에게 알림 생성 - hyeongwoo
@@ -158,66 +115,76 @@ public class MeetingServiceImpl implements MeetingService{
         return meeting.getId();
     }
 
-    private String makeFolder() {
-
-        String folderPath = "vine" + File.separator;
-
-        String str = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-        folderPath += str.replace("//", File.separator);
-
-        File uploadPathFolder = new File(uploadPath, folderPath);
-
-        if(uploadPathFolder.exists() == false){
-            uploadPathFolder.mkdirs();
-        }
-
-        return folderPath;
-
-    }
 
     /**
      * 모임수정
      */
     @Override
-    public void modify(MeetingDTO meetingDTO) {
-        Optional<Meeting> result = meetingRepository.findById(meetingDTO.getMeetingId());
+    public void modify(MeetingDTO meetingDTO) throws IOException {
 
-        if(result.isPresent()){
+        Meeting meeting = meetingRepository.findById(meetingDTO.getMeetingId()).orElseThrow(() ->
+                new IllegalStateException("존재하는 않은 모임입니다."));
 
-            //수정한 meetDate, reqDeadline 체크
-            if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
-                throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+
+
+        //수정한 meetDate, reqDeadline 체크
+        if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
+            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+        }
+
+        //변경
+        meeting.changeCategory(Category.builder().id(meetingDTO.getCategoryId()).build());
+        meeting.changeMember(Member.builder().id(meetingDTO.getMasterId()).build());
+        meeting.changeTitle(meetingDTO.getTitle());
+        meeting.changeText(meetingDTO.getText());
+        meeting.changePlace(meetingDTO.getPlace());
+        meeting.changeMaxNumber(meetingDTO.getMaxNumber());
+        meeting.changeMeetDate(meetingDTO.getMeetDate());
+        meeting.changeReqDeadline(meetingDTO.getReqDeadline());
+        meeting.changeChatLink(meetingDTO.getChatLink());
+
+
+        /* 여기서부터 img 변경 */
+        // meeting 의 기존 사진 모두 삭제
+        List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
+
+        //서버 컴퓨터에 저장된 사진 삭제
+        fileRemove(meetingImgList);
+
+        //meetingImg 삭제
+        meetingImgRepository.deleteByMeeting(meeting);
+
+        //새로운 사진 저장
+        List<MultipartFile> imageFiles = meetingDTO.getImageFiles();
+
+        if(imageFiles != null && imageFiles.size() > 0){
+
+            //서버 컴퓨터에 사진 저장
+            List<ResultFileStore> resultFileStores = fileStore.storeFiles(imageFiles);
+
+            //모임사진 저장
+            for(ResultFileStore resultFileStore : resultFileStores){
+                MeetingImg meetingImg = toMeetingImg(meeting, resultFileStore);
+                meetingImgRepository.save(meetingImg);
+
             }
+        }
 
-            Meeting meeting = result.get();
-
-            //변경
-            meeting.changeCategory(Category.builder().id(meetingDTO.getCategoryId()).build());
-            meeting.changeMember(Member.builder().id(meetingDTO.getMasterId()).build());
-            meeting.changeTitle(meetingDTO.getTitle());
-            meeting.changeText(meetingDTO.getText());
-            meeting.changePlace(meetingDTO.getPlace());
-            meeting.changeMaxNumber(meetingDTO.getMaxNumber());
-            meeting.changeMeetDate(meetingDTO.getMeetDate());
-            meeting.changeReqDeadline(meetingDTO.getReqDeadline());
-            meeting.changeChatLink(meetingDTO.getChatLink());
+    }
 
 
-            /* 여기서부터 img 변경 */
-            // meeting 의 사진 모두 삭제
-            List<MeetingImg> meetingImgResult = meetingImgRepository.findByMeeting(meeting);
-            if(meetingImgResult != null && meetingImgResult.size() > 0 ) {
-                meetingImgRepository.deleteByMeeting(meeting);
-            }
+    private void fileRemove(List<MeetingImg> meetingImgList) {
 
-            List<MeetingImg> meetingImgList = getImgDtoToEntity(meetingDTO, meeting);
+        if(meetingImgList != null && meetingImgList.size() > 0 ){
 
-            // 사진 첨부 유무 확인
-            if(meetingImgList != null && meetingImgList.size() > 0){
-                for(MeetingImg meetingImg : meetingImgList){
-                    meetingImgRepository.save(meetingImg);
-                }
+            for(MeetingImg meetingImg: meetingImgList){
+                String srcFileName = meetingImg.getFolderPath() + File.separator + meetingImg.getStoreFileName();
+                File file = new File(uploadPath, srcFileName);
+                file.delete();
+
+                File thumbnail = new File(uploadPath + File.separator +
+                        "s_" + File.separator + srcFileName);
+                thumbnail.delete();
             }
         }
 
@@ -231,27 +198,18 @@ public class MeetingServiceImpl implements MeetingService{
         Optional<Meeting> result = meetingRepository.findById(meetingId);
         Meeting meeting = result.get();
 
-        // participant -> requestParticipant -> meetingImg -> meeting 순으로 삭제
+        // participant -> requestParticipant -> 서버컴퓨터 사진삭제 -> meetingImg -> meeting 순으로 삭제
         participantRepository.deleteByMeeting(meeting);
 
         requestParticipantRepository.deleteByMeeting(meeting);
 
-        //서버 컴퓨터에 저장된 사진파일 삭제
         //TODO 2021.06.16-실제 테스트 필요-hyeongwoo
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
 
-        if(meetingImgList != null && meetingImgList.size() > 0 ){
-            for(MeetingImg meetingImg: meetingImgList){
-                String srcFileName = meetingImg.getFilePath() + File.separator + meetingImg.getFileName();
-                File file = new File(uploadPath, srcFileName);
-                file.delete();
+        //서버 컴퓨터에 저장된 사진 삭제
+        fileRemove(meetingImgList);
 
-                File thumbnail = new File(uploadPath + File.separator +
-                        "s_" + File.separator + srcFileName);
-                thumbnail.delete();
-            }
-        }
-
+        //meetingImg 삭제
         meetingImgRepository.deleteByMeeting(meeting);
 
         meetingRepository.deleteById(meetingId);
@@ -272,16 +230,16 @@ public class MeetingServiceImpl implements MeetingService{
                                                                 pageRequestDTO.getKeyword(), pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
-                (Meeting)arr[0],
-                (MemberImg)arr[1],
-                memberImgService.findOne((Long)arr[2]))
+                (Meeting)arr[0], //모임 엔티티
+                (MemberImg)arr[1], //모임장 프로필 사진
+                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
         );
 
         return new PageResultDTO<>(result, fn);
     }
 
     /**
-     * 모임조회 페이지
+     * 모임상세 조회 페이지
      */
     @Override
     @Transactional(readOnly = true)

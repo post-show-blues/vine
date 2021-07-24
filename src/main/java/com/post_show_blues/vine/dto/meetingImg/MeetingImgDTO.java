@@ -15,15 +15,13 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 public class MeetingImgDTO {
 
-    private String uuid;
+    private String storeFileName;
 
-    private String fileName;
-
-    private String filePath;
+    private String folderPath;
 
     public String getImageURL() {
         try {
-            return URLEncoder.encode(filePath + "/" + uuid + "_" + fileName, "UTF-8");
+            return URLEncoder.encode(folderPath + "/" + storeFileName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -33,7 +31,7 @@ public class MeetingImgDTO {
 
     public String getThumbnailURL() {
         try {
-            return URLEncoder.encode(filePath + "/s_" + uuid + "_" + fileName, "UTF-8");
+            return URLEncoder.encode(folderPath + "/s_" + storeFileName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

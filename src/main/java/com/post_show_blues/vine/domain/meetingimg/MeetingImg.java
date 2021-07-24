@@ -22,12 +22,13 @@ public class MeetingImg {
     private Meeting meeting;
 
     @Column(nullable = false)
-    private String uuid;
+    private String folderPath;
 
     @Column(nullable = false)
-    private String fileName;
+    private String storeFileName;
 
-    @Column(nullable = false)
-    private String filePath;
+
+
+
 
 }

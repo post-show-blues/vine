@@ -11,7 +11,9 @@ import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.file.ResultFileStore;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashMap;
@@ -22,9 +24,9 @@ import java.util.stream.Collectors;
 
 public interface MeetingService {
 
-    Long register(MeetingDTO meetingDTO, Optional<MeetingImgUploadDTO> meetingImgUploadDTO);
+    Long register(MeetingDTO meetingDTO) throws IOException;
 
-    void modify(MeetingDTO meetingDTO);
+    void modify(MeetingDTO meetingDTO) throws IOException;
 
     void remove(Long meetingId);
 
@@ -34,9 +36,7 @@ public interface MeetingService {
 
     Meeting findOne(Long id);
 
-    default Map<String, Object> dtoToEntity(MeetingDTO meetingDTO){
-
-        Map<String, Object> entityMap = new HashMap<>();
+    default Meeting dtoToEntity(MeetingDTO meetingDTO){
 
         Meeting meeting = Meeting.builder()
                 .id(meetingDTO.getMeetingId())
@@ -53,38 +53,21 @@ public interface MeetingService {
                 .chatLink(meetingDTO.getChatLink())
                 .build();
 
-        entityMap.put("meeting", meeting);
-
-
-        List<MeetingImg> meetingImgList = getImgDtoToEntity(meetingDTO, meeting);
-
-        entityMap.put("meetingImgList", meetingImgList);
-
-        return entityMap;
+        return meeting;
     }
 
-    default List<MeetingImg> getImgDtoToEntity(MeetingDTO meetingDTO,Meeting meeting){
+    default MeetingImg toMeetingImg(Meeting meeting, ResultFileStore resultFileStore){
 
-        List<MeetingImgDTO> imgDTOList = meetingDTO.getImgDTOList();
 
-        // 사진 첨부 유무 확인
-        if (imgDTOList != null && imgDTOList.size() > 0) {
-            List<MeetingImg> meetingImgList = imgDTOList.stream().map(meetingImgDTO -> {
-                MeetingImg meetingImg = MeetingImg.builder()
-                        .uuid(meetingImgDTO.getUuid())
-                        .fileName(meetingImgDTO.getFileName())
-                        .filePath(meetingImgDTO.getFilePath())
-                        .meeting(meeting)
-                        .build();
-                return meetingImg;
-            }).collect(Collectors.toList());
+        MeetingImg meetingImg = MeetingImg.builder()
+                .meeting(meeting)
+                .folderPath(resultFileStore.getFolderPath())
+                .storeFileName(resultFileStore.getStoreFileName())
+                .build();
 
-            return meetingImgList;
-        }
+        return meetingImg;
 
-        return null;
     }
-
 
     default MeetingDTO listEntityToDTO(Meeting meeting, MemberImg masterImg, MemberImg participantImg){
 
@@ -150,9 +133,8 @@ public interface MeetingService {
 
         List<MeetingImgDTO> meetingImgDTOList = meetingImgList.stream().map(meetingImg -> {
             return MeetingImgDTO.builder()
-                    .filePath(meetingImg.getFilePath())
-                    .fileName(meetingImg.getFileName())
-                    .uuid(meetingImg.getUuid())
+                    .folderPath(meetingImg.getFolderPath())
+                    .storeFileName(meetingImg.getStoreFileName())
                     .build();
         }).collect(Collectors.toList());
 

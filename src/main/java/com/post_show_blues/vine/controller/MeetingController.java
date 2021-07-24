@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
 import java.util.List;
 
 @Log4j2
@@ -76,7 +77,7 @@ public class MeetingController {
 
     @PostMapping("/{meeting-id}/edit") //모임 수정
     public String ModifyMeeting(@PathVariable("meeting-id") Long meetingId,
-                                    MeetingDTO meetingDTO){
+                                    MeetingDTO meetingDTO) throws IOException {
 
         meetingService.modify(meetingDTO);
 

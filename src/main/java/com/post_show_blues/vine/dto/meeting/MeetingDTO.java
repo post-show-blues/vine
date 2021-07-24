@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class MeetingDTO {
     private String chatLink;
 
     private LocalDateTime regDate, modDate;
+
+    private List<MultipartFile> imageFiles;
 
     @Builder.Default
     private List<MeetingImgDTO> imgDTOList = new ArrayList<>();

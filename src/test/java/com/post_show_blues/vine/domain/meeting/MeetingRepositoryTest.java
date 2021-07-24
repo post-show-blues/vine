@@ -118,19 +118,16 @@ class MeetingRepositoryTest {
         Meeting meeting = createMeeting();
 
         MeetingImg meetingImg1 = MeetingImg.builder()
-                .meeting(meeting)
-                .fileName("MeetingImg1")
-                .filePath("/hyeongwoo1")
-                .uuid(UUID.randomUUID().toString())
+                .storeFileName(UUID.randomUUID().toString() + "_MeetingImg1")
+                .folderPath("/hyeongwoo1")
                 .build();
 
         meetingImgRepository.save(meetingImg1);
 
         MeetingImg meetingImg2 = MeetingImg.builder()
                 .meeting(meeting)
-                .fileName("MeetingImg2")
-                .filePath("/hyeongwoo2")
-                .uuid(UUID.randomUUID().toString())
+                .storeFileName(UUID.randomUUID().toString() + "_MeetingImg2")
+                .folderPath("/hyeongwoo1")
                 .build();
 
         meetingImgRepository.save(meetingImg2);
