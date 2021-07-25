@@ -64,4 +64,11 @@ public class NoticeServiceImpl implements NoticeService{
 
         return count;
     }
+
+    @Override
+    public void remove(Long memberId) {
+
+        noticeRepository.deleteById(memberId);
+
+    }
 }

@@ -1,10 +1,17 @@
 package com.post_show_blues.vine.controller.api;
 
 
+import com.post_show_blues.vine.config.auth.PrincipalDetails;
+import com.post_show_blues.vine.dto.CMRespDto;
+import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
+import com.post_show_blues.vine.service.RequestParticipantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -12,23 +19,32 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class RequestParticipantApiController {
 
-    @GetMapping //참여요청자 목록
-    public String requestParticipantList(@PathVariable("meeting-id") Long memberId){
+    private final RequestParticipantService requestParticipantService;
 
-        return "";
+    @GetMapping //참여요청자 목록
+    public CMRespDto<?> requestParticipantList(@PathVariable("meeting-id") Long meetingId){
+
+        List<RequestParticipantDTO> requestParticipantDTOList = requestParticipantService.getRequestParticipantList(meetingId);
+
+        return new CMRespDto<>(1,"참여요청자 목록", requestParticipantDTOList);
     }
 
     @PostMapping //참여요청
-    public String requestParticipant(@PathVariable("meeting-id") Long memberId){
+    public CMRespDto<?> requestParticipant(@PathVariable("meeting-id") Long meetingId,
+                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        return "";
+        requestParticipantService.request(meetingId, principalDetails.getMember().getId());
+
+        return new CMRespDto<>(1,"참여요청 성공", null);
     }
 
     @DeleteMapping("/{req-id}") //참여요청 거절/철회
-    public String deleteRequestParticipant(@PathVariable("meeting-id") Long memberId,
+    public CMRespDto<?> deleteRequestParticipant(@PathVariable("meeting-id") Long meetingId,
                                            @PathVariable("req-id") Long requestParticipantId){
 
-        return "";
+        requestParticipantService.reject(requestParticipantId);
+
+        return new CMRespDto<>(1, "참여요청삭제 성공", null);
     }
 
 }

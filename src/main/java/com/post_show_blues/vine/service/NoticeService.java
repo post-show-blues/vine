@@ -15,6 +15,8 @@ public interface NoticeService {
 
     int unReadCount(Long memberId);
 
+    void remove(Long memberId);
+
     default NoticeDTO entityToDTO(Notice notice){
 
         NoticeDTO noticeDTO = NoticeDTO.builder()

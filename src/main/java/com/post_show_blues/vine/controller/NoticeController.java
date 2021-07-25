@@ -10,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @RequestMapping("/members/{member-id}/notices")
@@ -24,11 +22,12 @@ public class NoticeController {
 
     @GetMapping //알림목록
     public String noticeList(@PathVariable("member-id") Long memberId,
-                             PageRequestDTO pageRequestDTO,
+                             @ModelAttribute("requestDTO") PageRequestDTO requestDTO,
                              @AuthenticationPrincipal PrincipalDetails principalDetails,
                              Model model){
 
-        PageResultDTO<NoticeDTO, Notice> noticeDTOList = noticeService.getNoticeList(pageRequestDTO, memberId);
+        PageResultDTO<NoticeDTO, Notice> noticeDTOList = noticeService.getNoticeList(requestDTO, memberId);
+
 
         model.addAttribute("noticeDTOList", noticeDTOList);
         return "";
@@ -37,9 +36,13 @@ public class NoticeController {
 
     @PostMapping("/{notice-id}/delete") //알림삭제
     public String deleteNotice(@PathVariable("member-id") Long memberId,
-                               @PathVariable("notice-id") Long noticeId){
+                               @PathVariable("notice-id") Long noticeId,
+                               RedirectAttributes redirectAttributes){
 
+        noticeService.remove(noticeId);
 
-        return "";
+        redirectAttributes.addAttribute("memberId", memberId);
+
+        return "redirect:/members/{memberId}/notices";
     }
 }
