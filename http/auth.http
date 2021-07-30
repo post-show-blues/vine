@@ -1,0 +1,21 @@
+### 회원가입
+POST http://localhost:9200/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "이름1",
+  "nickname": "닉네임1",
+  "email": "name@duksung.ac.kr",
+  "password": "1111",
+  "phone": "010-1111-2222",
+  "university": "덕성여대"
+}
+
+### 로그인
+POST http://localhost:9200/auth/signin?username=name@duksung.ac.kr&password=1111
+Content-Type: application/x-www-form-urlencoded
+
+### 로그인
+#POST http://localhost:9200//member/
+#Content-Type: application/json;
+#Cookie : JSESSIONID=86A814B62D8F7A743C33926BFFAC8F4C;

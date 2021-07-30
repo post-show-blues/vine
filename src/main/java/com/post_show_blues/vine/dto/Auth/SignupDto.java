@@ -1,10 +1,9 @@
 package com.post_show_blues.vine.dto.auth;
 
 import com.post_show_blues.vine.domain.member.Member;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -13,7 +12,9 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @Builder
 @ToString
-public class SignupDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class  SignupDto {
     @NotEmpty
     private String name;
     @NotEmpty
@@ -27,7 +28,9 @@ public class SignupDto {
     @NotEmpty
     private String university;
 
-    public Member toEntity() {
+    private MultipartFile file;
+
+    public Member toMemberEntity() {
         return Member.builder()
                 .name(name)
                 .nickname(nickname)
@@ -35,6 +38,13 @@ public class SignupDto {
                 .email(email)
                 .phone(phone)
                 .university(university)
+                .build();
+    }
+
+    public MemberImg toMemberImgEntity(String memberImgUrl, Member member){
+        return MemberImg.builder()
+                .member(member)
+                .fileName(memberImgUrl)
                 .build();
     }
 }
