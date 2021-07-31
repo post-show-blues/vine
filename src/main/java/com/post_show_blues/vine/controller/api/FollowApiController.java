@@ -17,7 +17,6 @@ import java.util.List;
 //데이터만 리턴하는 컨트롤러
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
 public class FollowApiController {
 
     private final FollowService followService;

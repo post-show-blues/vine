@@ -2,6 +2,7 @@ package com.post_show_blues.vine.domain.member;
 
 import lombok.*;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Builder
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-public class Member{
+public class Member implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
     private Long id;

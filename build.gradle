@@ -35,6 +35,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'com.querydsl:querydsl-jpa'  //qdsl 추가 내용
+	implementation 'org.springframework.session:spring-session-jdbc'
 
 	// validation 추가
 	implementation 'org.springframework.boot:spring-boot-starter-validation'

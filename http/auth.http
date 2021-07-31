@@ -1,4 +1,4 @@
-### 회원가입
+### 회원가입 #사진 없음(사진 있을 경우 file 키 값 추가)
 POST http://localhost:9200/api/auth/signup
 Content-Type: application/json
 
@@ -12,10 +12,9 @@ Content-Type: application/json
 }
 
 ### 로그인
-POST http://localhost:9200/auth/signin?username=name@duksung.ac.kr&password=1111
+POST http://localhost:9200/auth/signin?email=name@duksung.ac.kr&password=1111
 Content-Type: application/x-www-form-urlencoded
 
-### 로그인
-#POST http://localhost:9200//member/
-#Content-Type: application/json;
-#Cookie : JSESSIONID=86A814B62D8F7A743C33926BFFAC8F4C;
+### 로그아웃
+POST http://localhost:9200/logout
+Content-Type: application/json
