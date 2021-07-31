@@ -23,6 +23,10 @@ public class PrincipalDetails implements UserDetails {
         return null;
     }
 
+    public Long getId(){
+        return member.getId();
+    }
+
     @Override
     public String getPassword() {
         return member.getPassword();
