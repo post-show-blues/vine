@@ -5,6 +5,8 @@ import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
@@ -29,10 +31,12 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     private final MemberRepository memberRepository;
     private final RequestParticipantRepository requestParticipantRepository;
     private final ParticipantRepository participantRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 참여요청
      */
+    @Transactional
     @Override
     public Long request(Long meetingId, Long memberId) {
 
@@ -79,16 +83,14 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
 
         RequestParticipant savedRequestParticipant = requestParticipantRepository.save(requestParticipant);
 
-        //TODO 2021.06.04.-요청시 방장에게 수락요청 알림-hyeongwoo
-        /*Long masterId = meeting.getMember().getId();
-
+        //알림 생성
         Notice notice = Notice.builder()
-                .memberId(masterId)
-                .text(member.getNickname()+"님이 " + meeting.getTitle()+"방에 참여 요청했습니다.")
-                .link()
+                .memberId(meeting.getMember().getId()) //방장에게
+                .text(meeting.getTitle()+"방에 " + member.getNickname()+"님이 참여요청했습니다.")
+                .link("/meetings/"+meeting.getId())
                 .build();
 
-        noticeRepository.save(notice);*/
+        noticeRepository.save(notice);
 
         return savedRequestParticipant.getId();
     }
@@ -96,6 +98,7 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     /**
      * 요청수락
      */
+    @Transactional
     @Override
     public void accept(Long requestParticipantId) {
 
@@ -107,7 +110,7 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
         //participant 참여명단 추가
         Participant participant = Participant.builder()
                 .member(requestParticipant.getMember())
-                .meeting(requestParticipant.getMeeting())
+                .meeting(meeting)
                 .build();
 
         participantRepository.save(participant);
@@ -118,23 +121,21 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
         //모임 참여 현재인원 1증가
         meeting.addCurrentNumber();
 
-
-        //TODO 2021.06.04.-수락시 요청한 회원에게 수락완료 알림-hyeongwoo
-        /*Long memberId = participant.getMember().getId();
-
+        //알림 생성
         Notice notice = Notice.builder()
-                .id(memberId)
+                .memberId(participant.getMember().getId()) // participantMember 에게
                 .text(meeting.getTitle() + "방 수락이 완료되었습니다.")
-                .link()
+                .link("/meetings/"+meeting.getId())
                 .build();
 
-        noticeRepository.save(notice);*/
+        noticeRepository.save(notice);
 
     }
 
     /**
      * 요청거절
      */
+    @Transactional
     @Override
     public void reject(Long requestParticipantId) {
         Optional<RequestParticipant> result = requestParticipantRepository.findById(requestParticipantId);
@@ -145,21 +146,20 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
 
         requestParticipantRepository.deleteById(requestParticipantId);
 
-        //TODO 2021.06.04.-거절 당한 회원에게 알림-hyeongwoo
-        /*
+        //알람 생성
         Notice notice = Notice.builder()
-                .memberId(member.getId())
+                .memberId(member.getId()) //참여요청자에게
                 .text(meeting.getTitle() + "방에 거절되었습니다")
-                .link()
                 .build();
 
         noticeRepository.save(notice);
-        */
+
 
     }
     /**
      * 요청자리스트(DTO)
      */
+    @Transactional
     @Override
     public List<RequestParticipantDTO> getRequestParticipantList(Long meetingId) {
 

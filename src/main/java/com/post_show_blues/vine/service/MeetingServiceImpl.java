@@ -1,12 +1,14 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
+import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
@@ -28,12 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -51,6 +50,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final ParticipantRepository participantRepository;
     private final RequestParticipantRepository requestParticipantRepository;
     private final MemberImgService memberImgService;
+    private final FollowRepository followRepository;
 
     /**
      * 모임등록
@@ -91,7 +91,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //모임저장
         Meeting meeting = dtoToEntity(meetingDTO);
-        meetingRepository.save(meeting);
+        Meeting savedMeeting = meetingRepository.save(meeting);
 
 
         List<MultipartFile> imageFiles = meetingDTO.getImageFiles();
@@ -109,9 +109,31 @@ public class MeetingServiceImpl implements MeetingService{
             }
         }
 
+        //[0] : Member, [1] : MemberImg
+        List<Object[]> result = followRepository.findFollowerMembers(meeting.getMember().getId());
 
-        //TODO 2021.06.02. 모임 등록시 자신의 팔로워들에게 알림 생성 - hyeongwoo
+        List<Member> followerList = result.stream().map(objects -> {
+            Member member = (Member) objects[0];
+            return member;
+        }).collect(Collectors.toList());
 
+
+        if(followerList != null && followerList.size() > 0){
+
+
+            String nicknameOfMaster = meetingRepository.getNicknameOfMaster(meeting.getId());
+
+            for (Member member : followerList){
+
+                Notice notion = Notice.builder()
+                        .memberId(member.getId())
+                        .text(nicknameOfMaster + "님이 새로운 모임을 열었습니다.")
+                        .link("/meetings/" + meeting.getId())
+                        .build();
+
+                noticeRepository.save(notion);
+            }
+        }
         return meeting.getId();
     }
 
@@ -119,6 +141,7 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임수정
      */
+    @Transactional
     @Override
     public void modify(MeetingDTO meetingDTO) throws IOException {
 
@@ -178,13 +201,11 @@ public class MeetingServiceImpl implements MeetingService{
         if(meetingImgList != null && meetingImgList.size() > 0 ){
 
             for(MeetingImg meetingImg: meetingImgList){
-                String srcFileName = meetingImg.getFolderPath() + File.separator + meetingImg.getStoreFileName();
-                File file = new File(uploadPath, srcFileName);
-                file.delete();
+                String folderPath = meetingImg.getFolderPath();
+                String storeFileName = meetingImg.getStoreFileName();
 
-                File thumbnail = new File(uploadPath + File.separator +
-                        "s_" + File.separator + srcFileName);
-                thumbnail.delete();
+                File file = new File(fileStore.getFullPath(folderPath, storeFileName));
+                file.delete();
             }
         }
 
@@ -193,6 +214,7 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임삭제
      */
+    @Transactional
     @Override
     public void remove(Long meetingId) {
         Optional<Meeting> result = meetingRepository.findById(meetingId);
@@ -220,8 +242,8 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임리스트 조회
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
@@ -241,8 +263,8 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임상세 조회 페이지
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public MeetingDTO getMeeting(Long meetingId) {
         List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
 
@@ -266,12 +288,26 @@ public class MeetingServiceImpl implements MeetingService{
     /**
      * 모임조회
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Meeting findOne(Long meetingId) {
         Optional<Meeting> result = meetingRepository.findById(meetingId);
 
         Meeting meeting = result.get();
         return meeting;
+    }
+
+
+    /**
+     * 디데이 갱신
+     */
+    @Transactional
+    @Override
+    public void updatedDay() {
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        meetingList.stream().forEach(meeting -> meeting.updateDDay());
+
     }
 }

@@ -3,6 +3,8 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class ParticipantServiceImpl implements ParticipantService{
 
     private final ParticipantRepository participantRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 추방_나가기
@@ -33,33 +36,37 @@ public class ParticipantServiceImpl implements ParticipantService{
 
         meeting.removeCurrentNumber();
 
-        participantRepository.deleteById(participantId);
 
-        //TODO 2021.06.04
-        // 1.추방 -> 회원에게 알림
-        // 2. 나가기 -> 방장에게 알림
-        // -hyeongwoo
-        /*
+        /** 1.추방 -> 회원에게 알림
+         *  2. 나가기 -> 방장에게 알림
+         */
         //알림
-        //방장에게 알림(나감)
+        //회원에게 알림(추방)
         if(meeting.getMember().getId() == memberId){
+
+            Notice memberNotice = Notice.builder()
+                    .memberId(participant.getMember().getId()) //회원에게
+                    .text(meeting.getTitle() + "방에 참여하지 못하게 되었습니다.")
+                    .build();
+            noticeRepository.save(memberNotice);
+
+        }
+        //방장에게 알림 (회원 나감)
+        else{
+            String nicknameOfParticipant = participantRepository.getNicknameOfParticipant(participantId);
+
             Notice masterNotice = Notice.builder()
-                    .memberId(memberId)
-                    .text(meeting.getTitle() + "방 인원이 나갔습니다.")
-                    .link()
+                    .memberId(meeting.getMember().getId()) //방장에게
+                    .text(meeting.getTitle() + "방에서 " +nicknameOfParticipant+"님이 나갔습니다.")
+                    .link("/meetings/"+meeting.getId())
                     .build();
             noticeRepository.save(masterNotice);
         }
-        //회원에게 알림(추방)
-        else{
-            Notice memberNotice = Notice.builder()
-                    .memberId(participant.getMember().getId())
-                    .text(meeting.getTitle() + "방에 ~~했습니다.")
-                    .link()
-                    .build();
-            noticeRepository.save(memberNotice);
-        }
-         */
+
+        //알림생성 후 참여 삭제
+        participantRepository.deleteById(participantId);
+
+
     }
 
     /**
