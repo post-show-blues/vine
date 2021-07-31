@@ -91,7 +91,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //모임저장
         Meeting meeting = dtoToEntity(meetingDTO);
-        meetingRepository.save(meeting);
+        Meeting savedMeeting = meetingRepository.save(meeting);
 
 
         List<MultipartFile> imageFiles = meetingDTO.getImageFiles();
@@ -112,8 +112,6 @@ public class MeetingServiceImpl implements MeetingService{
         //[0] : Member, [1] : MemberImg
         List<Object[]> result = followRepository.findFollowerMembers(meeting.getMember().getId());
 
-        System.out.println(result.size());
-
         List<Member> followerList = result.stream().map(objects -> {
             Member member = (Member) objects[0];
             return member;
@@ -121,6 +119,7 @@ public class MeetingServiceImpl implements MeetingService{
 
 
         if(followerList != null && followerList.size() > 0){
+
 
             String nicknameOfMaster = meetingRepository.getNicknameOfMaster(meeting.getId());
 
@@ -296,5 +295,19 @@ public class MeetingServiceImpl implements MeetingService{
 
         Meeting meeting = result.get();
         return meeting;
+    }
+
+
+    /**
+     * 디데이 갱신
+     */
+    @Transactional
+    @Override
+    public void updatedDay() {
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        meetingList.stream().forEach(meeting -> meeting.updateDDay());
+
     }
 }

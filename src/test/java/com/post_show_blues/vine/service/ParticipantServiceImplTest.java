@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -255,9 +256,9 @@ class ParticipantServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                            .toLocalDate()).getDays())
+                            .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

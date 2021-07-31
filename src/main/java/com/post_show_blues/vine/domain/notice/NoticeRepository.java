@@ -17,6 +17,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
     @Query("select count(n.id) from Notice n where n.memberId = :memberId and n.state = false")
     int getUnreadCount(Long memberId);
 
+
     //테스트 코드에 사용
     @Query("select n from Notice n where n.memberId = :memberId")
     List<Notice> getNoticeList(Long memberId);

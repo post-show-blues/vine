@@ -47,7 +47,7 @@ public class MeetingDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime reqDeadline;
 
-    private int dDay;
+    private Long dDay;
 
     private String chatLink;
 

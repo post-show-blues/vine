@@ -1,8 +1,11 @@
 package com.post_show_blues.vine.service;
 
+import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import com.post_show_blues.vine.domain.participant.Participant;
+import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
@@ -14,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -24,19 +28,51 @@ public class NoticeServiceImpl implements NoticeService{
 
     private final NoticeRepository noticeRepository;
     private final MeetingRepository meetingRepository;
+    private final ParticipantRepository participantRepository;
+    private final MeetingService meetingService;
 
 
     /**
      * D-day 모임 참여자들에게 알림 생성
      */
-    @Scheduled(cron = "0 29 18 * * ?")
+    @Scheduled(cron = "0 00 00 * * ?")
     @Transactional
     @Override
-    //TODO 2021.06.30.
-    // -D-day에 해당하는 모임 방장, 참여자들에게 알림 생성
-    // -hyeongwoo
-    public void D_dayNotice() {
-        System.out.println("guddn");
+    public void dDayNotice() {
+
+        //dDay -1 갱신
+        meetingService.updatedDay();
+
+
+        //dDay = 0 인 meetingList 조회
+        List<Meeting> meetingList = meetingRepository.getDZeroMeeting();
+
+        //알림 생성
+        meetingList.forEach(meeting -> {
+
+            //방장에게 활동일 알림
+            Notice masterNotice = Notice.builder()
+                    .memberId(meeting.getMember().getId())
+                    .text("오늘은 "+meeting.getTitle() + "방의 활동일입니다.")
+                    .link("/meetings/" + meeting.getId())
+                    .build();
+
+            noticeRepository.save(masterNotice);
+
+            //참여자들에게 활동일 알림
+            List<Participant> participantList = participantRepository.findByMeeting(meeting);
+
+            participantList.forEach(participant -> {
+                Notice participantNotice = Notice.builder()
+                        .memberId(participant.getMember().getId())
+                        .text("오늘은 "+meeting.getTitle() + "방의 활동입니다.")
+                        .link("/meetings/" + meeting.getId())
+                        .build();
+
+                noticeRepository.save(participantNotice);
+            });
+        });
+
     }
 
 

@@ -48,4 +48,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
             "where m.id = :meetingId")
     String getNicknameOfMaster(Long meetingId);
 
+    @Query("select m from Meeting m where m.dDay = 0")
+    List<Meeting> getDZeroMeeting();
+
 }

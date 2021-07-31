@@ -14,6 +14,7 @@ import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.file.ResultFileStore;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public interface MeetingService {
 
     Meeting findOne(Long id);
 
+    void updatedDay();
+
     default Meeting dtoToEntity(MeetingDTO meetingDTO){
 
         Meeting meeting = Meeting.builder()
@@ -49,7 +52,7 @@ public interface MeetingService {
                 .currentNumber(meetingDTO.getCurrentNumber())
                 .meetDate(meetingDTO.getMeetDate())
                 .reqDeadline(meetingDTO.getReqDeadline())
-                .dDay(Period.between(LocalDate.now(), meetingDTO.getMeetDate().toLocalDate()).getDays())
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(), meetingDTO.getMeetDate().toLocalDate().atStartOfDay()).toDays())
                 .chatLink(meetingDTO.getChatLink())
                 .build();
 

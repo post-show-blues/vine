@@ -56,7 +56,7 @@ public class Meeting extends BaseEntity {
     private LocalDateTime reqDeadline;
 
     @Column(nullable = false)
-    private int dDay;
+    private Long dDay;
 
     private String chatLink;
 
@@ -93,7 +93,7 @@ public class Meeting extends BaseEntity {
 
     public void changeMeetDate (LocalDateTime meetDate){
         this.meetDate = meetDate;
-        this.dDay = Period.between(LocalDate.now(), meetDate.toLocalDate()).getDays();
+        this.dDay = Duration.between(LocalDate.now().atStartOfDay(), meetDate.toLocalDate().atStartOfDay()).toDays();
     }
 
     public void changeReqDeadline (LocalDateTime reqDeadline){
@@ -115,6 +115,10 @@ public class Meeting extends BaseEntity {
 
     public void removeCurrentNumber(){
        this.currentNumber -=1;
+    }
+
+    public void updateDDay(){
+        this.dDay -= 1;
     }
 
 }
