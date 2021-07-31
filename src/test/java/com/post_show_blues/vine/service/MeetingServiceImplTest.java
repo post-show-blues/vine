@@ -2,6 +2,7 @@ package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.category.CategoryRepository;
+import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
@@ -10,6 +11,8 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
@@ -50,14 +53,43 @@ class MeetingServiceImplTest {
     @Autowired MeetingImgRepository meetingImgRepository;
     @Autowired RequestParticipantRepository requestParticipantRepository;
     @Autowired MemberImgRepository memberImgRepository;
+    @Autowired FollowRepository followRepository;
+    @Autowired NoticeRepository noticeRepository;
 
    @Test
     void 모임등록() throws Exception{
         //given
-        Member member = createMember();
+        Member memberA = createMember();
         Category category = createCategory();
 
-        //mock 이미지 파일 meeting.imgFiles 생성
+        //memberA를 팔로우 하는 memberB,C 생성
+       Member memberB = Member.builder()
+               .name("memberB")
+               .email("memberB@kookmin.ac.kr")
+               .nickname("memberNicknameB")
+               .password("1111")
+               .phone("010-0000-0000")
+               .university("국민대학교")
+               .build();
+
+       memberRepository.save(memberB);
+
+       Member memberC = Member.builder()
+               .name("memberC")
+               .email("memberC@kookmin.ac.kr")
+               .nickname("memberNicknameC")
+               .password("1111")
+               .phone("010-0000-0000")
+               .university("국민대학교")
+               .build();
+
+       memberRepository.save(memberC);
+
+       //memberB,C 가 A를 팔로우 -> A가 모임생성시 B,C에게 알림 생성
+       followRepository.rFollow(memberB.getId(), memberA.getId());
+       followRepository.rFollow(memberC.getId(), memberA.getId());
+
+       //mock 이미지 파일 meeting.imgFiles 생성
         List<MultipartFile> imgFiles = new ArrayList<>();
 
         MultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
@@ -70,7 +102,7 @@ class MeetingServiceImplTest {
         //meetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .categoryId(category.getId())
-                .masterId(member.getId())
+                .masterId(memberA.getId())
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
@@ -90,15 +122,26 @@ class MeetingServiceImplTest {
         //모임 검증
         Meeting meeting = meetingService.findOne(saveId);
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
-        Assertions.assertThat(meeting.getMember().getId()).isEqualTo(member.getId());
+        Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
-       //모임 imgFiles 검증
+        //모임 imgFiles 검증
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
         Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
 
-    }
+        //알림 검증
+       List<Notice> noticeListB = noticeRepository.getNoticeList(memberB.getId());
+       List<Notice> noticeListC = noticeRepository.getNoticeList(memberC.getId());
+
+       Assertions.assertThat(noticeListB.size()).isEqualTo(1);
+       Assertions.assertThat(noticeListC.size()).isEqualTo(1);
+
+       for (Notice notice : noticeListB){
+           System.out.println(notice.toString());
+       }
+
+   }
 
     @Test
     void 등록시_meetDate_deadline_비교() throws Exception{

@@ -25,8 +25,13 @@ public class NoticeServiceImpl implements NoticeService{
     private final NoticeRepository noticeRepository;
     private final MeetingRepository meetingRepository;
 
-    @Override
+
+    /**
+     * D-day 모임 참여자들에게 알림 생성
+     */
     @Scheduled(cron = "0 29 18 * * ?")
+    @Transactional
+    @Override
     //TODO 2021.06.30.
     // -D-day에 해당하는 모임 방장, 참여자들에게 알림 생성
     // -hyeongwoo
@@ -34,6 +39,11 @@ public class NoticeServiceImpl implements NoticeService{
         System.out.println("guddn");
     }
 
+
+    /**
+     * 알림 DTO 리스트
+     */
+    @Transactional(readOnly = true)
     @Override
     public PageResultDTO<NoticeDTO, Notice> getNoticeList(PageRequestDTO requestDTO, Long memberId) {
 
@@ -46,6 +56,10 @@ public class NoticeServiceImpl implements NoticeService{
         return new PageResultDTO<>(result, fn);
     }
 
+    /**
+     * 읽음으로 변경
+     */
+    @Transactional
     @Override
     public void changeRead(Long noticeId) {
         Optional<Notice> result = noticeRepository.findById(noticeId);
@@ -58,6 +72,10 @@ public class NoticeServiceImpl implements NoticeService{
 
     }
 
+    /**
+     * 읽지않음 갯수
+     */
+    @Transactional(readOnly = true)
     @Override
     public int unReadCount(Long memberId) {
         int count = noticeRepository.getUnreadCount(memberId);
@@ -65,6 +83,11 @@ public class NoticeServiceImpl implements NoticeService{
         return count;
     }
 
+
+    /**
+     * 알림삭제
+     */
+    @Transactional
     @Override
     public void remove(Long memberId) {
 

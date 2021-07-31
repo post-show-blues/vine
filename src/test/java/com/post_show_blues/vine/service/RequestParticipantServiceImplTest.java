@@ -9,6 +9,8 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
@@ -41,6 +43,7 @@ class RequestParticipantServiceImplTest {
     @Autowired MeetingImgRepository meetingImgRepository;
     @Autowired CategoryRepository categoryRepository;
     @Autowired ParticipantRepository participantRepository;
+    @Autowired NoticeRepository noticeRepository;
 
 
 
@@ -67,6 +70,15 @@ class RequestParticipantServiceImplTest {
 
         Assertions.assertThat(requestParticipant.getMeeting()).isEqualTo(meeting);
         Assertions.assertThat(requestParticipant.getMember()).isEqualTo(member);
+
+        //알림 검증 -> master 에게 알람 생성
+        List<Notice> noticeList = noticeRepository.getNoticeList(meeting.getMember().getId());
+        Assertions.assertThat(noticeList.size()).isEqualTo(1);
+
+        for(Notice notice : noticeList){
+            System.out.println(notice.toString());
+        }
+
     }
 
 
@@ -182,6 +194,15 @@ class RequestParticipantServiceImplTest {
                 .isTrue();
         //Meeting 인원 추가 +1
         Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(beforeNumber+1);
+
+        //알람 검증 -> 참여자에게 생성
+        List<Notice> noticeList = noticeRepository.getNoticeList(member.getId());
+
+        Assertions.assertThat(noticeList.size()).isEqualTo(1);
+        for (Notice notice : noticeList){
+            System.out.println(notice.toString());
+        }
+
     }
 
     @Test
@@ -263,6 +284,15 @@ class RequestParticipantServiceImplTest {
                 () -> requestParticipantRepository.findById(requestParticipant.getId()).get());
 
         Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+
+        //알람 검증 -> 거절 당한 회원에게
+        List<Notice> noticeList = noticeRepository.getNoticeList(member.getId());
+
+        Assertions.assertThat(noticeList.size()).isEqualTo(1);
+
+        for (Notice notice : noticeList){
+            System.out.println(notice.toString());
+        }
     }
 
     @Test
