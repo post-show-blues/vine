@@ -4,18 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequiredArgsConstructor
-@Log4j2
+@RequestMapping("/auth")
 @Controller
 public class AuthController {
 
-    @GetMapping("/auth/signin") //로그인 창 출력
+    @GetMapping("/signin") //로그인 창 출력
     public String singinForm(){
         return "signin";
     }
 
-    @GetMapping("/auth/signup") //회원가입 창 출력
+    @GetMapping("/signup") //회원가입 창 출력
     public String singupForm(){
         return "";
     }
