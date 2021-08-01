@@ -80,6 +80,10 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(expression);
 
 
+        if(keyword == null){
+           keyword = "";
+        }
+
         //카테고리 검색
         if(category != null){
 
