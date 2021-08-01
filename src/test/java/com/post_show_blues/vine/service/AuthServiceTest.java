@@ -4,7 +4,6 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.auth.SignupDto;
-import com.post_show_blues.vine.dto.memberImg.MemberImgUploadDto;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Log4j2
@@ -28,13 +24,11 @@ public class AuthServiceTest {
     @Test
     public void 중복닉네임() throws Exception {
         //given
-        SignupDto memberEntityA = createSignupDto();
+        SignupDto memberA = createSignupDto();
         String nickname="memberNickname";
 
-        MemberImgUploadDto memberImgEntityA= memberImgUploadDto();
-
         //when
-        authService.join(memberEntityA.toEntity(), Optional.of(memberImgEntityA));
+        authService.join(memberA);
 
         //then
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> authService.isDuplicateNickname(nickname));
@@ -48,17 +42,17 @@ public class AuthServiceTest {
         //given
         SignupDto memberEntityA = createSignupDto();
 
-        MemberImgUploadDto memberImgEntityA= memberImgUploadDto();
+        SignupDto signupDtoImg = createSignupDtoImg();
 
         //when
-        Object[] join = authService.join(memberEntityA.toEntity(), Optional.of(memberImgEntityA));
+        Object[] join = authService.join(signupDtoImg);
         Member memberA = (Member) join[0];
         MemberImg memberAImg = (MemberImg) join[1];
 
         //then
         assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
 
-        assertThat(memberAImg.getFileName().split("_")[1]).isEqualTo(memberImgEntityA.getFile().getOriginalFilename());
+        assertThat(memberAImg.getFileName().split("_")[1]).isEqualTo(signupDtoImg.getFile().getOriginalFilename());
 
     }
 
@@ -68,7 +62,7 @@ public class AuthServiceTest {
         SignupDto memberEntityA = createSignupDto();
 
         //when
-        Object[] join = authService.join(memberEntityA.toEntity(), Optional.empty());
+        Object[] join = authService.join(memberEntityA);
         Member memberA = (Member) join[0];
         MemberImg memberAImg = (MemberImg) join[1];
 
@@ -89,14 +83,12 @@ public class AuthServiceTest {
                 .build();
     }
 
-    MemberImgUploadDto memberImgUploadDto() throws IOException {
+    SignupDto createSignupDtoImg(){
         MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
 
-        return MemberImgUploadDto.builder()
-                .file(file1)
-                .build();
+        SignupDto signupDto = createSignupDto();
+        signupDto.setFile(file1);
+        return signupDto;
     }
-
-
 
 }

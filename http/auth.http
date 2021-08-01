@@ -12,8 +12,13 @@ Content-Type: application/json
 }
 
 ### 로그인
-POST http://localhost:9200/auth/signin?email=name@duksung.ac.kr&password=1111
-Content-Type: application/x-www-form-urlencoded
+POST http://localhost:9200/auth/signin
+Content-Type: application/json
+
+{
+  "email" : "name@duksung.ac.kr",
+  "password" : "1111"
+}
 
 ### 로그아웃
 POST http://localhost:9200/logout
