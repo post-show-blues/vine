@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
 import lombok.extern.log4j.Log4j2;
@@ -15,9 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @Log4j2
@@ -138,7 +138,7 @@ public class FollowServiceTest {
     }
 
     Member memberA() {
-        Member memberA = Member.builder()
+        SignupDto memberA = SignupDto.builder()
                 .name("memberA")
                 .email("member@duksung.ac.kr")
                 .nickname("memberNickname")
@@ -146,12 +146,12 @@ public class FollowServiceTest {
                 .phone("010-0000-0000")
                 .university("덕성대학교")
                 .build();
-        authService.join(memberA, Optional.empty());
-        return memberA;
+        Member memberEntityA = (Member) authService.join(memberA)[0];
+        return memberEntityA;
     }
 
     Member memberB() {
-        Member memberB = Member.builder()
+        SignupDto memberB = SignupDto.builder()
                 .name("memberB")
                 .email("member@kookmin.ac.kr")
                 .nickname("Nickname")
@@ -160,12 +160,12 @@ public class FollowServiceTest {
                 .university("국민대학교")
                 .build();
 
-        authService.join(memberB, Optional.empty());
-        return memberB;
+        Member memberEntityB = (Member) authService.join(memberB)[0];
+        return memberEntityB;
     }
 
     Member memberC() {
-        Member memberC = Member.builder()
+        SignupDto memberC = SignupDto.builder()
                 .name("memberC")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberC")
@@ -174,8 +174,8 @@ public class FollowServiceTest {
                 .university("국민대학교")
                 .build();
 
-        authService.join(memberC, Optional.empty());
-        return memberC;
+        Member memberEntityC = (Member) authService.join(memberC)[0];
+        return memberEntityC;
     }
 
 
