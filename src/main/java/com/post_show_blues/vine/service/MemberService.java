@@ -80,7 +80,7 @@ public class MemberService {
     }
 
     public List<Member> findMember(String keyword){
-        List<Member> members = memberRepository.findByNicknameOrEmail(keyword, keyword);
+        List<Member> members = memberRepository.findByNicknameContainingOrEmailContaining(keyword, keyword);
 
         if (members.isEmpty()){
             throw new IllegalArgumentException("일치하는 회원이 없습니다");

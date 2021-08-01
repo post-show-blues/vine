@@ -18,5 +18,14 @@ Content-Type: application/x-www-form-urlencoded
 email=name@duksung.ac.kr&password=1111
 
 ### 로그아웃
-POST http://localhost:9200/logout
+POST http://localhost:9200/auth/logout
+Content-Type: application/x-www-form-urlencoded
+
+
+### 모두 O
+GET http://localhost:9200/member/find/name
+Content-Type: application/json
+
+### 로그인만 O
+GET http://localhost:9200/meetings/new
 Content-Type: application/json

@@ -26,7 +26,7 @@ public class MemberApiController {
     @PutMapping("/profile")
     public CMRespDto<?> profileUpdate(
             MemberUpdateDto memberUpdateDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails){ //text 수정 가능
+            @AuthenticationPrincipal PrincipalDetails principalDetails) { //text 수정 가능
         Member memberEntity = memberService.memberUpdate(principalDetails.getId(), memberUpdateDto.toEntity());
 
         //세션정보 바꿔주기
@@ -37,7 +37,7 @@ public class MemberApiController {
     @PutMapping("/img")
     public CMRespDto<?> imgUpdate(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            MemberImgUploadDto memberImgUploadDto){
+            MemberImgUploadDto memberImgUploadDto) {
 
         Optional<MemberImgUploadDto> imgDto = Optional.ofNullable(memberImgUploadDto);
         memberService.memberImgUpdate(principalDetails.getMember(), imgDto);
@@ -47,17 +47,21 @@ public class MemberApiController {
 
     //사람 검색
     @GetMapping("/find/{keyword}")
-    public CMRespDto<?> findMember(@PathVariable String keyword){
+    public CMRespDto<?> findMember(@PathVariable String keyword) {
         List<Member> members = memberService.findMember(keyword);
         return new CMRespDto<>(1, "회원 검색 완료", members);
     }
 
-     //프로필 조회
+    //프로필 조회
+    @GetMapping("/")
     public CMRespDto<?> profile(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         //세션에서 멤버 찾아옴
+        System.out.println("principle"+principalDetails);
         Member member = principalDetails.getMember();
         log.info("세션정보 : " + member);
         return new CMRespDto<>(1, "회원 프로필 조회", member);
     }
+
+    //TODO : 다른사람이 내 프로필 조회
 
 }

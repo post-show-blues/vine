@@ -13,7 +13,7 @@ public class AuthController {
 
     @GetMapping("/signin") //로그인 창 출력
     public String singinForm(){
-        return "signin";
+        return "";
     }
 
     @GetMapping("/signup") //회원가입 창 출력
