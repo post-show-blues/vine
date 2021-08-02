@@ -26,7 +26,7 @@ public class RequestParticipantApiController {
 
         List<RequestParticipantDTO> requestParticipantDTOList = requestParticipantService.getRequestParticipantList(meetingId);
 
-        return new CMRespDto<>(1,"참여요청자 목록", requestParticipantDTOList);
+        return new CMRespDto<>(1,"참여요청자 목록 불러오기 성공", requestParticipantDTOList);
     }
 
     @PostMapping //참여요청
@@ -44,7 +44,7 @@ public class RequestParticipantApiController {
 
         requestParticipantService.reject(requestParticipantId);
 
-        return new CMRespDto<>(1, "참여요청삭제 성공", null);
+        return new CMRespDto<>(1, "참여요청 삭제 성공", null);
     }
 
 }

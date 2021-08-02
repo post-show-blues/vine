@@ -126,6 +126,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
         //모임 imgFiles 검증
