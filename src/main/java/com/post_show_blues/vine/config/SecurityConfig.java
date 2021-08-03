@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity //해당 파일로 시큐리티를 활성화
 @Configuration
@@ -34,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/signup", "/member/find/**", "/member",
                         "/meetings", "/meetings/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/meetings/**/requests").permitAll()
+                .antMatchers(HttpMethod.GET, "/meetings/**/participants").permitAll()
                 .anyRequest().authenticated()
                 .and()
 

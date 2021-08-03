@@ -51,6 +51,8 @@ public class MemberService {
         MemberImg memberImgEntity = memberImgRepository.findByMember(member);
         MemberImg memberImg;
 
+        //TODO : DTO가 없으면 DB 바꾸기
+        //TODO : 파일시스템 내에 연결된 사진 지우기
         if (memberImgUploadDto.isEmpty()) {
             memberImg=MemberImg.builder()
                     .id(memberImgEntity.getId())
