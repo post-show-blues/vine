@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,6 +127,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
         //모임 imgFiles 검증
@@ -567,6 +569,86 @@ class MeetingServiceImplTest {
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(5);
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+    }
+    
+    @Test
+    void 정렬_활동일_가까운순() throws Exception{
+        //given
+        Category category = createCategory();
+        Member member = createMember();
+
+
+        /**
+         * Meeting 생성
+         * 활동 가까운순
+         * meetingA dDay : -1 > meetingB dDay : 0 > meetingC dDay : 1
+         * 출력 : meetingB > meetingC (2개만 출력)
+         */
+        Meeting meetingA = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 01, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(-1L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingA);
+
+        Meeting meetingB = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 02, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(0L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingB);
+
+        Meeting meetingC = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 03, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(1L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingC);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(10)
+                .sort(List.of("meetDate", "ASC"))
+                .build();
+
+        //when
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
+
+        //then
+        List<MeetingDTO> meetingDTOList = result.getDtoList();
+
+        for (MeetingDTO meetingDTO : meetingDTOList){
+            System.out.println(meetingDTO);
+        }
+
+        Assertions.assertThat(result.getPage()).isEqualTo(1);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
+        Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 

@@ -246,7 +246,14 @@ public class MeetingServiceImpl implements MeetingService{
     @Override
     public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
 
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
+        Pageable pageable;
+
+        if(pageRequestDTO.getSort().get(1).equals("ASC")){
+
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).ascending());
+        }else{
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
+        }
 
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
                                                                 pageRequestDTO.getKeyword(), pageable);
