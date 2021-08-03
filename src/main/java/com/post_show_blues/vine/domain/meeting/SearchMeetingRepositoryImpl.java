@@ -79,7 +79,6 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
         builder.and(expression);
 
-
         //카테고리 검색
         if(category != null){
 

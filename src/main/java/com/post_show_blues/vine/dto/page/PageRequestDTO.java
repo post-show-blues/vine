@@ -18,12 +18,12 @@ public class PageRequestDTO {
 
     private Category category;
 
-    @Builder.Default
-    private String keyword = "";
+    private String keyword;
 
     public PageRequestDTO(){
         this.page = 1;
         this.size = 10;
+        this.keyword ="";
     }
 
 
