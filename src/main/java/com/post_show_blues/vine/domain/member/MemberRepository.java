@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    List<Member> findByNicknameOrEmail(String nickname, String email);
+    List<Member> findByNicknameContainingOrEmailContaining(String nickname, String email);
     Member findByNickname(String nickname);
     Member findByEmail(String email);
 }

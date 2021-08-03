@@ -51,6 +51,8 @@ public class MemberService {
         MemberImg memberImgEntity = memberImgRepository.findByMember(member);
         MemberImg memberImg;
 
+        //TODO : DTO가 없으면 DB 바꾸기
+        //TODO : 파일시스템 내에 연결된 사진 지우기
         if (memberImgUploadDto.isEmpty()) {
             memberImg=MemberImg.builder()
                     .id(memberImgEntity.getId())
@@ -80,7 +82,7 @@ public class MemberService {
     }
 
     public List<Member> findMember(String keyword){
-        List<Member> members = memberRepository.findByNicknameOrEmail(keyword, keyword);
+        List<Member> members = memberRepository.findByNicknameContainingOrEmailContaining(keyword, keyword);
 
         if (members.isEmpty()){
             throw new IllegalArgumentException("일치하는 회원이 없습니다");

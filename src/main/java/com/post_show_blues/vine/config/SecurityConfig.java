@@ -25,25 +25,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //CSRF 토큰 : 정상적인 사용자인지 아닌지 판단해줌
         http.csrf().disable();
         http.authorizeRequests()
-//                .antMatchers("/", "/user/**", "/image/**", "/subscribe/**", "/comment/**", "/api/**").authenticated()
-
                 //TODO : url 권한 설정
-
-                .antMatchers("/meetings/new","/api/subscribe/**", "/api/member/**",  "/meetings/**/**",
-                            "/meetings/**/requests/**", "/meetings/**/participants/**", "/members/**/notices/**/delte").authenticated()
-                .antMatchers(HttpMethod.POST, "/meetings/**/requests").authenticated()
-                .antMatchers(HttpMethod.POST, "/meetings/**/participants").authenticated()
-                .anyRequest().permitAll()
+                //TODO : 로그인 실패시 화면 설정
+                //TODO : /meetings/{meeintg-id}권한 문제
+                //먼저 정해진 값은 불변
+                .antMatchers("/meetings/new").authenticated()
+                .antMatchers("/auth/signup", "/member/find/**", "/member",
+                        "/meetings", "/meetings/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/meetings/**/requests").permitAll()
+                .antMatchers(HttpMethod.GET, "/meetings/**/participants").permitAll()
+                .anyRequest().authenticated()
                 .and()
+
                 .formLogin()
                 .loginPage("/auth/signin") // GET
-                .loginProcessingUrl("/auth/signin") // POST -> 스프링 시큐리티가 로그인 프로세스 진행
+                .loginProcessingUrl("/auth/signin") // POST -> 폼태그로 요청, 스프링 시큐리티가 로그인 프로세스 진행
                 .usernameParameter("email")
                 .defaultSuccessUrl("/meetings")
                 .and()
+
                 .logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/meetings");
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                .logoutUrl("/auth/logout") //POST -> 폼태그로 요청
+                .logoutSuccessUrl("/meetings")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
 //                .and()
 //                .oauth2Login() // form로그인도 하는데, oauth2로그인도 할꺼야!!
 //                .userInfoEndpoint() // oauth2로그인을 하면 최종응답을 회원정보를 바로 받을 수 있다.

@@ -24,5 +24,4 @@ public class AuthApiController {
         Object[] join = authService.join(signupDto);
         return new ResponseEntity<>(new CMRespDto<>(1, "회원가입 성공", join), HttpStatus.OK);
     }
-
 }
