@@ -79,6 +79,9 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
         builder.and(expression);
 
+        //활동이 지난 모임은 출력하지 않음
+        builder.and(meeting.dDay.goe(0));
+
         //카테고리 검색
         if(category != null){
 
