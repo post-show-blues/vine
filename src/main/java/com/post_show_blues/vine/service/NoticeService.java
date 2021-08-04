@@ -7,7 +7,7 @@ import com.post_show_blues.vine.dto.page.PageResultDTO;
 
 public interface NoticeService {
 
-    void D_dayNotice();
+    void dDayNotice();
 
     PageResultDTO<NoticeDTO, Notice> getNoticeList(PageRequestDTO requestDTO, Long memberId);
 

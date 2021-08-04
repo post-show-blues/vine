@@ -32,7 +32,6 @@ public interface RequestParticipantService {
                 .nickname(member.getNickname())
                 .text(member.getText())
                 .regDate(requestParticipant.getRegDate())
-                .modDate(requestParticipant.getModDate())
                 .build();
 
         if(memberImg != null){

@@ -27,5 +27,5 @@ public class RequestParticipantDTO {
 
     private MemberImgDTO memberImgDTO;
 
-    private LocalDateTime regDate, modDate;
+    private LocalDateTime regDate;
 }

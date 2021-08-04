@@ -2,6 +2,7 @@ package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.category.CategoryRepository;
+import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
@@ -10,6 +11,8 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.domain.notice.Notice;
+import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
@@ -29,11 +32,13 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,14 +55,44 @@ class MeetingServiceImplTest {
     @Autowired MeetingImgRepository meetingImgRepository;
     @Autowired RequestParticipantRepository requestParticipantRepository;
     @Autowired MemberImgRepository memberImgRepository;
+    @Autowired FollowRepository followRepository;
+    @Autowired NoticeRepository noticeRepository;
+
 
    @Test
     void 모임등록() throws Exception{
         //given
-        Member member = createMember();
+        Member memberA = createMember();
         Category category = createCategory();
 
-        //mock 이미지 파일 meeting.imgFiles 생성
+        //memberA를 팔로우 하는 memberB,C 생성
+       Member memberB = Member.builder()
+               .name("memberB")
+               .email("memberB@kookmin.ac.kr")
+               .nickname("memberNicknameB")
+               .password("1111")
+               .phone("010-0000-0000")
+               .university("국민대학교")
+               .build();
+
+       memberRepository.save(memberB);
+
+       Member memberC = Member.builder()
+               .name("memberC")
+               .email("memberC@kookmin.ac.kr")
+               .nickname("memberNicknameC")
+               .password("1111")
+               .phone("010-0000-0000")
+               .university("국민대학교")
+               .build();
+
+       memberRepository.save(memberC);
+
+       //memberB,C 가 A를 팔로우 -> A가 모임생성시 B,C에게 알림 생성
+       followRepository.rFollow(memberB.getId(), memberA.getId());
+       followRepository.rFollow(memberC.getId(), memberA.getId());
+
+       //mock 이미지 파일 meeting.imgFiles 생성
         List<MultipartFile> imgFiles = new ArrayList<>();
 
         MultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
@@ -70,15 +105,15 @@ class MeetingServiceImplTest {
         //meetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .categoryId(category.getId())
-                .masterId(member.getId())
+                .masterId(memberA.getId())
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,07,13,16,00))
                 .reqDeadline(LocalDateTime.of(2021,06,05,16,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate()).getDays())
+                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .imageFiles(imgFiles) //이미지 파일
                 .build();
@@ -90,15 +125,27 @@ class MeetingServiceImplTest {
         //모임 검증
         Meeting meeting = meetingService.findOne(saveId);
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
-        Assertions.assertThat(meeting.getMember().getId()).isEqualTo(member.getId());
+        Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
-       //모임 imgFiles 검증
+        //모임 imgFiles 검증
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
         Assertions.assertThat(meetingImgList.size()).isEqualTo(2);
 
-    }
+        //알림 검증
+       List<Notice> noticeListB = noticeRepository.getNoticeList(memberB.getId());
+       List<Notice> noticeListC = noticeRepository.getNoticeList(memberC.getId());
+
+       Assertions.assertThat(noticeListB.size()).isEqualTo(1);
+       Assertions.assertThat(noticeListC.size()).isEqualTo(1);
+
+       for (Notice notice : noticeListB){
+           System.out.println(notice.toString());
+       }
+
+   }
 
     @Test
     void 등록시_meetDate_deadline_비교() throws Exception{
@@ -114,9 +161,9 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,04,16,30))
                 .reqDeadline(LocalDateTime.of(2021,06,04,17,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate()).getDays())
+                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .build();
         
@@ -175,9 +222,9 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,07,14,00,00)) //5 -> 6일로 변경
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate()).getDays())
+                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(5) // 4 -> 5로 변경
                 .imageFiles(imgFiles)
                 .build();
@@ -228,9 +275,9 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate()).getDays())
+                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -350,9 +397,9 @@ class MeetingServiceImplTest {
                     .place("A")
                     .meetDate(LocalDateTime.of(2021,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                    .dDay(Period.between(LocalDate.now(),
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                             LocalDateTime.of(2021,8,05,00,00)
-                                    .toLocalDate()).getDays())
+                                    .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
                     .build();
@@ -468,9 +515,9 @@ class MeetingServiceImplTest {
                     .place("A")
                     .meetDate(LocalDateTime.of(2021,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                    .dDay(Period.between(LocalDate.now(),
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                             LocalDateTime.of(2021,8,05,00,00)
-                                    .toLocalDate()).getDays())
+                                    .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
                     .build();
@@ -524,6 +571,86 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(5);
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
+    
+    @Test
+    void 정렬_활동일_가까운순() throws Exception{
+        //given
+        Category category = createCategory();
+        Member member = createMember();
+
+
+        /**
+         * Meeting 생성
+         * 활동 가까운순
+         * meetingA dDay : -1 > meetingB dDay : 0 > meetingC dDay : 1
+         * 출력 : meetingB > meetingC (2개만 출력)
+         */
+        Meeting meetingA = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 01, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(-1L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingA);
+
+        Meeting meetingB = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 02, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(0L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingB);
+
+        Meeting meetingC = Meeting.builder()
+                .category(category)
+                .member(member)
+                .title("Meeting")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2021, 8, 03, 00, 00))
+                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .dDay(1L)
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+
+        meetingRepository.save(meetingC);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(10)
+                .sort(List.of("meetDate", "ASC"))
+                .build();
+
+        //when
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
+
+        //then
+        List<MeetingDTO> meetingDTOList = result.getDtoList();
+
+        for (MeetingDTO meetingDTO : meetingDTOList){
+            System.out.println(meetingDTO);
+        }
+
+        Assertions.assertThat(result.getPage()).isEqualTo(1);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
+        Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+    }
 
     @Test
     void 모임_조회페이지DTO() throws Exception{
@@ -571,6 +698,48 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(0);
     }
 
+    @Test
+    void dDay_갱신() throws Exception{
+        //given
+        Category category = createCategory();
+        Member member = createMember();
+
+        IntStream.rangeClosed(1,5).forEach(i -> {
+            Meeting meeting = Meeting.builder()
+                    .category(category)
+                    .member(member)
+                    .title("Meeting" + i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2021, 8, i, 00, 00))
+                    .reqDeadline(LocalDateTime.of(2021, 05, 04, 00, 00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2021, 7, i+10, 00, 00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
+                    .build();
+
+            meetingRepository.save(meeting);
+        });
+
+        //when
+        meetingService.updatedDay();
+
+        //then
+        List<Meeting> result = meetingRepository.findAll();
+
+        Assertions.assertThat(result.get(4).getDDay() - result.get(3).getDDay()).isEqualTo(1);
+        Assertions.assertThat(result.get(3).getDDay() - result.get(2).getDDay()).isEqualTo(1);
+        Assertions.assertThat(result.get(2).getDDay() - result.get(1).getDDay()).isEqualTo(1);
+        Assertions.assertThat(result.get(1).getDDay() - result.get(0).getDDay()).isEqualTo(1);
+
+        for (Meeting meeting : result){
+            System.out.println(meeting.getDDay());
+        }
+    }
+
+
     private Participant createParticipant() {
         Meeting meeting = createMeeting();
         Member member =Member.builder()
@@ -606,9 +775,9 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Period.between(LocalDate.now(),
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate()).getDays())
+                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .currentNumber(3)
                 .build();

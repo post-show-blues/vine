@@ -21,7 +21,6 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private String text;
 
-    @Column(nullable = false)
     private String link;
 
     @Column(nullable = false)

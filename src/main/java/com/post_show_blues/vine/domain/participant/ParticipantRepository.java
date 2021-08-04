@@ -37,7 +37,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     Optional<Participant> findByMeetingIdMemberId(@Param("meetingId") Long meetingId,
                                                   @Param("memberId") Long memberId);
 
-
+    @Query("select m.nickname from Participant p " +
+            "left join Member m on m.id = p.member.id " +
+            "where p.id = :participantId")
+    String getNicknameOfParticipant(Long participantId);
 
 
 }

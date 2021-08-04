@@ -15,9 +15,9 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 public class MeetingImgDTO {
 
-    private String storeFileName;
-
     private String folderPath;
+
+    private String storeFileName;
 
     public String getImageURL() {
         try {
