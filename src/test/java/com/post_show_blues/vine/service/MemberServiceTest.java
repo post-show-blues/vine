@@ -4,6 +4,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.member.FindMemberResultDTO;
 import com.post_show_blues.vine.dto.member.MemberUpdateDto;
 import com.post_show_blues.vine.dto.memberImg.MemberImgUploadDto;
 import org.junit.jupiter.api.Test;
@@ -55,54 +56,52 @@ public class MemberServiceTest {
         Member memberA = (Member) join[0];
 
         //when
-        List<Member> findMemberByNickname = memberService.findMember(memberA.getNickname());
-        List<Member> findMemberByEmail = memberService.findMember(memberA.getEmail());
+        List<FindMemberResultDTO>  findMemberByNickname = memberService.findMember(memberA.getNickname());
+        List<FindMemberResultDTO>  findMemberByEmail = memberService.findMember(memberA.getEmail());
 
         //then
         boolean isNickname = findMemberByNickname.stream().anyMatch(m -> m.getNickname() == memberA.getNickname());
-        boolean isEmail = findMemberByEmail.stream().anyMatch(m -> m.getEmail() == memberA.getEmail());
 
         assertThat(isNickname).isEqualTo(true);
-        assertThat(isEmail).isEqualTo(true);
 
     }
 
-    @Test
-    public void 사진수정() throws Exception {
-        //given
-        SignupDto memberEntityA = createSignupDto(); //변경 전 사진
-        Object[] join = authService.join(memberEntityA);
-        Member memberA = (Member) join[0];
-
-        //when
-        MemberImgUploadDto memberImgEntityB = memberImgUploadDtoB(); //변경 후 사진
-        memberService.memberImgUpdate(memberA, Optional.of(memberImgEntityB));
-
-        //then
-        List<MemberImg> memberImgs = memberImgRepository.findAll();
-
-        System.out.println("memberImgs = " + memberImgs);
-
-        //이전 사진
-        boolean isImgA = memberImgs.stream().anyMatch(i -> {
-                    if (i.getFileName() != "")
-                        return i.getFileName().split("_")[1].equals(memberEntityA.getFile().getOriginalFilename());
-                    return false;
-                }
-        );
-
-        //이후 사진
-        boolean isImgB = memberImgs.stream().anyMatch(i -> {
-                    if (i.getFileName() != "")
-                        return i.getFileName().split("_")[1].equals(memberImgEntityB.getFile().getOriginalFilename());
-                    return false;
-                }
-        );
-
-        assertThat(isImgA).isEqualTo(false); //이전사진은 없고
-        assertThat(isImgB).isEqualTo(true); //현재사진은 있다
-
-    }
+//    @Test
+//    public void 사진수정() throws Exception {
+//        //given
+//        SignupDto memberEntityA = createSignupDto(); //변경 전 사진
+//        Object[] join = authService.join(memberEntityA);
+//        Member memberA = (Member) join[0];
+//
+//        //when
+//        MemberImgUploadDto memberImgEntityB = memberImgUploadDtoB(); //변경 후 사진
+//        memberService.memberImgUpdate(memberA, Optional.of(memberImgEntityB));
+//
+//        //then
+//        List<MemberImg> memberImgs = memberImgRepository.findAll();
+//
+//        System.out.println("memberImgs = " + memberImgs);
+//
+//        //이전 사진
+//        boolean isImgA = memberImgs.stream().anyMatch(i -> {
+//                    if (i.getFileName() != "")
+//                        return i.getFileName().split("_")[1].equals(memberEntityA.getFile().getOriginalFilename());
+//                    return false;
+//                }
+//        );
+//
+//        //이후 사진
+//        boolean isImgB = memberImgs.stream().anyMatch(i -> {
+//                    if (i.getFileName() != "")
+//                        return i.getFileName().split("_")[1].equals(memberImgEntityB.getFile().getOriginalFilename());
+//                    return false;
+//                }
+//        );
+//
+//        assertThat(isImgA).isEqualTo(false); //이전사진은 없고
+//        assertThat(isImgB).isEqualTo(true); //현재사진은 있다
+//
+//    }
 
     SignupDto createSignupDto() {
         MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());

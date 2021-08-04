@@ -4,7 +4,10 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.dto.member.FindMemberResultDTO;
+import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.memberImg.MemberImgUploadDto;
+import com.post_show_blues.vine.file.FileStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 //회원 정보 수정
@@ -28,12 +33,13 @@ public class MemberService {
 
     @Value("${org.zerock.upload.path}")
     private String uploadFolder;
+    private final FileStore fileStore;
 
     /**
      * 회원 정보 수정
      */
     @Transactional
-    public Member memberUpdate(Long id, Member member){
+    public Member memberUpdate(Long id, Member member) {
         // 1. 영속화
         Member memberEntity = memberRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("찾을 수 없는 id입니다")
@@ -47,14 +53,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void memberImgUpdate(Member member, Optional<MemberImgUploadDto> memberImgUploadDto){
+    public void memberImgUpdate(Member member, Optional<MemberImgUploadDto> memberImgUploadDto) {
         MemberImg memberImgEntity = memberImgRepository.findByMember(member);
         MemberImg memberImg;
 
         //TODO : DTO가 없으면 DB 바꾸기
         //TODO : 파일시스템 내에 연결된 사진 지우기
         if (memberImgUploadDto.isEmpty()) {
-            memberImg=MemberImg.builder()
+            memberImg = MemberImg.builder()
                     .id(memberImgEntity.getId())
                     .member(memberImgEntity.getMember())
                     .build();
@@ -70,7 +76,7 @@ public class MemberService {
                 e.printStackTrace();
             }
 
-            memberImg=MemberImg.builder()
+            memberImg = MemberImg.builder()
                     .id(memberImgEntity.getId())
                     .member(memberImgEntity.getMember())
                     .fileName(imageFileName)
@@ -81,13 +87,33 @@ public class MemberService {
 
     }
 
-    public List<Member> findMember(String keyword){
+    public List<FindMemberResultDTO> findMember(String keyword) {
         List<Member> members = memberRepository.findByNicknameContainingOrEmailContaining(keyword, keyword);
 
-        if (members.isEmpty()){
+        if (members.isEmpty()) {
             throw new IllegalArgumentException("일치하는 회원이 없습니다");
         }
+        List<FindMemberResultDTO> findMemberResultDTO = members.stream().map(m -> FindMemberResultDTO.builder()
+                .id(m.getId())
+                .nickname(m.getNickname())
+                .build()).collect(Collectors.toList());
 
-        return members;
+
+        return findMemberResultDTO;
+    }
+
+    public MemberProfileDTO findMemberProfile(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("일치하는 회원이 없습니다")
+        );
+
+        MemberProfileDTO memberProfileDTO = MemberProfileDTO.builder()
+                .text(member.getText())
+                .instaurl(member.getInstaurl())
+                .nickname(member.getNickname())
+                .twitterurl(member.getTwitterurl())
+                .build();
+
+        return memberProfileDTO;
     }
 }
