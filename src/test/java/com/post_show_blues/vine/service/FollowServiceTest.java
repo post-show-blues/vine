@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,9 +100,10 @@ public class FollowServiceTest {
         followService.isFollow(memberA.getId(), memberB.getId()); //a가 b 팔로우
         followService.isFollow(memberA.getId(), memberC.getId()); //a가 c 팔로우
 
+        log.info("A->B, A->C 팔로우" +followRepository.findAll());
+
         //when
         List<FollowMemberResultDTO> followMembers = followService.followMember(memberA.getId());
-
 
         boolean isMemberB = followMembers.stream().anyMatch(m -> m.getId().equals(memberB.getId()));
         boolean isMemberC = followMembers.stream().anyMatch(m -> m.getId().equals(memberC.getId()));
@@ -137,7 +139,7 @@ public class FollowServiceTest {
 
     }
 
-    Member memberA() {
+    Member memberA() throws IOException {
         SignupDto memberA = SignupDto.builder()
                 .name("memberA")
                 .email("member@duksung.ac.kr")
@@ -150,7 +152,7 @@ public class FollowServiceTest {
         return memberEntityA;
     }
 
-    Member memberB() {
+    Member memberB() throws IOException {
         SignupDto memberB = SignupDto.builder()
                 .name("memberB")
                 .email("member@kookmin.ac.kr")
@@ -164,7 +166,7 @@ public class FollowServiceTest {
         return memberEntityB;
     }
 
-    Member memberC() {
+    Member memberC() throws IOException {
         SignupDto memberC = SignupDto.builder()
                 .name("memberC")
                 .email("memberC@kookmin.ac.kr")

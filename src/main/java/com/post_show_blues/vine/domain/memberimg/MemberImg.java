@@ -21,13 +21,10 @@ public class MemberImg {
     @JoinColumn(name="member_id",nullable = false)
     private Member member;
 
-//    @Column(nullable = false)
-    private String uuid;
+    @Column(nullable = false)
+    private String folderPath;
 
-    @Builder.Default
-    private String fileName="";
-
-//    @Column(nullable = false)
-    private String filePath="";
+    @Column(nullable = false)
+    private String storeFileName;
 
 }

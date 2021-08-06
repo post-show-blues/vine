@@ -1,5 +1,6 @@
 package com.post_show_blues.vine.dto.follow;
 
+import com.post_show_blues.vine.dto.memberImg.MemberImgResultDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,10 +11,8 @@ import lombok.ToString;
 public class FollowMemberResultDTO {
     private Long id;
     private String nickname;
+    private String text;
+    private MemberImgResultDTO memberImgResultDTO;
 
-    @Builder.Default
-    private String text = "";
 
-    @Builder.Default
-    private String imgFileName = "";
 }
