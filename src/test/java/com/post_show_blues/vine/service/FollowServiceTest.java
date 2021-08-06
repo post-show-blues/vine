@@ -10,6 +10,7 @@ import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,12 +38,20 @@ public class FollowServiceTest {
     @Autowired
     MemberImgRepository memberImgRepository;
 
+    Member memberA;
+    Member memberB;
+    Member memberC;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        memberA = memberA();
+        memberB = memberB();
+        memberC = memberC();
+    }
+
     @Test
     public void 팔로우() throws Exception {
         //given
-        Member memberA = memberA();
-        Member memberB = memberB();
-
         followService.isFollow(memberA.getId(), memberB.getId());
 
         //when
@@ -57,8 +66,6 @@ public class FollowServiceTest {
     @Test
     public void 알람테이블() throws Exception {
         //given
-        Member memberA = memberA();
-        Member memberB = memberB();
         followService.isFollow(memberA.getId(), memberB.getId());
 
         //when
@@ -74,8 +81,6 @@ public class FollowServiceTest {
     @Test
     public void 언팔로우() throws Exception {
         //given
-        Member memberA = memberA();
-        Member memberB = memberB();
         followService.isFollow(memberA.getId(), memberB.getId());
 
         List<Follow> followList = followRepository.findAll();
@@ -94,13 +99,11 @@ public class FollowServiceTest {
         //given
         //a가 b, c를 팔로우
         //a의 팔로우 목록 b, c
-        Member memberA = memberA();
-        Member memberB = memberB();
-        Member memberC = memberC();
+
         followService.isFollow(memberA.getId(), memberB.getId()); //a가 b 팔로우
         followService.isFollow(memberA.getId(), memberC.getId()); //a가 c 팔로우
 
-        log.info("A->B, A->C 팔로우" +followRepository.findAll());
+        log.info("A->B, A->C 팔로우" + followRepository.findAll());
 
         //when
         List<FollowMemberResultDTO> followMembers = followService.followMember(memberA.getId());
@@ -113,7 +116,6 @@ public class FollowServiceTest {
         assertThat(isMemberC).isEqualTo(true);
 
 
-
     }
 
     @Test
@@ -121,9 +123,6 @@ public class FollowServiceTest {
         //given
         //b, c가 a를 팔로우
         //a의 팔로워 b, c
-        Member memberA = memberA();
-        Member memberB = memberB();
-        Member memberC = memberC();
         followService.isFollow(memberB.getId(), memberA.getId()); //b가 a 팔로우
         followService.isFollow(memberC.getId(), memberA.getId()); //c가 a 팔로우
 
