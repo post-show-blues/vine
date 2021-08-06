@@ -5,6 +5,8 @@ import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.file.FileStore;
+import com.post_show_blues.vine.file.ResultFileStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 //회원가입
 @Service
@@ -26,9 +26,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberImgRepository memberImgRepository;
-
-    @Value("${org.zerock.upload.path}")
-    private String uploadFolder;
+    private final FileStore fileStore;
 
     /**
      * 중복 닉네임 검증
@@ -42,35 +40,20 @@ public class AuthService {
      * 회원가입
      */
     @Transactional
-    public Object[] join(SignupDto signupDto) {
+    public Object[] join(SignupDto signupDto) throws IOException {
         //회원 정보
-        System.out.println("조인 메서드 실행");
         Member member = signupDto.toMemberEntity();
         String rawPassword = member.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
         member.setPassword(encPassword);
         Member memberEntity = memberRepository.save(member);
-        MemberImg memberImg;
 
-        if (signupDto.getFile()==null) {
-            memberImg=MemberImg.builder()
-                    .member(member)
-                    .build();
-        } else {
-            //회원 이미지
-            UUID uuid = UUID.randomUUID(); //이미지 고유성 보장
-            String imageFileName = uuid + "_" + signupDto.getFile().getOriginalFilename();
-            Path imageFilePath = Paths.get(uploadFolder + "/" + imageFileName);
-
-            try {
-                Files.write(imageFilePath, signupDto.getFile().getBytes());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            memberImg = signupDto.toMemberImgEntity(imageFileName, member);
+        MemberImg memberImgEntity = null;
+        if (signupDto.getFile() != null) {
+            ResultFileStore resultFileStore = fileStore.storeProfileFile(signupDto.getFile());
+            MemberImg memberImg = signupDto.toMemberImgEntity(resultFileStore.getFolderPath(), resultFileStore.getStoreFileName(), member);
+            memberImgEntity = memberImgRepository.save(memberImg);
         }
-
-        MemberImg memberImgEntity = memberImgRepository.save(memberImg);
 
         return new Object[]{memberEntity, memberImgEntity};
     }
@@ -89,6 +72,4 @@ public class AuthService {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
-
-
 }

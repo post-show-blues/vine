@@ -96,5 +96,47 @@ public class FileStore {
 
     }
 
+    public ResultFileStore storeProfileFile(MultipartFile multipartFile) throws IOException {
+
+        if(multipartFile.isEmpty()){
+            return null;
+        }
+
+        //파일 이름
+        String originalFilename = multipartFile.getOriginalFilename();
+        log.info("originalFilename: " + originalFilename);
+
+        //파일 저장 이름
+        String storeFileName = createStoreFileName(originalFilename);
+        log.info("storeFileName: " + storeFileName);
+
+        //폴더 생성
+        String folderPath = makeProfileFolder();
+
+        //이미지 저장
+        multipartFile.transferTo(new File(getFullPath(folderPath, storeFileName)));
+
+        return new ResultFileStore(folderPath, storeFileName);
+
+    }
+
+
+    private String makeProfileFolder() {
+
+        String folderPath = "vine" + File.separator + "profile";
+
+
+        log.info("folderPath: " + folderPath);
+
+        File uploadPathFolder = new File(uploadFolder, folderPath);
+
+        if(uploadPathFolder.exists() == false){
+            uploadPathFolder.mkdirs();
+        }
+
+        return folderPath;
+
+    }
+
 
 }

@@ -11,12 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Log4j2
-@SpringBootTest
 @Transactional
+@SpringBootTest
 public class AuthServiceTest {
     @Autowired AuthService authService;
     @Autowired MemberRepository memberRepository;
@@ -40,8 +42,6 @@ public class AuthServiceTest {
     @Test
     public void 회원가입_사진o() throws Exception {
         //given
-        SignupDto memberEntityA = createSignupDto();
-
         SignupDto signupDtoImg = createSignupDtoImg();
 
         //when
@@ -50,25 +50,25 @@ public class AuthServiceTest {
         MemberImg memberAImg = (MemberImg) join[1];
 
         //then
-        assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
+        assertThat(memberA.getNickname()).isEqualTo(signupDtoImg.getNickname());
 
-        assertThat(memberAImg.getFileName().split("_")[1]).isEqualTo(signupDtoImg.getFile().getOriginalFilename());
+        assertThat(memberAImg.getStoreFileName().split("_")[1]).isEqualTo(signupDtoImg.getFile().getOriginalFilename());
 
     }
 
     @Test
     public void 회원가입_사진x() throws Exception {
         //given
-        SignupDto memberEntityA = createSignupDto();
+        SignupDto memberA = createSignupDto();
 
         //when
-        Object[] join = authService.join(memberEntityA);
-        Member memberA = (Member) join[0];
-        MemberImg memberAImg = (MemberImg) join[1];
+        Object[] join = authService.join(memberA);
+        Member memberEntityA = (Member) join[0];
+        Optional<MemberImg> memberAImg = Optional.ofNullable((MemberImg) join[1]);
 
         //then
         assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
-        assertThat(memberAImg.getFileName()).isEqualTo("");
+        assertThat(memberAImg.isEmpty()).isEqualTo(true);
     }
 
 

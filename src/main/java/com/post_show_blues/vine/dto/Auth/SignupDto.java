@@ -26,6 +26,7 @@ public class  SignupDto {
     @NotEmpty
     private String phone;
     @NotEmpty
+    @NotEmpty
     private String university;
 
     private MultipartFile file;
@@ -41,10 +42,11 @@ public class  SignupDto {
                 .build();
     }
 
-    public MemberImg toMemberImgEntity(String memberImgUrl, Member member){
+    public MemberImg toMemberImgEntity(String folderPath, String storeFileName, Member member){
         return MemberImg.builder()
                 .member(member)
-                .fileName(memberImgUrl)
+                .folderPath(folderPath)
+                .storeFileName(storeFileName)
                 .build();
     }
 }
