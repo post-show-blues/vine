@@ -8,11 +8,14 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class MemberProfileDTO {
+public class MyProfileDTO {
+    private Long id;
     private String nickname;
     private String text;
     private String instaurl;
     private String twitterurl;
     private MemberImgDTO memberImgDTO;
-    private Boolean isFollow;
+    //TODO : 참여활동, 팔로잉/팔로워 명수  넘겨주기 추가
+    //팔로잉 / 팔로워 명수
+    //참여활동 정보
 }

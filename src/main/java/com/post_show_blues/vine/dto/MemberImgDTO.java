@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberImgDTO {
-
-    private String uuid;
-
-    private String fileName;
-
-    private String filePath;
+    private String folderPath;
+    private String storeFileName;
 
 }

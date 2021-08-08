@@ -5,16 +5,14 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
-import com.post_show_blues.vine.dto.memberImg.MemberImgResultDTO;
-import com.post_show_blues.vine.dto.notice.NoticeResultDTO;
+import com.post_show_blues.vine.dto.MemberImgDTO;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
-
+import com.post_show_blues.vine.dto.notice.NoticeResultDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +70,7 @@ public class FollowService {
             MemberImg memberImg = (MemberImg) fm[1];
 
             if (memberImg != null) {
-                MemberImgResultDTO memberImgResultDTO = MemberImgResultDTO.builder()
+                MemberImgDTO memberImgDTO = MemberImgDTO.builder()
                         .folderPath(memberImg.getFolderPath())
                         .storeFileName(memberImg.getStoreFileName())
                         .build();
@@ -81,7 +79,7 @@ public class FollowService {
                         .id(member.getId())
                         .nickname(member.getNickname())
                         .text(member.getText())
-                        .memberImgResultDTO(memberImgResultDTO)
+                        .memberImgDTO(memberImgDTO)
                         .build();
             } else {
                 return FollowMemberResultDTO.builder()
@@ -110,7 +108,7 @@ public class FollowService {
             Boolean isFollow = followRepository.existsByFromMemberIdAndToMemberId(member.getId(), id);
 
             if (memberImg != null) {
-                MemberImgResultDTO memberImgResultDTO = MemberImgResultDTO.builder()
+                MemberImgDTO memberImgDTO = MemberImgDTO.builder()
                         .folderPath(memberImg.getFolderPath())
                         .storeFileName(memberImg.getStoreFileName())
                         .build();
@@ -119,7 +117,7 @@ public class FollowService {
                         .id(member.getId())
                         .nickname(member.getNickname())
                         .text(member.getText())
-                        .memberImgResultDTO(memberImgResultDTO)
+                        .memberImgDTO(memberImgDTO)
                         .isFollow(isFollow)
                         .build();
             } else {
