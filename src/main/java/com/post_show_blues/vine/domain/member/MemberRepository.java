@@ -11,11 +11,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select me, mi from Member me " +
             "left join MemberImg mi on mi.member=me " +
             "where me.nickname like %:keyword% or me.email like %:keyword%")
-    List<Object[]> findMemberByNicknameOrEmail(String keyword);
-    @Query("select me, mi from Member me " +
-            "left join MemberImg mi on mi.member=me " +
-            "where me.id=:id")
-    Object[] findMyProfile(Long id);
+    List<Object[]> findMemberByNicknameOrEmail(@Param("keyword") String keyword);
+
     Member findByNickname(String nickname);
     Member findByEmail(String email);
 

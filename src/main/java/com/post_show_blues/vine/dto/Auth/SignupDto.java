@@ -26,7 +26,6 @@ public class  SignupDto {
     @NotEmpty
     private String phone;
     @NotEmpty
-    @NotEmpty
     private String university;
 
     private MultipartFile file;

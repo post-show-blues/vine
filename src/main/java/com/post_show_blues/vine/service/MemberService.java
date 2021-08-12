@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,25 +38,16 @@ public class MemberService {
             Member member = (Member) m[0];
             MemberImg memberImg = (MemberImg) m[1];
 
-            if (memberImg != null) {
-                MemberImgDTO memberImgDTO = MemberImgDTO.builder()
-                        .folderPath(memberImg.getFolderPath())
-                        .storeFileName(memberImg.getStoreFileName())
-                        .build();
+            MemberListDTO memberList = new MemberListDTO();
 
-                return MemberListDTO.builder()
-                        .id(member.getId())
-                        .nickname(member.getNickname())
-                        .text(member.getText())
-                        .memberImgDTO(memberImgDTO)
-                        .build();
-            } else {
-                return MemberListDTO.builder()
-                        .id(member.getId())
-                        .nickname(member.getNickname())
-                        .text(member.getText())
-                        .build();
+            if (memberImg != null) {
+                memberList.setMemberImgDTO(new MemberImgDTO(memberImg.getFolderPath(), memberImg.getStoreFileName()));
             }
+            memberList.setId(member.getId());
+            memberList.setNickname(member.getNickname());
+            memberList.setText(member.getText());
+
+            return memberList;
         }).collect(Collectors.toList());
 
         return memberListDTO;
@@ -63,10 +55,6 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberProfileDTO memberProfile(Long myId, Long findId) {
-
-        //TODO : 없는 회원 찾을 때(ID 미스)
-        //TODO : 사진이 없는 회원 찾을 때
-        //TODO : 팔로우하지 않은 회원 찾을 때 테스트
 
         MemberProfileDTO memberProfileDTO = searchMemberRepository.findMemberProfile(myId, findId)
                 .orElseThrow(() ->
@@ -79,26 +67,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MyProfileDTO MyProfile(Long id) {
 
-        //TODO : 없는 회원 찾을 때(ID 미스)
-        //TODO : 사진이 없는 회원 찾을 때
+        MyProfileDTO myProfile = searchMemberRepository.findMyProfile(id);
 
-        Object[] myProfile = memberRepository.findMyProfile(id);
-
-        Member member = (Member) myProfile[0];
-        MemberImg memberImg = (MemberImg) myProfile[1];
-
-        MyProfileDTO myProfileDTO = null;
-
-        if (memberImg != null) {
-            myProfileDTO.setMemberImgDTO(new MemberImgDTO(memberImg.getFolderPath(), memberImg.getStoreFileName()));
-        }
-        myProfileDTO.setId(member.getId());
-        myProfileDTO.setNickname(member.getNickname());
-        myProfileDTO.setText(member.getText());
-        myProfileDTO.setInstaurl(member.getInstaurl());
-        myProfileDTO.setTwitterurl(member.getTwitterurl());
-
-        return myProfileDTO;
+        return myProfile;
     }
 
 
