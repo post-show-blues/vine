@@ -37,7 +37,7 @@ public class MemberServiceTest {
     FollowService followService;
     @Autowired
     FollowRepository followRepository;
-    
+
     Member memberA;
     MemberImg memberAImg;
 
