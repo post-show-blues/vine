@@ -5,7 +5,7 @@ import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
-import com.post_show_blues.vine.service.NoticeService;
+import com.post_show_blues.vine.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

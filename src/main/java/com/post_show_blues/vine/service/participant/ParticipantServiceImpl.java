@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.participant;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.member.Member;

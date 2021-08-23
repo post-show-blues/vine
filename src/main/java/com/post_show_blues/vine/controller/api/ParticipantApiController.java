@@ -4,14 +4,12 @@ package com.post_show_blues.vine.controller.api;
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
-import com.post_show_blues.vine.service.ParticipantService;
-import com.post_show_blues.vine.service.RequestParticipantService;
+import com.post_show_blues.vine.service.participant.ParticipantService;
+import com.post_show_blues.vine.service.requestParticipant.RequestParticipantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

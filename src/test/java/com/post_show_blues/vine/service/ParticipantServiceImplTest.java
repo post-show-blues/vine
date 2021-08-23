@@ -13,6 +13,7 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.service.participant.ParticipantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -3,6 +3,7 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.dto.CategoryDTO;
+import com.post_show_blues.vine.service.category.CategoryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class CategoryServiceImplTest {
 
-    @Autowired CategoryService categoryService;
+    @Autowired
+    CategoryService categoryService;
     @Autowired CategoryRepository categoryRepository;
 
     @Test

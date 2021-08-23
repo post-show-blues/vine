@@ -18,27 +18,23 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
-import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 

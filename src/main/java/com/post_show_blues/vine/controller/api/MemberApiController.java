@@ -5,7 +5,7 @@ import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
-import com.post_show_blues.vine.service.MemberService;
+import com.post_show_blues.vine.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

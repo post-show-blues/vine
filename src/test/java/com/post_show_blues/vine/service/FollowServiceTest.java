@@ -9,6 +9,8 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
+import com.post_show_blues.vine.service.auth.AuthService;
+import com.post_show_blues.vine.service.follow.FollowService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

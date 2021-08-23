@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.category;
 
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.dto.CategoryDTO;

@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.notice;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
@@ -9,6 +9,7 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -4,6 +4,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.service.auth.AuthService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @SpringBootTest
 public class AuthServiceTest {
-    @Autowired AuthService authService;
+    @Autowired
+    AuthService authService;
     @Autowired MemberRepository memberRepository;
 
     @Test

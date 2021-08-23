@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.follow;
 
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.Member;

@@ -13,14 +13,13 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.service.notice.NoticeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

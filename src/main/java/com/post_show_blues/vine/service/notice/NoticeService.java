@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.notice;
 
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;

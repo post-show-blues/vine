@@ -4,12 +4,11 @@ import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
-import com.post_show_blues.vine.service.FollowService;
+import com.post_show_blues.vine.service.follow.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

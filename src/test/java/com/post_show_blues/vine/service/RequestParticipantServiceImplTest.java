@@ -15,6 +15,7 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
+import com.post_show_blues.vine.service.requestParticipant.RequestParticipantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 

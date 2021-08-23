@@ -2,7 +2,7 @@ package com.post_show_blues.vine.controller.api;
 
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.auth.SignupDto;
-import com.post_show_blues.vine.service.AuthService;
+import com.post_show_blues.vine.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

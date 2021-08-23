@@ -7,19 +7,19 @@ import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
-import com.post_show_blues.vine.dto.member.MemberUpdateDto;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
+import com.post_show_blues.vine.service.auth.AuthService;
+import com.post_show_blues.vine.service.follow.FollowService;
+import com.post_show_blues.vine.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

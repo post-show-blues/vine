@@ -1,12 +1,10 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.memberImg;
 
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor

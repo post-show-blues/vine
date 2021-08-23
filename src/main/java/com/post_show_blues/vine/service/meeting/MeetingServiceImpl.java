@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.service;
+package com.post_show_blues.vine.service.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
@@ -13,11 +13,11 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
-import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
+import com.post_show_blues.vine.service.memberImg.MemberImgService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
