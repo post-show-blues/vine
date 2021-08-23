@@ -30,10 +30,8 @@ public interface ParticipantService {
 
         if(memberImg != null){
             MemberImgDTO memberImgDTO = MemberImgDTO.builder()
-                    .filePath(memberImg.getFilePath())
-                    .fileName(memberImg.getFileName())
-                    .uuid(memberImg.getUuid())
-                    .uuid(memberImg.getUuid())
+                    .folderPath(memberImg.getFolderPath())
+                    .storeFileName(memberImg.getStoreFileName())
                     .build();
 
             participantDTO.setMemberImgDTO(memberImgDTO);

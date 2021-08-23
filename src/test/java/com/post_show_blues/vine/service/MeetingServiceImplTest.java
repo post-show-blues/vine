@@ -383,9 +383,8 @@ class MeetingServiceImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -395,10 +394,10 @@ class MeetingServiceImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -438,9 +437,8 @@ class MeetingServiceImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("123Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -501,9 +499,8 @@ class MeetingServiceImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("231qqf@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -513,10 +510,10 @@ class MeetingServiceImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -527,6 +524,7 @@ class MeetingServiceImplTest {
 
         List<Meeting> meetingList = meetingRepository.findAll();
 
+        //첫번째 미팅
         Meeting meeting = meetingList.get(0);
 
         //participant 생성
@@ -556,7 +554,7 @@ class MeetingServiceImplTest {
 
         //when
         /**
-            첫번째 모임에만 참여자 존재하며 프로필 사진은 x
+            첫번째 모임에만 참여자가 존재하며 프로필 사진은 x
          */
         PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
 
@@ -591,8 +589,8 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2021, 8, 01, 00, 00))
-                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
                 .dDay(-1L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -606,8 +604,8 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2021, 8, 02, 00, 00))
-                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 02, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
                 .dDay(0L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -621,8 +619,8 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2021, 8, 03, 00, 00))
-                .reqDeadline(LocalDateTime.of(2021, 06, 04, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 03, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
                 .dDay(1L)
                 .maxNumber(4)
                 .currentNumber(3)

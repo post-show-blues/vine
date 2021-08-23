@@ -93,9 +93,8 @@ public interface MeetingService {
 
         if(masterImg != null){
             MemberImgDTO masterImgDTO = MemberImgDTO.builder()
-                    .filePath(masterImg.getFilePath())
-                    .fileName(masterImg.getFileName())
-                    .uuid(masterImg.getUuid())
+                    .folderPath(masterImg.getFolderPath())
+                    .storeFileName(masterImg.getStoreFileName())
                     .build();
 
             meetingDTO.setMasterImg(masterImgDTO);
@@ -103,9 +102,8 @@ public interface MeetingService {
 
         if(participantImg != null){
             MemberImgDTO participantImgDTO = MemberImgDTO.builder()
-                    .filePath(participantImg.getFilePath())
-                    .fileName(participantImg.getFileName())
-                    .uuid(participantImg.getUuid())
+                    .folderPath(participantImg.getFolderPath())
+                    .storeFileName(participantImg.getStoreFileName())
                     .build();
 
             meetingDTO.setParticipantImg(participantImgDTO);

@@ -350,9 +350,8 @@ class RequestParticipantServiceImplTest {
 
         MemberImg memberImg3 = MemberImg.builder()
                 .member(memberC)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231!!!l_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg3);
@@ -403,9 +402,8 @@ class RequestParticipantServiceImplTest {
 
         MemberImg memberImg = MemberImg.builder()
                 .member(memberB)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("23aa1f@Rfl_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg);

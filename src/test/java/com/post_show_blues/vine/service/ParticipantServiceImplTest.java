@@ -180,9 +180,8 @@ class ParticipantServiceImplTest {
 
         MemberImg memberImg3 = MemberImg.builder()
                 .member(memberC)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("dddf@Rfl_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg3);
@@ -233,9 +232,8 @@ class ParticipantServiceImplTest {
 
         MemberImg memberImg = MemberImg.builder()
                 .member(memberB)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("23dfsf@Rfl_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg);

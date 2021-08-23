@@ -66,9 +66,8 @@ class SearchMeetingRepositoryImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -78,10 +77,10 @@ class SearchMeetingRepositoryImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -121,9 +120,8 @@ class SearchMeetingRepositoryImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -181,9 +179,8 @@ class SearchMeetingRepositoryImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -193,10 +190,10 @@ class SearchMeetingRepositoryImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -241,9 +238,8 @@ class SearchMeetingRepositoryImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -253,10 +249,10 @@ class SearchMeetingRepositoryImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -320,9 +316,8 @@ class SearchMeetingRepositoryImplTest {
 
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
-                    .fileName("MemberImg"+i)
-                    .filePath("/hyeongwoo")
-                    .uuid(UUID.randomUUID().toString())
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -332,10 +327,10 @@ class SearchMeetingRepositoryImplTest {
                     .title("Meeting"+i)
                     .text("meet")
                     .place("A")
-                    .meetDate(LocalDateTime.of(2021,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2021,8,05,00,00)
+                            LocalDateTime.of(2023,8,05,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)

@@ -95,9 +95,8 @@ class ParticipantRepositoryTest {
 
         MemberImg memberImg = MemberImg.builder()
                 .member(member)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231saf@Rfl_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg);

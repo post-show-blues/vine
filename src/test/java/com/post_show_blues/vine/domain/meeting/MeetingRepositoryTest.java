@@ -42,75 +42,6 @@ class MeetingRepositoryTest {
     @Autowired
     MeetingImgRepository meetingImgRepository;
 
-    @Test
-    void testGetListPage() throws Exception {
-        //given
-        MemberImg memberImg1 = createMemberImg();
-
-        Member member1 = memberImg1.getMember();
-
-        //meeting 생성
-        Category category = createCategory();
-
-        Meeting meeting = Meeting.builder()
-                .category(category)
-                .member(member1)
-                .title("MeetingA")
-                .text("meet")
-                .place("A")
-                .meetDate(LocalDateTime.of(2021,06,05,14,00))
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
-                .maxNumber(4)
-                .currentNumber(3)
-                .build();
-
-        meetingRepository.save(meeting);
-
-        //participant1 생성
-
-        MemberImg memberImg2 = createMemberImg();
-
-        Member member2 = memberImg2.getMember();
-
-        Participant participant1 = Participant.builder()
-                .meeting(meeting)
-                .member(member2)
-                .build();
-
-        participantRepository.save(participant1);
-
-        //participant2 생성
-
-        MemberImg memberImg3 = createMemberImg();
-
-        Member member3 = memberImg3.getMember();
-
-        Participant participant2 = Participant.builder()
-                .meeting(meeting)
-                .member(member3)
-                .build();
-
-        participantRepository.save(participant2);
-
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("meeting_id").descending());
-
-        //when
-        Page<Object[]> result = meetingRepository.getListPage(pageRequest);
-
-        //then
-        System.out.println(result.getTotalElements());
-        System.out.println(result.getTotalPages());
-        System.out.println(result.getClass());
-        System.out.println(result.get());
-
-        for (Object[] objects : result.getContent()) {
-            System.out.println(Arrays.toString(objects));
-        }
-
-    }
 
     @Test
     void testGetMeetingWithAll() throws Exception {
@@ -176,9 +107,8 @@ class MeetingRepositoryTest {
 
         MemberImg memberImg = MemberImg.builder()
                 .member(member)
-                .fileName("MemberImg1")
-                .filePath("/hyeongwoo")
-                .uuid(UUID.randomUUID().toString())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231dfsaf@Rfl_file1.jpeg")
                 .build();
 
         memberImgRepository.save(memberImg);
