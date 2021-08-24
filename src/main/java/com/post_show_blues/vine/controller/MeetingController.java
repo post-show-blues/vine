@@ -26,17 +26,6 @@ public class MeetingController {
     private final CategoryService categoryService;
 
 
-    @GetMapping("/") //모임목록
-    public String meetingList(@ModelAttribute PageRequestDTO requestDTO, Model model){
-
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(requestDTO);
-
-        model.addAttribute("requestDTO", requestDTO);
-        model.addAttribute("result", result);
-
-        return "";
-    }
-
     @GetMapping("/new") //모임등록 폼
     public String registerMeetingForm(Model model){
 
@@ -47,26 +36,7 @@ public class MeetingController {
         return "";
     }
 
-    @PostMapping("/new") //모임등록
-    public String registerMeeting(@ModelAttribute MeetingDTO meetingDTO) throws IOException {
 
-        Long meetingId = meetingService.register(meetingDTO);
-
-        return "redirect:/meetings";
-    }
-
-    @GetMapping("/{meeting-id}") //모임조회
-    public String readMeeting(@PathVariable("meeting-id") Long meetingId,
-                              @ModelAttribute PageRequestDTO requestDTO,
-                              Model model){
-
-        MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
-
-        model.addAttribute("requestDTO", requestDTO);
-        model.addAttribute("meetingDTO", meetingDTO);
-
-        return "";
-    }
 
     @GetMapping("/{meeting-id}/edit") //모임수정 폼
     public String modifyMeetingForm(@PathVariable("meeting-id") Long meetingId,
@@ -81,32 +51,6 @@ public class MeetingController {
         model.addAttribute("categoryListDTO", categoryDTOList);
 
         return "";
-    }
-
-    @PostMapping("/{meeting-id}/edit") //모임 수정
-    public String ModifyMeeting(@PathVariable("meeting-id") Long meetingId,
-                                @ModelAttribute PageRequestDTO requestDTO,
-                                MeetingDTO meetingDTO, Model model,
-                                RedirectAttributes redirectAttributes) throws IOException {
-
-        meetingService.modify(meetingDTO);
-
-        model.addAttribute("requestDTO", requestDTO);
-
-        redirectAttributes.addAttribute("meetingId",meetingId);
-        redirectAttributes.addAttribute("page", requestDTO.getPage());
-        redirectAttributes.addAttribute("category",requestDTO.getCategory());
-        redirectAttributes.addAttribute("keyword", requestDTO.getKeyword());
-
-        return "redirect:/read/{meetingId}";
-    }
-
-    @PostMapping("/{meeting-id}/delete") //모임삭제
-    public String deleteMeeting(@PathVariable("meeting-id") Long meetingId){
-
-        meetingService.remove(meetingId);
-
-        return "redirect:/meetings";
     }
 
 
