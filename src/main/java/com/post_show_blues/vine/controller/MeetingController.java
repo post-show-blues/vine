@@ -33,6 +33,8 @@ public class MeetingController {
 
         model.addAttribute("categoryListDTO", categoryDTOList);
 
+        
+
         return "";
     }
 

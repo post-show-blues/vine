@@ -37,7 +37,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
 
     @Override
-    public Page<Object[]> searchPage(Category category, String keyword, Pageable pageable) {
+    public Page<Object[]> searchPage(List<Long> categoryIdList, String keyword, Pageable pageable) {
 
         log.info("search..............................");
 
@@ -83,20 +83,21 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(meeting.dDay.goe(0));
 
         //카테고리 검색
-        if(category != null){
+        if(categoryIdList != null && categoryIdList.size() > 0){
 
-            List<Category> result = categoryRepository.findAll();
+            BooleanBuilder categoryBuilder = new BooleanBuilder();
 
-            for (Category dbCategory : result){
-                if(category == dbCategory){
+            for(Long categoryId : categoryIdList){
 
-                    builder.and(meeting.title.contains(keyword));
-                    builder.and(meeting.category.eq(category));
-                    break;
+                categoryBuilder.or(meeting.category.id.eq(categoryId));
 
-                }
             }
-        }else{
+
+            builder.and(categoryBuilder);
+        }
+
+        //키워드 검색
+        if(keyword != null){
             builder.and(meeting.title.contains(keyword));
         }
 

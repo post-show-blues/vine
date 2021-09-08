@@ -255,7 +255,7 @@ public class MeetingServiceImpl implements MeetingService{
             pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
         }
 
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryIdList(),
                                                                 pageRequestDTO.getKeyword(), pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(

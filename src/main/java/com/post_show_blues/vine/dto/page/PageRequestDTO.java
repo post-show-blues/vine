@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -18,18 +19,18 @@ public class PageRequestDTO {
 
     private int size;
 
-    private Category category;
+    @Builder.Default
+    private List<Long> categoryIdList;
 
     @Builder.Default
-    private String keyword = "";
+    private String keyword;
 
     @Builder.Default
     private List<String> sort = List.of("id","DESC");
 
     public PageRequestDTO(){
         this.page = 1;
-        this.size = 10;
-        this.keyword ="";
+        this.size = 36;
         this.sort = List.of("id", "DESC");
     }
 
