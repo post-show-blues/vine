@@ -2,6 +2,7 @@ package com.post_show_blues.vine.dto.meeting;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.MemberImgDTO;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +28,8 @@ public class MeetingDTO {
 
     private Long masterId;
 
-    private Long categoryId;
-
-    private String categoryName;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String title;
 

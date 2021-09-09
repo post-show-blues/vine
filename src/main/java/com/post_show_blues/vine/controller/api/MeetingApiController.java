@@ -65,7 +65,7 @@ public class MeetingApiController {
 
         redirectAttributes.addAttribute("meetingId",meetingId);
         redirectAttributes.addAttribute("page", requestDTO.getPage());
-        redirectAttributes.addAttribute("category",requestDTO.getCategory());
+        redirectAttributes.addAttribute("category",requestDTO.getCategoryList());
         redirectAttributes.addAttribute("keyword", requestDTO.getKeyword());
 
         return "redirect:/read/{meetingId}";

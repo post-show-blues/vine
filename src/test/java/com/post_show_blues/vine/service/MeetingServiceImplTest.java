@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
@@ -45,7 +44,6 @@ class MeetingServiceImplTest {
 
     @Autowired MeetingService meetingService;
     @Autowired MeetingRepository meetingRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
@@ -59,7 +57,6 @@ class MeetingServiceImplTest {
     void 모임등록() throws Exception{
         //given
         Member memberA = createMember();
-        Category category = createCategory();
 
         //memberA를 팔로우 하는 memberB,C 생성
        Member memberB = Member.builder()
@@ -100,7 +97,7 @@ class MeetingServiceImplTest {
 
         //meetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
-                .categoryId(category.getId())
+                .category(Category.SPORTS)
                 .masterId(memberA.getId())
                 .title("MeetingA")
                 .text("meet")
@@ -122,7 +119,7 @@ class MeetingServiceImplTest {
         Meeting meeting = meetingService.findOne(saveId);
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
-        Assertions.assertThat(meeting.getCategory().getId()).isEqualTo(category.getId());
+        Assertions.assertThat(meeting.getCategory()).isEqualTo(meetingDTO.getCategory());
         Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
 
@@ -147,10 +144,9 @@ class MeetingServiceImplTest {
     void 등록시_meetDate_deadline_비교() throws Exception{
         //given
         Member member = createMember();
-        Category category = createCategory();
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
-                .categoryId(category.getId())
+                .category(Category.SPORTS)
                 .masterId(member.getId())
                 .title("MeetingA")
                 .text("meet")
@@ -186,8 +182,6 @@ class MeetingServiceImplTest {
         meetingImgRepository.save(memberImgA);
 
         //수정 데이터
-        Category category1 = createCategory();
-
         Member memberB = Member.builder()
                 .name("member")
                 .email("memberA@kookmin.ac.kr")
@@ -211,7 +205,7 @@ class MeetingServiceImplTest {
         //MeetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meetingA.getId())
-                .categoryId(category1.getId()) //변경
+                .category(Category.MUSIC) //변경 sports -> music
                 .masterId(memberB.getId()) //변경
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
@@ -235,7 +229,7 @@ class MeetingServiceImplTest {
         //모임수정
         Assertions.assertThat(findMeeting.getTitle()).isEqualTo("MeetingB");
         Assertions.assertThat(findMeeting.getMember().getId()).isEqualTo(memberB.getId());
-        Assertions.assertThat(findMeeting.getCategory().getId()).isEqualTo(category1.getId());
+        Assertions.assertThat(findMeeting.getCategory()).isEqualTo(meetingDTO.getCategory());
         //Assertions.assertThat(findMeeting.getDDay()).isEqualTo(3);
 
         //모임 사진 수정
@@ -250,7 +244,6 @@ class MeetingServiceImplTest {
         Meeting meeting = createMeeting();
 
         //수정 데이터
-        Category category1 = createCategory();
         Member member1 = Member.builder()
                 .name("member")
                 .email("memberA@kookmin.ac.kr")
@@ -264,7 +257,7 @@ class MeetingServiceImplTest {
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
-                .categoryId(category1.getId())
+                .category(Category.SPORTS)
                 .masterId(member1.getId())
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
@@ -353,19 +346,8 @@ class MeetingServiceImplTest {
     void 모임리스트조회() throws Exception{
         //given
 
-        //카테고리 생성
-        Category category1 = Category.builder().name("스포츠").build();
-        Category category2 = Category.builder().name("음악").build();
-        Category category3 = Category.builder().name("맛집").build();
-
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
-        categoryRepository.save(category3);
-
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
-
-            Category category = createCategory();
 
             Member member = Member.builder()
                     .name("member"+i)
@@ -385,7 +367,7 @@ class MeetingServiceImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -410,11 +392,11 @@ class MeetingServiceImplTest {
         Meeting meeting4 = meetingList.get(3);
         Meeting meeting5 = meetingList.get(4);
 
-        meeting1.changeCategory(category2); // category = "음악"
-        meeting2.changeCategory(category1); // category = "스포츠"
-        meeting3.changeCategory(category1); // category = "스포츠"
-        meeting4.changeCategory(category1); // category = "스포츠"
-        meeting5.changeCategory(category3); // category = "맛집"
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
 
         meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
         meeting4.changeTitle("풋살할 사람"); //meeting4
@@ -447,7 +429,7 @@ class MeetingServiceImplTest {
         });
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .category(category1)
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
                 .keyword("풋살")
                 .page(1)
                 .size(10)
@@ -455,7 +437,7 @@ class MeetingServiceImplTest {
 
         //when
         /**
-         * meeting2,3,4 category1(스포츠)
+         * meeting2,3 (스포츠), meeting4 (춤)
          * meeting2,4 title =  ~풋살~
          * = meeting2,4만 출력
          * meeting2 참여자 3
@@ -481,8 +463,6 @@ class MeetingServiceImplTest {
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
 
-            Category category = createCategory();
-
             Member member = Member.builder()
                     .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
@@ -501,7 +481,7 @@ class MeetingServiceImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -569,7 +549,6 @@ class MeetingServiceImplTest {
     @Test
     void 정렬_활동일_가까운순() throws Exception{
         //given
-        Category category = createCategory();
         Member member = createMember();
 
 
@@ -580,7 +559,7 @@ class MeetingServiceImplTest {
          * 출력 : meetingB > meetingC (2개만 출력)
          */
         Meeting meetingA = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("Meeting")
                 .text("meet")
@@ -595,7 +574,7 @@ class MeetingServiceImplTest {
         meetingRepository.save(meetingA);
 
         Meeting meetingB = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("Meeting")
                 .text("meet")
@@ -610,7 +589,7 @@ class MeetingServiceImplTest {
         meetingRepository.save(meetingB);
 
         Meeting meetingC = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("Meeting")
                 .text("meet")
@@ -674,7 +653,7 @@ class MeetingServiceImplTest {
 
         //then
         Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategoryName()).isEqualTo("categoryA");
+        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
         Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
     }
 
@@ -688,19 +667,18 @@ class MeetingServiceImplTest {
 
         //then
         Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategoryName()).isEqualTo("categoryA");
+        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
         Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(0);
     }
 
     @Test
     void dDay_갱신() throws Exception{
         //given
-        Category category = createCategory();
         Member member = createMember();
 
         IntStream.rangeClosed(1,5).forEach(i -> {
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting" + i)
                     .text("meet")
@@ -758,11 +736,10 @@ class MeetingServiceImplTest {
     }
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -781,15 +758,6 @@ class MeetingServiceImplTest {
         return meeting;
     }
 
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
-    }
 
     private Member createMember() {
         Member member = Member.builder()

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface SearchMeetingRepository {
 
-    Page<Object[]> searchPage(List<Long> categoryIdList, String keyword, Pageable pageable);
+    Page<Object[]> searchPage(List<Category> categoryList, String keyword, Pageable pageable);
 
 }

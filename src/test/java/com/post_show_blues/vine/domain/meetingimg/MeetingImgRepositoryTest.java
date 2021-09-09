@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.domain.meetingimg;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
@@ -15,15 +14,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class MeetingImgRepositoryTest {
 
     @Autowired MeetingRepository meetingRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
 
     @Test
@@ -56,11 +52,10 @@ class MeetingImgRepositoryTest {
 
     private Meeting createMeeting() {
 
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -74,16 +69,6 @@ class MeetingImgRepositoryTest {
         meetingRepository.save(meeting);
 
         return meeting;
-    }
-
-    private Category createCategory () {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
     }
 
     private Member createMember(){

@@ -1,6 +1,5 @@
 package com.post_show_blues.vine.service.meeting;
 
-import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
@@ -8,7 +7,6 @@ import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.*;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
-import com.post_show_blues.vine.dto.meetingImg.MeetingImgUploadDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.file.ResultFileStore;
@@ -16,11 +14,7 @@ import com.post_show_blues.vine.file.ResultFileStore;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface MeetingService {
@@ -44,7 +38,7 @@ public interface MeetingService {
         Meeting meeting = Meeting.builder()
                 .id(meetingDTO.getMeetingId())
                 .member(Member.builder().id(meetingDTO.getMasterId()).build())
-                .category(Category.builder().id(meetingDTO.getCategoryId()).build())
+                .category(meetingDTO.getCategory())
                 .title(meetingDTO.getTitle())
                 .text(meetingDTO.getText())
                 .place(meetingDTO.getPlace())
@@ -77,7 +71,7 @@ public interface MeetingService {
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .masterId(meeting.getMember().getId())
-                .categoryId(meeting.getCategory().getId())
+                .category(meeting.getCategory())
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())
@@ -111,13 +105,12 @@ public interface MeetingService {
         return meetingDTO;
     }
 
-    default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,
-                                         Category category){
+    default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList){
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .masterId(meeting.getMember().getId())
-                .categoryId(category.getId())
+                .category(meeting.getCategory())
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())
@@ -140,9 +133,6 @@ public interface MeetingService {
         }).collect(Collectors.toList());
 
         meetingDTO.setImgDTOList(meetingImgDTOList);
-
-
-        meetingDTO.setCategoryName(category.getName());
 
         return meetingDTO;
     }

@@ -2,12 +2,12 @@ package com.post_show_blues.vine.dto.page;
 
 import com.post_show_blues.vine.domain.category.Category;
 import lombok.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.List;
 
 @Builder
@@ -19,10 +19,9 @@ public class PageRequestDTO {
 
     private int size;
 
-    @Builder.Default
-    private List<Long> categoryIdList;
+    @Enumerated(EnumType.STRING)
+    private List<Category> categoryList;
 
-    @Builder.Default
     private String keyword;
 
     @Builder.Default

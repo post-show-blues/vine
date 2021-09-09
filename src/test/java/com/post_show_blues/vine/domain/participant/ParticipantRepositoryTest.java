@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.domain.participant;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
 
 
@@ -33,8 +31,6 @@ class ParticipantRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     MeetingRepository meetingRepository;
-    @Autowired
-    CategoryRepository categoryRepository;
     @Autowired
     MemberImgRepository memberImgRepository;
 
@@ -91,10 +87,19 @@ class ParticipantRepositoryTest {
 
     private MemberImg createMemberImg () {
 
-        Member member = createMember();
+        Member memberC = Member.builder()
+                .name("member")
+                .email("memberC@kookmin.ac.kr")
+                .nickname("memberCNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(memberC);
 
         MemberImg memberImg = MemberImg.builder()
-                .member(member)
+                .member(memberC)
                 .folderPath("vine/2021/09/21")
                 .storeFileName("231saf@Rfl_file1.jpeg")
                 .build();
@@ -107,37 +112,59 @@ class ParticipantRepositoryTest {
     private List<Participant> createParticipantList () {
         Meeting meeting = createMeeting();
 
-        MemberImg memberImg1 = createMemberImg();
-        Member member1 = memberImg1.getMember();
+        Member memberB =Member.builder()
+                .name("memberB")
+                .email("memberB@kookmin.ac.kr")
+                .nickname("memberBNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberB);
 
-        MemberImg memberImg2 = createMemberImg();
-        Member member2 = memberImg2.getMember();
+        MemberImg memberImg = createMemberImg();
+        Member memberC = memberImg.getMember();
 
-        MemberImg memberImg3 = createMemberImg();
-        Member member3 = memberImg3.getMember();
+        //memberD 만들기
+        Member memberD =Member.builder()
+                .name("member")
+                .email("memberD@kookmin.ac.kr")
+                .nickname("memberDNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberD);
+
+        MemberImg memberImg2 = MemberImg.builder()
+                .member(memberD)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("dddf@Rfl_file1.jpeg")
+                .build();
+
+        memberImgRepository.save(memberImg2);
+
 
         Participant participant1 = Participant.builder()
                 .meeting(meeting)
-                .member(member1)
+                .member(memberB)
                 .build();
 
         Participant participant2 = Participant.builder()
                 .meeting(meeting)
-                .member(member2)
+                .member(memberC)
                 .build();
 
         Participant participant3 = Participant.builder()
                 .meeting(meeting)
-                .member(member3)
+                .member(memberD)
                 .build();
 
         participantRepository.save(participant1);
         participantRepository.save(participant2);
         participantRepository.save(participant3);
 
-
         List<Participant> participantList = new ArrayList<>();
-
 
         participantList.add(participant1);
         participantList.add(participant2);
@@ -147,11 +174,10 @@ class ParticipantRepositoryTest {
     }
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -170,21 +196,12 @@ class ParticipantRepositoryTest {
         return meeting;
     }
 
-    private Category createCategory () {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
-    }
 
     private Member createMember(){
         Member member = Member.builder()
-                .name("memberA")
-                .email("member@kookmin.ac.kr")
-                .nickname("memberNickname")
+                .name("member")
+                .email("memberA@kookmin.ac.kr" )
+                .nickname("memberANickname")
                 .password("1111")
                 .phone("010-0000-0000")
                 .university("국민대학교")

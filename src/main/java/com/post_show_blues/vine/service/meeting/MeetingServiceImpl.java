@@ -156,7 +156,7 @@ public class MeetingServiceImpl implements MeetingService{
         }
 
         //변경
-        meeting.changeCategory(Category.builder().id(meetingDTO.getCategoryId()).build());
+        meeting.changeCategory(meetingDTO.getCategory());
         meeting.changeMember(Member.builder().id(meetingDTO.getMasterId()).build());
         meeting.changeTitle(meetingDTO.getTitle());
         meeting.changeText(meetingDTO.getText());
@@ -255,7 +255,7 @@ public class MeetingServiceImpl implements MeetingService{
             pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
         }
 
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryIdList(),
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
                                                                 pageRequestDTO.getKeyword(), pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
@@ -287,9 +287,7 @@ public class MeetingServiceImpl implements MeetingService{
             });
         }
 
-        Category category = (Category) result.get(0)[2];
-
-        return readEntitiesToDTO(meeting, meetingImgList, category);
+        return readEntitiesToDTO(meeting, meetingImgList);
     }
 
     /**

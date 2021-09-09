@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.member.QMember;
 import com.post_show_blues.vine.domain.memberimg.QMemberImg;
 import com.post_show_blues.vine.domain.participant.QParticipant;
@@ -27,17 +26,13 @@ import java.util.stream.Collectors;
 public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         implements SearchMeetingRepository {
 
-    private final CategoryRepository categoryRepository;
-
-
-    public SearchMeetingRepositoryImpl(CategoryRepository categoryRepository) {
+    public SearchMeetingRepositoryImpl() {
         super(Meeting.class);
-        this.categoryRepository = categoryRepository;
     }
 
 
     @Override
-    public Page<Object[]> searchPage(List<Long> categoryIdList, String keyword, Pageable pageable) {
+    public Page<Object[]> searchPage(List<Category> categoryList, String keyword, Pageable pageable) {
 
         log.info("search..............................");
 
@@ -83,13 +78,13 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(meeting.dDay.goe(0));
 
         //카테고리 검색
-        if(categoryIdList != null && categoryIdList.size() > 0){
+        if(categoryList != null && categoryList.size() > 0){
 
             BooleanBuilder categoryBuilder = new BooleanBuilder();
 
-            for(Long categoryId : categoryIdList){
+            for(Category category : categoryList){
 
-                categoryBuilder.or(meeting.category.id.eq(categoryId));
+                categoryBuilder.or(meeting.category.eq(category));
 
             }
 

@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
@@ -41,7 +40,6 @@ class RequestParticipantServiceImplTest {
     @Autowired RequestParticipantRepository requestParticipantRepository;
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired NoticeRepository noticeRepository;
 
@@ -121,7 +119,6 @@ class RequestParticipantServiceImplTest {
         Member member1 = createMember();
 
         //meeting 생성
-        Category category = createCategory();
         Member member2 =Member.builder()
                 .name("member")
                 .email("memberA@kookmin.ac.kr")
@@ -133,7 +130,7 @@ class RequestParticipantServiceImplTest {
         memberRepository.save(member2);
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member2)
                 .title("MeetingA")
                 .text("meet")
@@ -211,7 +208,6 @@ class RequestParticipantServiceImplTest {
         Member member1 = createMember();
 
         //meeting 생성
-        Category category = createCategory();
         Member member2 =Member.builder()
                 .name("member")
                 .email("memberA@kookmin.ac.kr")
@@ -223,7 +219,7 @@ class RequestParticipantServiceImplTest {
         memberRepository.save(member2);
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member2)
                 .title("MeetingA")
                 .text("meet")
@@ -412,11 +408,10 @@ class RequestParticipantServiceImplTest {
     }
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -435,15 +430,6 @@ class RequestParticipantServiceImplTest {
         return meeting;
     }
 
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
-    }
 
     private Member createMember() {
         Member member = Member.builder()

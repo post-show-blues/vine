@@ -1,21 +1,7 @@
 package com.post_show_blues.vine.domain.category;
 
-import lombok.*;
+public enum Category {
 
-import javax.persistence.*;
+    SPORTS, TRAVEL, PHOTO, MUSIC, STUDIES, DESIGN, ENTERTAINMENT, COOKING, DANCE, LANGUAGE, VOLUNTEER, ETC
 
-@Entity
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@ToString
-public class Category {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id", nullable = false)
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
 }
