@@ -28,6 +28,7 @@ public class ParticipantApiController {
     public CMRespDto<?> requestParticipantList(
                                                 @PathVariable("meeting-id") Long meetingId){
 
+        
         List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meetingId);
 
         return new CMRespDto<>(1, "참여인원 목록 불러오기 성공", participantDTOList);
