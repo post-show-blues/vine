@@ -1,11 +1,13 @@
 package com.post_show_blues.vine.controller.api;
 
+import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,9 +24,24 @@ public class MeetingApiController {
     //TODO - api 통신 방식 상의 필요
 
     @GetMapping//모임목록
-    public String meetingList(@RequestBody PageRequestDTO requestDTO, Model model){
+    public String meetingList(@RequestBody PageRequestDTO requestDTO, Model model,
+                              @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(requestDTO, null);
+        PageResultDTO<MeetingDTO, Object[]> result;
+
+        //전체 모임리스트 조회
+        if(requestDTO.getUserId() == null){
+            result = meetingService.getAllMeetingList(requestDTO);
+        }
+        //팔로우가 방장인 모임리스트 조회
+        else {
+
+            if(!requestDTO.getUserId().equals(principalDetails.getMember().getId())){
+                throw new IllegalStateException("조회 권한이 없습니다.");
+            }
+
+            result = meetingService.getFollowMeetingList(requestDTO, principalDetails.getMember().getId());
+        }
 
         model.addAttribute("requestDTO", requestDTO);
         model.addAttribute("result", result);

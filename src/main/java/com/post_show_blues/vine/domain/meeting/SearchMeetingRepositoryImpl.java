@@ -72,7 +72,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
             jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(member1));
         }
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select( meeting, memberImg1, memberImg2.id.min());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, memberImg1, memberImg2.id.min());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -106,7 +106,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         //팔로우한 사람이 방장인 모임만 출력
         if(userId != null){
             builder.and(follow.fromMemberId.id.eq(userId));
-        }
+            }
 
         tuple.where(builder);
 
