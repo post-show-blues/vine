@@ -156,7 +156,7 @@ public class MeetingServiceImpl implements MeetingService{
         }
 
         //변경
-        meeting.changeCategory(Category.builder().id(meetingDTO.getCategoryId()).build());
+        meeting.changeCategory(meetingDTO.getCategory());
         meeting.changeMember(Member.builder().id(meetingDTO.getMasterId()).build());
         meeting.changeTitle(meetingDTO.getTitle());
         meeting.changeText(meetingDTO.getText());
@@ -240,11 +240,11 @@ public class MeetingServiceImpl implements MeetingService{
 
 
     /**
-     * 모임리스트 조회
+     * 전체 모임리스트 조회
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
+    public PageResultDTO<MeetingDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable;
 
@@ -255,8 +255,36 @@ public class MeetingServiceImpl implements MeetingService{
             pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
         }
 
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
-                                                                pageRequestDTO.getKeyword(), pageable);
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
+                                                            pageRequestDTO.getKeyword(),
+                                                            null, pageable);
+
+        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+                (Meeting)arr[0], //모임 엔티티
+                (MemberImg)arr[1], //모임장 프로필 사진
+                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
+        );
+
+        return new PageResultDTO<>(result, fn);
+    }
+
+    /**
+     * 팔로우가 방장인 모임리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PageResultDTO<MeetingDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
+
+        Pageable pageable;
+
+        if(pageRequestDTO.getSort().get(1).equals("ASC")){
+
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).ascending());
+        }else{
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
+        }
+
+        Page<Object[]> result = meetingRepository.searchPage(null, null, principalId, pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
@@ -287,9 +315,7 @@ public class MeetingServiceImpl implements MeetingService{
             });
         }
 
-        Category category = (Category) result.get(0)[2];
-
-        return readEntitiesToDTO(meeting, meetingImgList, category);
+        return readEntitiesToDTO(meeting, meetingImgList);
     }
 
     /**

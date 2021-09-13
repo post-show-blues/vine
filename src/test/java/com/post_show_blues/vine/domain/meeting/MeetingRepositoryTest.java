@@ -1,31 +1,22 @@
 package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
-import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -33,8 +24,6 @@ class MeetingRepositoryTest {
 
     @Autowired
     MeetingRepository meetingRepository;
-    @Autowired
-    CategoryRepository categoryRepository;
     @Autowired
     MemberRepository memberRepository;
     @Autowired MemberImgRepository memberImgRepository;
@@ -50,6 +39,7 @@ class MeetingRepositoryTest {
         Meeting meeting = createMeeting();
 
         MeetingImg meetingImg1 = MeetingImg.builder()
+                .meeting(meeting)
                 .storeFileName(UUID.randomUUID().toString() + "_MeetingImg1")
                 .folderPath("/hyeongwoo1")
                 .build();
@@ -73,17 +63,6 @@ class MeetingRepositoryTest {
         for (Object[] object : objects){
             System.out.println(Arrays.toString(object));
         }
-    }
-
-
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
     }
 
     private Member createMember() {
@@ -118,11 +97,10 @@ class MeetingRepositoryTest {
 
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")

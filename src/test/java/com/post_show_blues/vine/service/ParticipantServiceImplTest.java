@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
@@ -34,7 +33,6 @@ class ParticipantServiceImplTest {
     @Autowired ParticipantService participantService;
     @Autowired MeetingRepository meetingRepository;
     @Autowired MemberRepository memberRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired NoticeRepository noticeRepository;
@@ -243,11 +241,10 @@ class ParticipantServiceImplTest {
     }
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -264,16 +261,6 @@ class ParticipantServiceImplTest {
         meetingRepository.save(meeting);
 
         return meeting;
-    }
-
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
     }
 
     private Member createMember() {

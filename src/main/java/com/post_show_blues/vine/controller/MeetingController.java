@@ -3,8 +3,6 @@ package com.post_show_blues.vine.controller;
 import com.post_show_blues.vine.dto.CategoryDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
-import com.post_show_blues.vine.dto.page.PageResultDTO;
-import com.post_show_blues.vine.service.category.CategoryService;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,15 +21,11 @@ import java.util.List;
 public class MeetingController {
 
     private final MeetingService meetingService;
-    private final CategoryService categoryService;
-
 
     @GetMapping("/new") //모임등록 폼
     public String registerMeetingForm(Model model){
 
-        List<CategoryDTO> categoryDTOList = categoryService.getCategoryList();
 
-        model.addAttribute("categoryListDTO", categoryDTOList);
 
         return "";
     }
@@ -44,11 +38,9 @@ public class MeetingController {
                                     Model model){
 
         MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
-        List<CategoryDTO> categoryDTOList = categoryService.getCategoryList();
 
         model.addAttribute("requestDTO", requestDTO);
         model.addAttribute("meetingDTO", meetingDTO);
-        model.addAttribute("categoryListDTO", categoryDTOList);
 
         return "";
     }

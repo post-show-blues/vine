@@ -1,7 +1,6 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
@@ -32,7 +31,6 @@ class NoticeServiceImplTest {
     @Autowired NoticeService noticeService;
     @Autowired NoticeRepository noticeRepository;
     @Autowired MeetingRepository meetingRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired ParticipantRepository participantRepository;
 
@@ -79,7 +77,6 @@ class NoticeServiceImplTest {
         participantRepository.save(participant2);
 
         //dDay = 0 이 아닌 meeting 생성 -> meetingB
-        Category category = createCategory();
         Member memberD =Member.builder()
                 .name("memberD")
                 .email("memberD@kookmin.ac.kr")
@@ -92,7 +89,7 @@ class NoticeServiceImplTest {
         memberRepository.save(memberD);
 
         Meeting meetingB = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(memberD)
                 .title("Meeting")
                 .text("meet")
@@ -152,10 +149,10 @@ class NoticeServiceImplTest {
         PageResultDTO<NoticeDTO, Notice> result = noticeService.getNoticeList(requestDTO, 1L);
 
         //then
-        Assertions.assertThat(result.getTotalPage()).isEqualTo(2);
-        Assertions.assertThat(result.getSize()).isEqualTo(10);
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+        Assertions.assertThat(result.getSize()).isEqualTo(36);
         Assertions.assertThat(result.getStart()).isEqualTo(1);
-        Assertions.assertThat(result.getDtoList().size()).isEqualTo(10);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(11);
     }
 
     @Test
@@ -202,11 +199,10 @@ class NoticeServiceImplTest {
     }
 
     private Meeting createMeeting() {
-        Category category = createCategory();
         Member member = createMember();
 
         Meeting meeting = Meeting.builder()
-                .category(category)
+                .category(Category.SPORTS)
                 .member(member)
                 .title("MeetingA")
                 .text("meet")
@@ -238,13 +234,4 @@ class NoticeServiceImplTest {
         return member;
     }
 
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
-    }
 }

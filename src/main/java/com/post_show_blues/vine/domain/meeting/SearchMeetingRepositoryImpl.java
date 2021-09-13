@@ -1,7 +1,7 @@
 package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
+import com.post_show_blues.vine.domain.follow.QFollow;
 import com.post_show_blues.vine.domain.member.QMember;
 import com.post_show_blues.vine.domain.memberimg.QMemberImg;
 import com.post_show_blues.vine.domain.participant.QParticipant;
@@ -27,17 +27,13 @@ import java.util.stream.Collectors;
 public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         implements SearchMeetingRepository {
 
-    private final CategoryRepository categoryRepository;
-
-
-    public SearchMeetingRepositoryImpl(CategoryRepository categoryRepository) {
+    public SearchMeetingRepositoryImpl() {
         super(Meeting.class);
-        this.categoryRepository = categoryRepository;
     }
 
 
     @Override
-    public Page<Object[]> searchPage(Category category, String keyword, Pageable pageable) {
+    public Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long userId, Pageable pageable) {
 
         log.info("search..............................");
 
@@ -58,6 +54,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
         QParticipant participant = QParticipant.participant;
 
+        QFollow follow = QFollow.follow;
+
         //쿼리 작성
         JPQLQuery<Meeting> jpqlQuery = from(meeting);
 
@@ -70,7 +68,11 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         jpqlQuery.leftJoin(member2).on(participant.member.eq(member2));
         jpqlQuery.leftJoin(memberImg2).on(memberImg2.member.eq(member2));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select( meeting, memberImg1, memberImg2.id.min());
+        if(userId != null){
+            jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(member1));
+        }
+
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, memberImg1, memberImg2.id.min());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -83,22 +85,28 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(meeting.dDay.goe(0));
 
         //카테고리 검색
-        if(category != null){
+        if(categoryList != null && categoryList.size() > 0){
 
-            List<Category> result = categoryRepository.findAll();
+            BooleanBuilder categoryBuilder = new BooleanBuilder();
 
-            for (Category dbCategory : result){
-                if(category == dbCategory){
+            for(Category category : categoryList){
 
-                    builder.and(meeting.title.contains(keyword));
-                    builder.and(meeting.category.eq(category));
-                    break;
+                categoryBuilder.or(meeting.category.eq(category));
 
-                }
             }
-        }else{
+
+            builder.and(categoryBuilder);
+        }
+
+        //키워드 검색
+        if(keyword != null){
             builder.and(meeting.title.contains(keyword));
         }
+
+        //팔로우한 사람이 방장인 모임만 출력
+        if(userId != null){
+            builder.and(follow.fromMemberId.id.eq(userId));
+            }
 
         tuple.where(builder);
 

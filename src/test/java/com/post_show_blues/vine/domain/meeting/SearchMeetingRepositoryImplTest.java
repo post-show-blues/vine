@@ -1,7 +1,8 @@
 package com.post_show_blues.vine.domain.meeting;
 
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.category.CategoryRepository;
+import com.post_show_blues.vine.domain.follow.Follow;
+import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
@@ -20,10 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -31,28 +30,16 @@ import java.util.stream.IntStream;
 class SearchMeetingRepositoryImplTest {
 
     @Autowired MeetingRepository meetingRepository;
-    @Autowired CategoryRepository categoryRepository;
     @Autowired MemberRepository memberRepository;
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired ParticipantRepository participantRepository;
+    @Autowired FollowRepository followRepository;
 
     @Test
     void 검색리스트() throws Exception{
         //given
-
-        //카테고리 생성
-        Category category1 = Category.builder().name("스포츠").build();
-        Category category2 = Category.builder().name("음악").build();
-        Category category3 = Category.builder().name("맛집").build();
-
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
-        categoryRepository.save(category3);
-
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
-
-            Category category = createCategory();
 
             Member member = Member.builder()
                     .name("member"+i)
@@ -72,7 +59,7 @@ class SearchMeetingRepositoryImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -97,11 +84,11 @@ class SearchMeetingRepositoryImplTest {
         Meeting meeting4 = meetingList.get(3);
         Meeting meeting5 = meetingList.get(4);
 
-        meeting1.changeCategory(category2); // category = "음악"
-        meeting2.changeCategory(category1); // category = "스포츠"
-        meeting3.changeCategory(category1); // category = "스포츠"
-        meeting4.changeCategory(category1); // category = "스포츠"
-        meeting5.changeCategory(category3); // category = "맛집"
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
 
         meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
         meeting4.changeTitle("풋살할 사람"); //meeting4
@@ -134,7 +121,7 @@ class SearchMeetingRepositoryImplTest {
         });
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .category(category1)
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
                 .keyword("풋살")
                 .page(1)
                 .size(10)
@@ -142,14 +129,14 @@ class SearchMeetingRepositoryImplTest {
 
         //when
         /**
-         * meeting2,3,4 category1(스포츠)
+         * meeting2,3 (스포츠), meeting4 (춤)
          * meeting2,4 title =  ~풋살~
          * = meeting2,4만 출력
          * meeting2 참여자 3
          * meeting4 참여자 x
          */
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -164,8 +151,6 @@ class SearchMeetingRepositoryImplTest {
         //given
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
-
-            Category category = createCategory();
 
             Member member = Member.builder()
                     .name("member"+i)
@@ -185,7 +170,7 @@ class SearchMeetingRepositoryImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -202,11 +187,14 @@ class SearchMeetingRepositoryImplTest {
 
         });
 
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(1).size(3).build();
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(3)
+                .build();
 
         //when
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(),
-                pageRequestDTO.getKeyword(),
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
+                pageRequestDTO.getKeyword(), pageRequestDTO.getUserId(),
                 pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
@@ -224,8 +212,6 @@ class SearchMeetingRepositoryImplTest {
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
 
-            Category category = createCategory();
-
             Member member = Member.builder()
                     .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
@@ -244,7 +230,7 @@ class SearchMeetingRepositoryImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -273,10 +259,11 @@ class SearchMeetingRepositoryImplTest {
                 .size(10)
                 .build();
 
+
         //when
         // meeting 2,4 만 title 풋살 포함
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -291,18 +278,9 @@ class SearchMeetingRepositoryImplTest {
     void 리스트조회_카테고리검색() throws Exception{
         //given
         //카테고리 생성
-        Category category1 = Category.builder().name("스포츠").build();
-        Category category2 = Category.builder().name("음악").build();
-        Category category3 = Category.builder().name("맛집").build();
-
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
-        categoryRepository.save(category3);
 
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
-
-            Category category = createCategory();
 
             Member member = Member.builder()
                     .name("member"+i)
@@ -322,7 +300,7 @@ class SearchMeetingRepositoryImplTest {
             memberImgRepository.save(memberImg);
 
             Meeting meeting = Meeting.builder()
-                    .category(category)
+                    .category(Category.SPORTS)
                     .member(member)
                     .title("Meeting"+i)
                     .text("meet")
@@ -347,22 +325,22 @@ class SearchMeetingRepositoryImplTest {
         Meeting meeting4 = meetingList.get(3);
         Meeting meeting5 = meetingList.get(4);
 
-        meeting1.changeCategory(category2); // category = "음악"
-        meeting2.changeCategory(category1); // category = "스포츠"
-        meeting3.changeCategory(category1); // category = "스포츠"
-        meeting4.changeCategory(category1); // category = "스포츠"
-        meeting5.changeCategory(category3); // category = "맛집"
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .category(category1)
+                .categoryList(List.of(Category.SPORTS,Category.DANCE))
                 .page(1)
                 .size(10)
                 .build();
 
         //when
-        // meeting2,3,4 만 category1
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategory(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+        // meeting2,3,4 만 카테고리 검색에 해당 (스포츠, 춤)
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -372,15 +350,152 @@ class SearchMeetingRepositoryImplTest {
         Assertions.assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
-    private Category createCategory() {
-        Category category = Category.builder()
-                .name("categoryA")
+    @Test
+    void 리스트조회_팔로우() throws Exception{
+        //given
+        //meeting 생성
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+
+            Meeting meeting = Meeting.builder()
+                    .category(Category.SPORTS)
+                    .member(member)
+                    .title("Meeting"+i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2023,8,05,00,00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
+                    .build();
+            meetingRepository.save(meeting);
+
+        });
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting2 = meetingList.get(1);
+        Meeting meeting3 = meetingList.get(2);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
+
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
+
+        meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
+        meeting4.changeTitle("풋살할 사람"); //meeting4
+
+        //팔로우 - 팔로우하지 않은 사람(자기자신)의 모임은 출력되면 안됨. = 팔로우한 사람이 방장인 모임만 출력되어야 함.
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        followRepository.rFollow(memberUser.getId(), meeting1.getMember().getId());
+        followRepository.rFollow(memberUser.getId(), meeting2.getMember().getId());
+        followRepository.rFollow(memberUser.getId(), meeting3.getMember().getId());
+        followRepository.rFollow(memberUser.getId(), meeting4.getMember().getId());
+        followRepository.rFollow(memberUser.getId(), meeting5.getMember().getId());
+
+
+        Meeting meetingUser = Meeting.builder()
+                .category(Category.SPORTS)
+                .member(memberUser)
+                .title("풋살이지만 출력되면 안돼")
+                .text("meet")
+                .place("A")
+                .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                        LocalDateTime.of(2023,8,05,00,00)
+                                .toLocalDate().atStartOfDay()).toDays())
+                .maxNumber(4)
+                .currentNumber(3)
+                .build();
+        meetingRepository.save(meetingUser);
+
+
+        //participant 생성
+        IntStream.rangeClosed(6,8).forEach(i->{
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName(i+"231f@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+
+            Participant participant = Participant.builder()
+                    .meeting(meeting2)
+                    .member(member)
+                    .build();
+
+            participantRepository.save(participant);
+        });
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
+                .keyword("풋살")
+                .page(1)
+                .size(10)
+                .userId(memberUser.getId())
                 .build();
 
-        categoryRepository.save(category);
+        //when
+        /**
+         * meeting1,2,3,4,5 는 팔로우 / meetingUser 은 자기자신이 만든 모임 (팔로우x)
+         * meeting2,3 (스포츠), meeting4 (춤)
+         * meeting2,4 title =  ~풋살~
+         * = meeting2,4만 출력
+         * meeting2 참여자 3
+         * meeting4 참여자 x
+         */
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+                memberUser.getId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
-        return category;
+        //then
+        for (Object[] arr : result.getContent()){
+            System.out.println(Arrays.toString(arr));
+        }
+
+        Assertions.assertThat(result.getTotalElements()).isEqualTo(2);
     }
-
 
 }
