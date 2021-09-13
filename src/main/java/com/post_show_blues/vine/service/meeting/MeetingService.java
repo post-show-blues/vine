@@ -25,7 +25,7 @@ public interface MeetingService {
 
     void remove(Long meetingId);
 
-    PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO);
+    PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
 
     MeetingDTO getMeeting(Long meetingId);
 

@@ -244,7 +244,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO) {
+    public PageResultDTO<MeetingDTO, Object[]> getMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
 
         Pageable pageable;
 
@@ -256,7 +256,7 @@ public class MeetingServiceImpl implements MeetingService{
         }
 
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
-                                                                pageRequestDTO.getKeyword(), pageable);
+                                                                pageRequestDTO.getKeyword(), principalId, pageable);
 
         Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티

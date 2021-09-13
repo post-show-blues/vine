@@ -133,7 +133,7 @@ class SearchMeetingRepositoryImplTest {
          * meeting4 참여자 x
          */
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+                null, pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -191,7 +191,7 @@ class SearchMeetingRepositoryImplTest {
 
         //when
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
-                pageRequestDTO.getKeyword(),
+                pageRequestDTO.getKeyword(), null,
                 pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
@@ -256,10 +256,11 @@ class SearchMeetingRepositoryImplTest {
                 .size(10)
                 .build();
 
+
         //when
         // meeting 2,4 만 title 풋살 포함
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+                null, pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -336,7 +337,7 @@ class SearchMeetingRepositoryImplTest {
         //when
         // meeting2,3,4 만 카테고리 검색에 해당 (스포츠, 춤)
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getPageable(Sort.by("id").descending()));
+                null, pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){

@@ -24,7 +24,7 @@ public class MeetingApiController {
     @GetMapping//모임목록
     public String meetingList(@RequestBody PageRequestDTO requestDTO, Model model){
 
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(requestDTO);
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(requestDTO, null);
 
         model.addAttribute("requestDTO", requestDTO);
         model.addAttribute("result", result);

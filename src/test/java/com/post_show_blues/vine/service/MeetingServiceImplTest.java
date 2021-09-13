@@ -443,7 +443,7 @@ class MeetingServiceImplTest {
          * meeting2 참여자 3
          * meeting4 참여자 x
          */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO, null);
 
         //then
         List<MeetingDTO> meetingDTOList = result.getDtoList();
@@ -532,7 +532,7 @@ class MeetingServiceImplTest {
         /**
             첫번째 모임에만 참여자가 존재하며 프로필 사진은 x
          */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO, null);
 
         //then
         List<MeetingDTO> meetingDTOList = result.getDtoList();
@@ -610,7 +610,7 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getMeetingList(pageRequestDTO, null);
 
         //then
         List<MeetingDTO> meetingDTOList = result.getDtoList();

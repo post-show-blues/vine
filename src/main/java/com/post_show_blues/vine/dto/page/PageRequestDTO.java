@@ -27,6 +27,8 @@ public class PageRequestDTO {
     @Builder.Default
     private List<String> sort = List.of("id","DESC");
 
+    private Long userId;
+
     public PageRequestDTO(){
         this.page = 1;
         this.size = 36;
