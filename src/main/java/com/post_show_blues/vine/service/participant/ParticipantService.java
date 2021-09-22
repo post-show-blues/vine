@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ParticipantService {
 
-    void remove(Long participantId, Long memberId); //2번째 파라미터 = 현재 로그인 id (알림구분 용도)
+    void remove(Long participantId, Long principalId); //2번째 파라미터 = 현재 로그인 id (알림구분 용도)
 
     List<ParticipantDTO> getParticipantList(Long meetingId);
 

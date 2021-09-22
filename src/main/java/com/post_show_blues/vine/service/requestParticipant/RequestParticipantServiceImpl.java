@@ -102,10 +102,12 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     @Override
     public void accept(Long requestParticipantId) {
 
-        Optional<RequestParticipant> result = requestParticipantRepository.findById(requestParticipantId);
-        RequestParticipant requestParticipant = result.get();
+        RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
+                new IllegalStateException("존재하지 않은 요청입니다."));
 
         Meeting meeting = requestParticipant.getMeeting();
+
+        //TODO 방장만  수락 가능 체크
 
         //participant 참여명단 추가
         Participant participant = Participant.builder()
@@ -133,18 +135,20 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     }
 
     /**
-     * 요청거절
+     * 요청거절/철회
      */
     @Transactional
     @Override
     public void reject(Long requestParticipantId) {
-        Optional<RequestParticipant> result = requestParticipantRepository.findById(requestParticipantId);
-        RequestParticipant requestParticipant = result.get();
+        RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
+                new IllegalStateException("존재하지 않은 요청입니다."));
 
         Member member = requestParticipant.getMember();
         Meeting meeting = requestParticipant.getMeeting();
 
-        requestParticipantRepository.deleteById(requestParticipantId);
+        //TODO 방장거절, 요청자 철회 가능 체크
+
+       requestParticipantRepository.deleteById(requestParticipantId);
 
         //알람 생성
         Notice notice = Notice.builder()
