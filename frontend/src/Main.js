@@ -2,7 +2,7 @@ function Main() {
 
   return (
     <>
-      <button>새로운 곳</button>
+      <div >이 페이지가 뜨면 성공!</div>
     </>
   );
 }
