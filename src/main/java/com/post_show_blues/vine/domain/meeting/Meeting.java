@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class Meeting extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "meeting_id", nullable = false)
+    @Column(name = "meeting_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
