@@ -35,7 +35,7 @@ public class Meeting extends BaseEntity {
     private Category category;
 
     @Builder.Default
-    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     @Column(nullable = false)
@@ -65,7 +65,6 @@ public class Meeting extends BaseEntity {
     private Long dDay;
 
     private String chatLink;
-
 
 
     public void changeCategory(Category category){
@@ -125,6 +124,12 @@ public class Meeting extends BaseEntity {
 
     public void updateDDay(){
         this.dDay -= 1;
+    }
+
+    //연관관계 메서드
+    public void addComment(Comment comment){
+        this.commentList.add(comment);
+        comment.setMeeting(this);
     }
 
 }

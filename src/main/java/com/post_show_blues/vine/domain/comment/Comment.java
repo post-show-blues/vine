@@ -40,5 +40,21 @@ public class Comment extends BaseEntity {
     @Column(length = 100,nullable = false)
     private String content;
 
+    public void setMeeting(Meeting meeting){
+        this.meeting = meeting;
+    }
+
+    public void setParent(Comment parent){
+        this.parent = parent;
+    }
+
+    //연관관계 메서드
+    public void addChild(Comment child){
+        this.child.add(child);
+        child.setParent(this);
+    }
+
+
+
 
 }

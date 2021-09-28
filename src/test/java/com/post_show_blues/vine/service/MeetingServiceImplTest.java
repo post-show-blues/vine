@@ -433,8 +433,19 @@ class MeetingServiceImplTest {
         });
         
         //댓글 생성 - meeting2 모임에만 생성
-        Comment commentA = createComment(meeting2, meeting2.getMember(), null);
-        Comment commentB = createComment(meeting2, meeting1.getMember(), commentA);
+        Comment commentA = createComment(meeting2.getMember());
+
+        meeting2.addComment(commentA);
+
+        commentRepository.save(commentA);
+
+        Comment commentB = createComment(meeting1.getMember()); //meeting1 방장이 meeting2에 댓글 작성
+
+        meeting2.addComment(commentB);
+
+        commentA.addChild(commentB);
+
+        commentRepository.save(commentB);
 
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
@@ -716,7 +727,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
-    @Commit
+
     @Test
     void 모임_조회페이지DTO() throws Exception{
         //given
@@ -738,9 +749,20 @@ class MeetingServiceImplTest {
 
         meetingImgRepository.save(meetingImg2);
 
-        //댓글 생성
-        Comment commentA = createComment(meeting, meeting.getMember(), null);
-        Comment commentB = createComment(meeting, meeting.getMember(), commentA);
+        //댓글 생성 - commentA의 대댓글은 commentB
+        Comment commentA = createComment(meeting.getMember());
+
+        meeting.addComment(commentA);
+
+        commentRepository.save(commentA);
+
+        Comment commentB = createComment(meeting.getMember());
+
+        meeting.addComment(commentB);
+
+        commentA.addChild(commentB);
+
+        commentRepository.save(commentB);
 
 
         //when
@@ -750,25 +772,9 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
         Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
         Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
-
-        System.out.println(meetingDTO);
-    }
-
-    @Test
-    void 댓글확인() throws Exception{
-        //given
-        MeetingDTO meetingDTO = meetingService.getMeeting(2L);
-
-        System.out.println("----------------------");
-        System.out.println(meetingDTO.getCommentList());
-        for(Comment comment : meetingDTO.getCommentList()){
-            for(Comment child : comment.getChild()){
-                System.out.println(child);
-            }
-
-        }
-
-        //then
+        Assertions.assertThat(meetingDTO.getCommentList().size()).isEqualTo(1);
+        Assertions.assertThat(meetingDTO.getCommentList().get(0).getChild().size()).isEqualTo(1);
+        Assertions.assertThat(meetingDTO.getCommentCount()).isEqualTo(2);
     }
 
     @Test
@@ -826,16 +832,14 @@ class MeetingServiceImplTest {
     }
 
 
-    private Comment createComment(Meeting meeting, Member member, Comment parent) {
+    private Comment createComment(Member member) {
 
         Comment comment = Comment.builder()
                 .member(member)
-                .meeting(meeting)
-                .parent(parent)
                 .content("기대돼요!")
                 .build();
 
-        return commentRepository.save(comment);
+        return comment;
     }
 
     private Participant createParticipant() {
