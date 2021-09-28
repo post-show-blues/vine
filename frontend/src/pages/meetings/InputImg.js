@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import camera from "../../assets/images/camera.svg";
+import { innerShadow } from "../constant";
 
 const InputImg = () => {
   const imgInputStyle = css`
@@ -12,6 +13,7 @@ const InputImg = () => {
     width: 100%;
     height: 272px;
     margin: 1rem 0;
+    box-shadow: ${innerShadow};
   `
   return (
     <div css={imgInputStyle}>

@@ -13,16 +13,18 @@ const Button = ({name, icon}) => {
     font-size: 1.5rem;
     background-color: #c4c4c4;
     box-shadow: ${innerShadow};
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `
   
   return (
-    <button className="flex items-center justify-between" css={buttonStyle}>
+    <button className={isNull(icon) ? null : "ml-auto"} css={buttonStyle}>
       {!isNull(icon) ?
-        <FontAwesomeIcon icon={icon} /> :
+        <FontAwesomeIcon icon={icon} className="mr-4" /> :
         null
       }
-      <span className="mx-auto">{name}</span>
+      <span >{name}</span>
     </button>
   )
 }
