@@ -1,5 +1,6 @@
 package com.post_show_blues.vine.service.meeting;
 
+import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
@@ -14,6 +15,7 @@ import com.post_show_blues.vine.file.ResultFileStore;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,15 +112,21 @@ public interface MeetingService {
 
     default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList){
 
-        System.out.println("=======================");
-        System.out.println(meeting.getCommentList());
-        System.out.println(meeting);
+        List<Comment> commentList = new ArrayList<>();
+
+        if(meeting.getCommentList() != null && meeting.getCommentList().size() > 0){
+            for(Comment comment : meeting.getCommentList()){
+                if(comment.getParent() == null){
+                    commentList.add(comment);
+                }
+            }
+        }
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .masterId(meeting.getMember().getId())
                 .category(meeting.getCategory())
-                .commentList(meeting.getCommentList())
+                .commentList(commentList)
                 .commentCount(meeting.getCommentList().size())
                 .title(meeting.getTitle())
                 .text(meeting.getText())

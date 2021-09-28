@@ -466,18 +466,6 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
-    private Comment createComment(Meeting meeting, Member member, Comment parent) {
-
-        Comment comment = Comment.builder()
-                .member(member)
-                .meeting(meeting)
-                .parent(parent)
-                .content("기대돼요!")
-                .build();
-        
-        return commentRepository.save(comment);
-    }
-
     @Test
     void 전체_모임리스트조회_참여자사진X() throws Exception{
         //given
@@ -728,7 +716,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
-
+    @Commit
     @Test
     void 모임_조회페이지DTO() throws Exception{
         //given
@@ -769,14 +757,17 @@ class MeetingServiceImplTest {
     @Test
     void 댓글확인() throws Exception{
         //given
-        Meeting meeting = meetingRepository.findById(51L).get();
-        //when
-        System.out.println(meeting.getCommentList());
-        MeetingDTO meetingDTO = meetingService.getMeeting(51L);
+        MeetingDTO meetingDTO = meetingService.getMeeting(2L);
 
         System.out.println("----------------------");
         System.out.println(meetingDTO.getCommentList());
-        System.out.println(meetingDTO.getCommentCount());
+        for(Comment comment : meetingDTO.getCommentList()){
+            for(Comment child : comment.getChild()){
+                System.out.println(child);
+            }
+
+        }
+
         //then
     }
 
@@ -834,6 +825,18 @@ class MeetingServiceImplTest {
         }
     }
 
+
+    private Comment createComment(Meeting meeting, Member member, Comment parent) {
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .meeting(meeting)
+                .parent(parent)
+                .content("기대돼요!")
+                .build();
+
+        return commentRepository.save(comment);
+    }
 
     private Participant createParticipant() {
         Meeting meeting = createMeeting();
