@@ -1,10 +1,11 @@
 import { Route } from 'react-router-dom';
-import MeetingsNew from "./MeetingsNew";
-import Home from './Home';
+import {Index as HomeIndex} from "./pages/home/Index"
+import {Index as MeetingsNew} from "./pages/meetings/new/Index";
+
 function App() {
   return (
     <div>
-      <Route exact path="/" component={Home} />
+      <Route exact path="/" component={HomeIndex} />
       <Route path="/meetings/new" component={MeetingsNew} />
       {/* 여기에 라우팅 주소 추가해서 만드시면 됩니다 */}
     </div>
