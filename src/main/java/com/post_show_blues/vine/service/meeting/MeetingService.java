@@ -74,6 +74,7 @@ public interface MeetingService {
                 .meetingId(meeting.getId())
                 .masterId(meeting.getMember().getId())
                 .category(meeting.getCategory())
+                .commentCount(meeting.getCommentList().size())
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())
@@ -109,10 +110,16 @@ public interface MeetingService {
 
     default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList){
 
+        System.out.println("=======================");
+        System.out.println(meeting.getCommentList());
+        System.out.println(meeting);
+
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .masterId(meeting.getMember().getId())
                 .category(meeting.getCategory())
+                .commentList(meeting.getCommentList())
+                .commentCount(meeting.getCommentList().size())
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())

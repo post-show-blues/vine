@@ -27,22 +27,25 @@ public class ParticipantServiceImpl implements ParticipantService{
     /**
      * 추방_나가기
      */
+    @Transactional
     @Override
-    public void remove(Long participantId, Long memberId) {
-        Optional<Participant> result = participantRepository.findById(participantId);
-        Participant participant = result.get();
+    public void remove(Long participantId, Long principalId) {
+
+        Participant participant = participantRepository.findById(participantId).orElseThrow(() ->
+                new IllegalStateException("존재하지 않은 참여자입니다."));
 
         Meeting meeting = participant.getMeeting();
 
         meeting.removeCurrentNumber();
 
+        //TODO 방장, 참여자 확인
 
         /** 1.추방 -> 회원에게 알림
          *  2. 나가기 -> 방장에게 알림
          */
         //알림
         //회원에게 알림(추방)
-        if(meeting.getMember().getId() == memberId){
+        if(meeting.getMember().getId() == principalId){
 
             Notice memberNotice = Notice.builder()
                     .memberId(participant.getMember().getId()) //회원에게
@@ -72,8 +75,8 @@ public class ParticipantServiceImpl implements ParticipantService{
     /**
      * 참여자리스트(DTO)
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<ParticipantDTO> getParticipantList(Long meetingId) {
 
         List<Object[]> result = participantRepository.getListParticipantByMeetingId(meetingId);
@@ -91,8 +94,8 @@ public class ParticipantServiceImpl implements ParticipantService{
     /**
      * 참여조회
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Participant findOne(Long id) {
         Optional<Participant> result = participantRepository.findById(id);
 

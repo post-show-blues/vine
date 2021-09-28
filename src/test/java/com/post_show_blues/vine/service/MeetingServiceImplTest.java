@@ -1,6 +1,8 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.category.Category;
+import com.post_show_blues.vine.domain.comment.Comment;
+import com.post_show_blues.vine.domain.comment.CommentRepository;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +54,7 @@ class MeetingServiceImplTest {
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired FollowRepository followRepository;
     @Autowired NoticeRepository noticeRepository;
+    @Autowired CommentRepository commentRepository;
 
 
    @Test
@@ -427,6 +431,11 @@ class MeetingServiceImplTest {
 
             participantRepository.save(participant);
         });
+        
+        //댓글 생성 - meeting2 모임에만 생성
+        Comment commentA = createComment(meeting2, meeting2.getMember(), null);
+        Comment commentB = createComment(meeting2, meeting1.getMember(), commentA);
+
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
@@ -455,6 +464,18 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getPage()).isEqualTo(1);
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+    }
+
+    private Comment createComment(Meeting meeting, Member member, Comment parent) {
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .meeting(meeting)
+                .parent(parent)
+                .content("기대돼요!")
+                .build();
+        
+        return commentRepository.save(comment);
     }
 
     @Test
@@ -729,6 +750,9 @@ class MeetingServiceImplTest {
 
         meetingImgRepository.save(meetingImg2);
 
+        //댓글 생성
+        Comment commentA = createComment(meeting, meeting.getMember(), null);
+        Comment commentB = createComment(meeting, meeting.getMember(), commentA);
 
 
         //when
@@ -738,6 +762,22 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
         Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
         Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
+
+        System.out.println(meetingDTO);
+    }
+
+    @Test
+    void 댓글확인() throws Exception{
+        //given
+        Meeting meeting = meetingRepository.findById(51L).get();
+        //when
+        System.out.println(meeting.getCommentList());
+        MeetingDTO meetingDTO = meetingService.getMeeting(51L);
+
+        System.out.println("----------------------");
+        System.out.println(meetingDTO.getCommentList());
+        System.out.println(meetingDTO.getCommentCount());
+        //then
     }
 
     @Test
