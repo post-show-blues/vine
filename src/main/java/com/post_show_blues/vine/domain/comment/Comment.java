@@ -6,13 +6,14 @@ import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"member","meeting"})
+@ToString(exclude = {"member","meeting","child"})
 @Entity
 public class Comment extends BaseEntity {
 
@@ -28,12 +29,13 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_comment_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Comment> child;
+    @Builder.Default
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    private List<Comment> child  = new ArrayList<>();
 
     @Column(length = 100,nullable = false)
     private String content;

@@ -1,8 +1,10 @@
 package com.post_show_blues.vine.domain.meeting;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.post_show_blues.vine.domain.BaseEntity;
 import com.post_show_blues.vine.domain.category.Category;
+import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
 
@@ -10,6 +12,8 @@ import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -30,9 +34,14 @@ public class Meeting extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER)
+    private List<Comment> commentList = new ArrayList<>();
+
     @Column(nullable = false)
     private String title;
 
+    @Lob
     @Column(nullable = false)
     @Builder.Default
     private String text = "";

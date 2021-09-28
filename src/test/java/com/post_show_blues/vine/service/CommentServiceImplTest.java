@@ -13,9 +13,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Transactional
@@ -111,6 +113,7 @@ public class CommentServiceImplTest {
         Assertions.assertThat(comment.getContent()).isEqualTo(commentDTO.getContent());
         Assertions.assertThat(comment.getParent().getId()).isEqualTo(parentComment.getId());
     }
+
 
     private Meeting createMeeting() {
         Member member = createMember();
