@@ -227,13 +227,10 @@ class MeetingServiceImplTest {
         meetingService.modify(meetingDTO);
 
         //then
-        Optional<Meeting> result = meetingRepository.findById(meetingA.getId());
-        Meeting findMeeting = result.get();
-
         //모임수정
-        Assertions.assertThat(findMeeting.getTitle()).isEqualTo("MeetingB");
-        Assertions.assertThat(findMeeting.getMember().getId()).isEqualTo(memberB.getId());
-        Assertions.assertThat(findMeeting.getCategory()).isEqualTo(meetingDTO.getCategory());
+        Assertions.assertThat(meetingA.getTitle()).isEqualTo("MeetingB");
+        Assertions.assertThat(meetingA.getMember().getId()).isEqualTo(memberB.getId());
+        Assertions.assertThat(meetingA.getCategory()).isEqualTo(meetingDTO.getCategory());
         //Assertions.assertThat(findMeeting.getDDay()).isEqualTo(3);
 
         //모임 사진 수정
@@ -317,6 +314,17 @@ class MeetingServiceImplTest {
                 .build();
         requestParticipantRepository.save(requestParticipant);
 
+        //meeting 댓글 생성
+        Comment commentA = createComment(member); //참여자가 댓글 남김.
+        commentA.setMeeting(meeting);
+
+        commentRepository.save(commentA);
+
+        Comment commentB = createComment(meeting.getMember());
+        commentB.setMeeting(meeting);
+        commentB.setParent(commentA);
+
+        commentRepository.save(commentB); //방장이 참여자 댓글에 대댓글 남김.
 
         //when
         meetingService.remove(meetingId);
@@ -334,8 +342,16 @@ class MeetingServiceImplTest {
         NoSuchElementException e3 = assertThrows(NoSuchElementException.class,
                 () -> meetingImgRepository.findById(meetingImg.getId()).get());
 
-        //삭제된 모임방 검색 (모임 삭제)
+        //삭제된 모임방의 대댓글 검색 (대댓글 삭제)
         NoSuchElementException e4 = assertThrows(NoSuchElementException.class,
+                () -> commentRepository.findById(commentB.getId()).get());
+
+        //삭제된 모임방의 댓글 (댓글 삭제)
+        NoSuchElementException e5 = assertThrows(NoSuchElementException.class,
+                () -> commentRepository.findById(commentA.getId()).get());
+
+        //삭제된 모임방 검색 (모임 삭제)
+        NoSuchElementException e6 = assertThrows(NoSuchElementException.class,
                 () -> meetingRepository.findById(meetingId).get());
 
 
@@ -343,6 +359,8 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e2.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e3.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e4.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e5.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e6.getMessage()).isEqualTo("No value present");
 
     }
 

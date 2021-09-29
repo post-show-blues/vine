@@ -40,6 +40,10 @@ public class Comment extends BaseEntity {
     @Column(length = 100,nullable = false)
     private String content;
 
+    public void changeContent(String content){
+        this.content = content;
+    }
+
     //연관관계 메서드
     public void setMeeting(Meeting meeting){
         this.meeting = meeting;

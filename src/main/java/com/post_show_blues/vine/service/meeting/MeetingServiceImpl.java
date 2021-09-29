@@ -220,7 +220,8 @@ public class MeetingServiceImpl implements MeetingService{
         Optional<Meeting> result = meetingRepository.findById(meetingId);
         Meeting meeting = result.get();
 
-        // participant -> requestParticipant -> 서버컴퓨터 사진삭제 -> meetingImg -> meeting 순으로 삭제
+        // participant -> requestParticipant -> 서버컴퓨터 사진삭제
+        // -> meetingImg -> meeting 순으로 삭제 (meeting 삭제 시 cascade로 댓글도 삭제)
         participantRepository.deleteByMeeting(meeting);
 
         requestParticipantRepository.deleteByMeeting(meeting);
@@ -234,6 +235,7 @@ public class MeetingServiceImpl implements MeetingService{
         //meetingImg 삭제
         meetingImgRepository.deleteByMeeting(meeting);
 
+        //meeting, comment 삭제
         meetingRepository.deleteById(meetingId);
     }
 
