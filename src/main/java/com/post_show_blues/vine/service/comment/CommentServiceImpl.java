@@ -29,7 +29,30 @@ public class CommentServiceImpl implements CommentService{
         return comment;
     }
 
+    /**
+     * 댓글수정
+     */
+    @Transactional
+    @Override
+    public void modify(Long commentId, String content) {
 
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new IllegalStateException("존재하지 않은 댓글입니다."));
+
+        comment.changeContent(content);
+
+    }
+
+    /**
+     * 댓글삭제
+     */
+    @Transactional
+    @Override
+    public void remove(Long commentId) {
+
+        commentRepository.deleteById(commentId);
+
+    }
 
 
 }

@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @Transactional
@@ -114,6 +117,62 @@ public class CommentServiceImplTest {
         Assertions.assertThat(comment.getParent().getId()).isEqualTo(parentComment.getId());
     }
 
+    @Test
+    void 댓글수정() throws Exception{
+        //given
+        //meeting 생성
+        Meeting meeting = createMeeting();
+
+        //comment 생성
+        Comment comment = createComment(meeting.getMember()); //방장이 댓글 남김.
+        comment.setMeeting(meeting);
+        commentRepository.save(comment);
+
+        //commentDTO 생성
+        CommentDTO commentDTO = CommentDTO.builder()
+                .content("댓글 수정했어요!")
+                .build();
+
+        //when
+        commentService.modify(comment.getId(), commentDTO.getContent());
+
+        //then
+        Assertions.assertThat(comment.getContent()).isEqualTo(commentDTO.getContent());
+        Assertions.assertThat(comment.getMeeting()).isEqualTo(meeting);
+        Assertions.assertThat(comment.getMember()).isEqualTo(meeting.getMember());
+    }
+
+    @Test
+    void 댓글삭제() throws Exception{
+        //given
+        //meeting 생성
+        Meeting meeting = createMeeting();
+
+        //comment 생성
+        Comment comment = createComment(meeting.getMember()); //방장이 댓글 남김.
+        comment.setMeeting(meeting);
+        commentRepository.save(comment);
+
+        //when
+        commentService.remove(comment.getId());
+
+        //then
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> commentRepository.findById(comment.getId()).get());
+
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+    }
+
+    private Comment createComment(Member member) {
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .content("기대돼요!")
+                .build();
+
+        return comment;
+    }
 
     private Meeting createMeeting() {
         Member member = createMember();
