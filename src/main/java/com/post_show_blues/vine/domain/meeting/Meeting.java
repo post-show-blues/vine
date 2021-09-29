@@ -126,10 +126,5 @@ public class Meeting extends BaseEntity {
         this.dDay -= 1;
     }
 
-    //연관관계 메서드
-    public void addComment(Comment comment){
-        this.commentList.add(comment);
-        comment.setMeeting(this);
-    }
 
 }

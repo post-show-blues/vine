@@ -435,15 +435,15 @@ class MeetingServiceImplTest {
         //댓글 생성 - meeting2 모임에만 생성
         Comment commentA = createComment(meeting2.getMember());
 
-        meeting2.addComment(commentA);
+        commentA.setMeeting(meeting2);
 
         commentRepository.save(commentA);
 
         Comment commentB = createComment(meeting1.getMember()); //meeting1 방장이 meeting2에 댓글 작성
 
-        meeting2.addComment(commentB);
+        commentB.setMeeting(meeting2);
 
-        commentA.addChild(commentB);
+        commentB.setParent(commentA);
 
         commentRepository.save(commentB);
 
@@ -752,15 +752,15 @@ class MeetingServiceImplTest {
         //댓글 생성 - commentA의 대댓글은 commentB
         Comment commentA = createComment(meeting.getMember());
 
-        meeting.addComment(commentA);
+        commentA.setMeeting(meeting);
 
         commentRepository.save(commentA);
 
         Comment commentB = createComment(meeting.getMember());
 
-        meeting.addComment(commentB);
+        commentB.setMeeting(meeting);
 
-        commentA.addChild(commentB);
+        commentB.setParent(commentA);
 
         commentRepository.save(commentB);
 
