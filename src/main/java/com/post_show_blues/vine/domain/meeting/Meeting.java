@@ -1,8 +1,10 @@
 package com.post_show_blues.vine.domain.meeting;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.post_show_blues.vine.domain.BaseEntity;
 import com.post_show_blues.vine.domain.category.Category;
+import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
 
@@ -10,6 +12,8 @@ import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -20,7 +24,7 @@ import java.time.LocalDateTime;
 public class Meeting extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "meeting_id", nullable = false)
+    @Column(name = "meeting_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,9 +34,14 @@ public class Meeting extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
+
     @Column(nullable = false)
     private String title;
 
+    @Lob
     @Column(nullable = false)
     @Builder.Default
     private String text = "";
@@ -56,7 +65,6 @@ public class Meeting extends BaseEntity {
     private Long dDay;
 
     private String chatLink;
-
 
 
     public void changeCategory(Category category){
@@ -117,5 +125,6 @@ public class Meeting extends BaseEntity {
     public void updateDDay(){
         this.dDay -= 1;
     }
+
 
 }

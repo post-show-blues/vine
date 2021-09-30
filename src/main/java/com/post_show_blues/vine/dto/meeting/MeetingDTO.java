@@ -3,6 +3,7 @@ package com.post_show_blues.vine.dto.meeting;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.post_show_blues.vine.domain.category.Category;
+import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.MemberImgDTO;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,11 @@ public class MeetingDTO {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    @Builder.Default
+    private List<Comment> commentList = new ArrayList<>();
+
+    private int commentCount;
 
     private String title;
 
