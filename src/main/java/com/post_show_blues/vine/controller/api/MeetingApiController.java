@@ -23,7 +23,7 @@ public class MeetingApiController {
     private final MeetingService meetingService;
 
     @GetMapping//모임목록
-    public ResponseEntity<?> meetingList(@RequestBody PageRequestDTO requestDTO,
+    public ResponseEntity<?> meetingList(PageRequestDTO requestDTO,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         PageResultDTO<MeetingDTO, Object[]> result;
@@ -49,7 +49,7 @@ public class MeetingApiController {
     }
 
     @PostMapping //모임등록
-    public ResponseEntity<?> registerMeeting(@RequestBody MeetingDTO meetingDTO) throws IOException {
+    public ResponseEntity<?> registerMeeting(MeetingDTO meetingDTO) throws IOException {
 
         meetingService.register(meetingDTO);
 
