@@ -4,17 +4,21 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.dto.auth.SigninDto;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
+import com.post_show_blues.vine.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,16 +28,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final MemberImgRepository memberImgRepository;
     private final FileStore fileStore;
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
 
-    /**
-     * 중복 닉네임 검증
-     */
     @Transactional
-    public void isDuplicateNickname(String nickname) {
-        validateDuplicateMember(nickname);
+    public void isDuplicateNickname(String nickname){
+        validateDuplicateNickname(nickname);
+    }
+
+    @Transactional
+    public void isDuplicateEmail(String email){
+        validateDuplicateEmail(email);
     }
 
     /**
@@ -43,9 +51,11 @@ public class AuthService {
     public Object[] join(SignupDto signupDto) throws IOException {
         //회원 정보
         Member member = signupDto.toMemberEntity();
-        String rawPassword = member.getPassword();
-        String encPassword = bCryptPasswordEncoder.encode(rawPassword);
-        member.setPassword(encPassword);
+
+        isDuplicateNickname(member.getNickname());
+        isDuplicateEmail(member.getEmail());
+
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         Member memberEntity = memberRepository.save(member);
 
         MemberImg memberImgEntity = null;
@@ -59,6 +69,22 @@ public class AuthService {
     }
 
     /**
+     * 로그인
+     */
+    public String login(SigninDto signinDto) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        signinDto.getEmail(),
+                        signinDto.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return tokenProvider.createToken(authentication);
+    }
+
+
+    /**
      * 전체 회원 조회
      */
     @Transactional(readOnly = true)
@@ -66,10 +92,18 @@ public class AuthService {
         return memberRepository.findAll();
     }
 
-    private void validateDuplicateMember(String nickname) {
-        Member findMember = memberRepository.findByNickname(nickname);
-        if (findMember != null) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+    private void validateDuplicateNickname(String nickname){
+        Member findMember = memberRepository.findByNickname(nickname).get();
+        if(findMember!=null){
+            throw new IllegalStateException("중복된 닉네임입니다");
         }
     }
+
+    private void validateDuplicateEmail(String email){
+        Member findMember = memberRepository.findByNickname(email).get();
+        if(findMember!=null){
+            throw new IllegalStateException("중복된 이메일입니다");
+        }
+    }
+
 }

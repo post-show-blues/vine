@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -13,9 +14,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "where me.nickname like %:keyword% or me.email like %:keyword%")
     List<Object[]> findMemberByNicknameOrEmail(@Param("keyword") String keyword);
 
-    Member findByNickname(String nickname);
+    Optional<Member> findByNickname(String nickname);
 
-    Member findByEmail(String email);
+    Optional<Member> findByEmail(String email);
 
 }
 
