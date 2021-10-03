@@ -1,5 +1,5 @@
 ### 회원가입 #사진 없음(사진 있을 경우 file 키 값 추가)
-POST http://localhost:9200/api/auth/signup
+POST http://localhost:9200/auth/signup
 Content-Type: application/json
 
 {
@@ -13,22 +13,31 @@ Content-Type: application/json
 
 ### 로그인
 POST http://localhost:9200/auth/signin
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-email=name@duksung.ac.kr&password=1111
+{
+  "email" : "name@duksung.ac.kr",
+  "password" : "1111"
+}
 
 ### 로그아웃
 GET http://localhost:9200/auth/logout
-Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0NDkiLCJpYXQiOjE2MzMyNjgzNzEsImV4cCI6MTYzMzM1NDc3MX0.UChlCbStxpqTRpTbdnsW7mcyhPgfmukcUSBGYb3kvam2viHQSeGZYp9KjDUwTCdqiZ8YD3Owqe3cl_fFsWVFkw
 
+
+### 로그인 안 한 유저가 접근
+GET http://localhost:9200/meetings
+Content-Type: application/json
 
 ### 모두 O
 GET http://localhost:9200/member/find/name
 Content-Type: application/json
 
 ### 로그인만 O
-GET http://localhost:9200/meetings/new
+GET http://localhost:9200/member/profile
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0NDkiLCJpYXQiOjE2MzMyNjgzNzEsImV4cCI6MTYzMzM1NDc3MX0.UChlCbStxpqTRpTbdnsW7mcyhPgfmukcUSBGYb3kvam2viHQSeGZYp9KjDUwTCdqiZ8YD3Owqe3cl_fFsWVFkw
+
 
 ###
 GET http://localhost:9200/member

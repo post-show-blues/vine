@@ -36,10 +36,14 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.querydsl:querydsl-jpa'  //qdsl 추가 내용
-	implementation 'org.springframework.session:spring-session-jdbc'
 
 	// validation 추가
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// jwt 라이브러리 추가
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
 	compile group: 'net.coobird', name: 'thumbnailator', version: '0.4.11'
 }

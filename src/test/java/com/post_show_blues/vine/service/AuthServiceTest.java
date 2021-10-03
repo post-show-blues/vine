@@ -35,9 +35,9 @@ public class AuthServiceTest {
         authService.join(memberA);
 
         //then
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> authService.isDuplicateNickname(nickname));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> authService.join(memberA));
 
-        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        assertThat(e.getMessage()).isEqualTo("중복된 이메일입니다");
 
     }
 
