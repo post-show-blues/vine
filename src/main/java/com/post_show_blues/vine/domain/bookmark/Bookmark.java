@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"member","meeting"})
+@ToString(exclude = {"member"})
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
@@ -33,5 +33,11 @@ public class Bookmark {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
+
+    //연관관계 메서드
+    public void setMember(Member member){
+        this.member = member;
+        member.getBookmarkList().add(this);
+    }
 
 }

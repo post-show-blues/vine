@@ -1,8 +1,11 @@
 package com.post_show_blues.vine.domain.member;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -42,5 +45,9 @@ public class Member implements Serializable {
 
     @Column(nullable = false)
     private String university;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<Bookmark> bookmarkList = new ArrayList<>();
 
 }
