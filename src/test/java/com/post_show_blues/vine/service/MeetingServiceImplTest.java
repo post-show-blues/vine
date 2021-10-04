@@ -855,6 +855,7 @@ class MeetingServiceImplTest {
         Comment comment = Comment.builder()
                 .member(member)
                 .content("기대돼요!")
+                .open(true)
                 .build();
 
         return comment;

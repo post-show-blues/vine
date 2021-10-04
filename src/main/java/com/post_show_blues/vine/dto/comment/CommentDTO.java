@@ -31,18 +31,29 @@ public class CommentDTO {
     @NotBlank
     private String content;
 
+    @NotNull
+    private Boolean open;
+
+    private Boolean existState;
+
     public Comment toEntity(Meeting meeting, Comment parentComment){
 
 
         Comment comment = Comment.builder()
                 .member(Member.builder().id(memberId).build())
                 .content(content)
+                .open(open)
                 .build();
 
         comment.setMeeting(meeting);
 
         if(parentComment != null){
             comment.setParent(parentComment);
+
+            //부모댓글이 비공개일 경우 - 자식 댓글로 비공개로 변경
+            if(parentComment.getOpen() == false){
+                comment.changeOpen(false);
+            }
         }
 
         return comment;

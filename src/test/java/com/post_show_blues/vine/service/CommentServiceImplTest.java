@@ -57,6 +57,7 @@ public class CommentServiceImplTest {
                 .memberId(writer.getId())
                 .meetingId(meeting.getId())
                 .content("정말 기대돼요!")
+                .open(true)
                 .build();
 
         //when
@@ -73,7 +74,6 @@ public class CommentServiceImplTest {
     @Test
     void 대댓글쓰기() throws Exception{
         //given
-
         //모임 생성
         Meeting meeting = createMeeting();
 
@@ -82,6 +82,7 @@ public class CommentServiceImplTest {
                 .meeting(meeting)
                 .member(meeting.getMember()) //모임장이 댓글 작성
                 .content("많이 참여해주세요!")
+                .open(true)
                 .build();
 
         commentRepository.save(parentComment);
@@ -104,6 +105,7 @@ public class CommentServiceImplTest {
                 .meetingId(meeting.getId())
                 .parentId(parentComment.getId())
                 .content("정말 기대돼요!")
+                .open(true)
                 .build();
 
         //when
@@ -115,6 +117,51 @@ public class CommentServiceImplTest {
         Assertions.assertThat(comment.getMember().getId()).isEqualTo(writer.getId());
         Assertions.assertThat(comment.getContent()).isEqualTo(commentDTO.getContent());
         Assertions.assertThat(comment.getParent().getId()).isEqualTo(parentComment.getId());
+    }
+
+    @Test
+    void 대댓글쓰기_부모댓글_비공개() throws Exception{
+        //given
+        //모임 생성
+        Meeting meeting = createMeeting();
+
+        //부모댓글 생성
+        Comment parentComment = Comment.builder()
+                .meeting(meeting)
+                .member(meeting.getMember()) //모임장이 댓글 작성
+                .content("많이 참여해주세요!")
+                .open(false)
+                .build();
+
+        commentRepository.save(parentComment);
+
+        //작성자 생성
+        Member writer = Member.builder()
+                .name("memberC")
+                .email("memberC@kookmin.ac.kr")
+                .nickname("memberNicknameC")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(writer);
+
+        //commentDTO 생성
+        CommentDTO commentDTO = CommentDTO.builder()
+                .memberId(writer.getId())
+                .meetingId(meeting.getId())
+                .parentId(parentComment.getId())
+                .content("정말 기대돼요!")
+                .open(true) //true 로 해도 강제적으로 false
+                .build();
+
+        //when
+        Comment childComment = commentService.register(commentDTO, writer.getId());
+
+        //then
+        Assertions.assertThat(childComment.getOpen()).isFalse();
+        Assertions.assertThat(parentComment.getOpen()).isFalse();
     }
 
     @Test
@@ -131,6 +178,7 @@ public class CommentServiceImplTest {
         //commentDTO 생성
         CommentDTO commentDTO = CommentDTO.builder()
                 .content("댓글 수정했어요!")
+                .open(true)
                 .build();
 
         //when
@@ -191,6 +239,7 @@ public class CommentServiceImplTest {
         Comment comment = Comment.builder()
                 .member(member)
                 .content("기대돼요!")
+                .open(true)
                 .build();
 
         return comment;
