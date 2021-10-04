@@ -106,8 +106,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2021,07,13,16,00))
-                .reqDeadline(LocalDateTime.of(2021,06,05,16,00))
+                .meetDate(LocalDateTime.of(2021,10,13,16,00))
+                .reqDeadline(LocalDateTime.of(2021,10,10,16,00))
                 .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
                                 .toLocalDate().atStartOfDay()).toDays())
@@ -125,7 +125,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory()).isEqualTo(meetingDTO.getCategory());
         Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
-        //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
+        //Assertions.assertThat(meeting.getDDay()).isEqualTo(5);
 
         //모임 imgFiles 검증
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
@@ -214,11 +214,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate(LocalDateTime.of(2021,07,14,00,00)) //5 -> 6일로 변경
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
+                .meetDate(LocalDateTime.of(2021,10,14,00,00))
+                .reqDeadline(LocalDateTime.of(2021,10,10,00,00))
                 .maxNumber(5) // 4 -> 5로 변경
                 .imageFiles(imgFiles)
                 .build();
@@ -231,7 +228,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingA.getTitle()).isEqualTo("MeetingB");
         Assertions.assertThat(meetingA.getMember().getId()).isEqualTo(memberB.getId());
         Assertions.assertThat(meetingA.getCategory()).isEqualTo(meetingDTO.getCategory());
-        //Assertions.assertThat(findMeeting.getDDay()).isEqualTo(3);
+        //Assertions.assertThat(meetingA.getDDay()).isEqualTo(5);
 
         //모임 사진 수정
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meetingA);
@@ -265,9 +262,6 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -397,7 +391,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,8,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -527,7 +521,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,6,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -616,7 +610,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,6,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -855,6 +849,7 @@ class MeetingServiceImplTest {
         Comment comment = Comment.builder()
                 .member(member)
                 .content("기대돼요!")
+                .open(true)
                 .build();
 
         return comment;

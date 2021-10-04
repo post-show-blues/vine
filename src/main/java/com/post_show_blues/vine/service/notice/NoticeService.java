@@ -24,7 +24,7 @@ public interface NoticeService {
                 .memberId(notice.getMemberId())
                 .text(notice.getText())
                 .link(notice.getLink())
-                .state(notice.getState())
+                .readState(notice.getReadState())
                 .build();
 
         return noticeDTO;

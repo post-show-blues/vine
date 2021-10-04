@@ -40,8 +40,23 @@ public class Comment extends BaseEntity {
     @Column(length = 100,nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private Boolean open;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean existState = true;
+
     public void changeContent(String content){
         this.content = content;
+    }
+
+    public void changeOpen(boolean bool){
+        this.open = bool;
+    }
+
+    public void removeComment(){
+        this.existState = false;
     }
 
     //연관관계 메서드

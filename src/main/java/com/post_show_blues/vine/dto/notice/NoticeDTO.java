@@ -19,6 +19,6 @@ public class NoticeDTO {
 
     private String link;
 
-    private Boolean state;
+    private Boolean readState;
 
 }
