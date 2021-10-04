@@ -4,9 +4,11 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
+import com.post_show_blues.vine.dto.member.MemberUpdateDto;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class MemberUpdateService {
     private final MemberRepository memberRepository;
     private final MemberImgRepository memberImgRepository;
@@ -25,21 +28,26 @@ public class MemberUpdateService {
      * 회원 정보 수정
      */
     @Transactional
-    public Member memberUpdate(Long id, Member member) {
+    public Member memberUpdate(Long id, MemberUpdateDto memberUpdateDto) throws IOException {
         // 1. 영속화
         Member memberEntity = memberRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("찾을 수 없는 id입니다")
         );
 
-        memberEntity.setInstaurl(member.getInstaurl());
-        memberEntity.setTwitterurl(member.getTwitterurl());
-        memberEntity.setText(member.getText());
+        memberTextUpdate(memberEntity, memberUpdateDto);
+        memberImgUpdate(memberEntity, Optional.ofNullable(memberUpdateDto.getFile()));
 
         return memberEntity;
     }
 
-    @Transactional
-    public void memberImgUpdate(Member member, Optional<MultipartFile> memberImgUploadDto) throws IOException {
+    private void memberTextUpdate(Member member, MemberUpdateDto memberUpdateDto){
+        member.setInstaurl(memberUpdateDto.getInstaurl());
+        member.setFacebookurl(memberUpdateDto.getFacebookurl());
+        member.setText(memberUpdateDto.getText());
+    }
+
+    //TODO : 이미지 업데이트 분기 어떻게 할 지
+    private void memberImgUpdate(Member member, Optional<MultipartFile> memberImgUploadDto) throws IOException {
         Optional<MemberImg> memberImgEntity = memberImgRepository.findByMember(member);
 
         //dto 사진 o, db 사진 o

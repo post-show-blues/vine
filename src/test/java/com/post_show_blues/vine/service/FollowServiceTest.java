@@ -147,7 +147,6 @@ public class FollowServiceTest {
                 .nickname("memberNickname")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("덕성대학교")
                 .build();
         Member memberEntityA = (Member) authService.join(memberA)[0];
         return memberEntityA;
@@ -160,7 +159,6 @@ public class FollowServiceTest {
                 .nickname("Nickname")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
 
         Member memberEntityB = (Member) authService.join(memberB)[0];
@@ -174,7 +172,6 @@ public class FollowServiceTest {
                 .nickname("memberC")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
 
         Member memberEntityC = (Member) authService.join(memberC)[0];

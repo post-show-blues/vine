@@ -120,7 +120,6 @@ public class MemberServiceTest {
                 .nickname("memberNickname")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("덕성대학교")
                 .file(file1)
                 .build();
         Object[] join = authService.join(signupDTO);
@@ -137,7 +136,6 @@ public class MemberServiceTest {
                 .nickname("memberB")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("덕성대학교")
                 .file(file1)
                 .build();
         Object[] join = authService.join(signupDTO);

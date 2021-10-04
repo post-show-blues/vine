@@ -28,11 +28,12 @@ public class MemberUpdateApiController {
     @PutMapping("/profile/edit")
     public CMRespDto<?> profileUpdate(
             MemberUpdateDto memberUpdateDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails) { //text 수정 가능
+            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException { //text 수정 가능
+
         log.info("principle : " + principalDetails);
 
         if (principalDetails != null) {
-            Member memberEntity = memberUpdateService.memberUpdate(principalDetails.getId(), memberUpdateDto.toEntity());
+            Member memberEntity = memberUpdateService.memberUpdate(principalDetails.getId(), memberUpdateDto);
             //세션정보 바꿔주기
             principalDetails.setMember(memberEntity);
             return new CMRespDto<>(1, "회원수정완료", memberEntity);
@@ -40,23 +41,5 @@ public class MemberUpdateApiController {
         throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다");
 
     }
-
-    @PutMapping("/img/edit")
-    public CMRespDto<?> imgUpdate(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            MultipartFile img) throws IOException {
-        log.info("principle : " + principalDetails);
-
-        if (principalDetails != null) {
-
-            Optional<MultipartFile> imgDto = Optional.ofNullable(img);
-            memberUpdateService.memberImgUpdate(principalDetails.getMember(), imgDto);
-            //세션정보 바꿔주기
-            return new CMRespDto<>(1, "회원사진 업데이트 완료", null);
-        }
-        throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다");
-
-    }
-
 
 }

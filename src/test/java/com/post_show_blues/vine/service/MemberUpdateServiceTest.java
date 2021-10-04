@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +53,7 @@ public class MemberUpdateServiceTest {
         MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
 
         //when
-        Member updateMember = memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto.toEntity());
+        Member updateMember = memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
 
         //then
         assertThat(updateMember.getInstaurl()).isEqualTo(memberUpdateDto.getInstaurl());
@@ -65,36 +64,42 @@ public class MemberUpdateServiceTest {
     @Test
     public void 회원사진수정_DTO_O_DB_O () throws Exception {
         //given
-        Optional<MultipartFile> memberImgUploadDto_o = memberImgUploadDto_O();
-        memberUpdateService.memberImgUpdate(memberA, memberImgUploadDto_o);
+        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
+        memberUpdateDto.setFile(memberImgUploadDto_O());
+
+        memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
 
         //when
         MemberImg memberImg = memberImgRepository.findByMember(memberA).get();
 
         //then
-        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberImgUploadDto_o.get().getOriginalFilename());
+        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberUpdateDto.getFile().getOriginalFilename());
 
     }
 
     @Test
-    public void 회원사진수정_DTO_O_DB_X () throws Exception {
+    public void 회원사진수정_DTO_O_DB_X () throws Exception { //이름이 동일함
         //given
-        Optional<MultipartFile> memberImgUploadDto_o = memberImgUploadDto_O();
-        memberUpdateService.memberImgUpdate(memberB, memberImgUploadDto_o);
+        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
+        memberUpdateDto.setFile(memberImgUploadDto_O());
+
+        memberUpdateService.memberUpdate(memberB.getId(), memberUpdateDto);
 
         //when
         MemberImg memberImg = memberImgRepository.findByMember(memberB).get();
 
         //then
-        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberImgUploadDto_o.get().getOriginalFilename());
+        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberUpdateDto.getFile().getOriginalFilename());
 
     }
 
     @Test
     public void 회원사진수정_DTO_X_DB_O () throws Exception {
         //given
-        Optional<MultipartFile> memberImgUploadDto_x = memberImgUploadDto_X();
-        memberUpdateService.memberImgUpdate(memberA, memberImgUploadDto_x);
+        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
+        memberUpdateDto.setFile(memberImgUploadDto_X());
+
+        memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
 
         //when
         boolean empty = memberImgRepository.findByMember(memberA).isEmpty();
@@ -106,8 +111,9 @@ public class MemberUpdateServiceTest {
     @Test
     public void 회원사진수정_DTO_X_DB_X () throws Exception {
         //given
-        Optional<MultipartFile> memberImgUploadDto_x = memberImgUploadDto_X();
-        memberUpdateService.memberImgUpdate(memberB, memberImgUploadDto_x);
+        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
+        memberUpdateDto.setFile(memberImgUploadDto_X());
+        memberUpdateService.memberUpdate(memberB.getId(), memberUpdateDto);
 
         //when
         boolean empty = memberImgRepository.findByMember(memberB).isEmpty();
@@ -126,7 +132,6 @@ public class MemberUpdateServiceTest {
                 .nickname("memberA")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("덕성대학교")
                 .file(file1)
                 .build();
         Object[] join = authService.join(signupDTO);
@@ -142,7 +147,6 @@ public class MemberUpdateServiceTest {
                 .nickname("memberB")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("덕성대학교")
                 .build();
 
         Object[] join = authService.join(signupDTO);
@@ -154,15 +158,15 @@ public class MemberUpdateServiceTest {
         return MemberUpdateDto.builder()
                 .text("안녕하세요")
                 .instaurl("https://www.instagram.com/dlwlrma/?hl=ko")
-                .twitterurl("https://twitter.com/BTS_twt?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor")
+                .facebookurl("https://twitter.com/BTS_twt?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor")
                 .build();
     }
 
-    Optional<MultipartFile> memberImgUploadDto_O() throws IOException {
-        return Optional.of(new MockMultipartFile("file", "filename-2.jpeg", "image/jpeg", "some-image".getBytes()));
+    MultipartFile memberImgUploadDto_O() throws IOException {
+        return new MockMultipartFile("file", "filename-2.jpeg", "image/jpeg", "some-image".getBytes());
     }
 
-    Optional<MultipartFile> memberImgUploadDto_X() throws IOException {
-        return Optional.ofNullable(null);
+    MultipartFile memberImgUploadDto_X() throws IOException {
+        return null;
     }
 }

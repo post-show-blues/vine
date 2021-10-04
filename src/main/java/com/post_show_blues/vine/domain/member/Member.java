@@ -32,7 +32,7 @@ public class Member implements Serializable {
     private String instaurl="";
 
     @Builder.Default
-    private String twitterurl="";
+    private String facebookurl="";
 
     @Column(nullable = false)
     private String password;
@@ -40,7 +40,8 @@ public class Member implements Serializable {
     @Column(nullable = false)
     private String phone;
 
-    @Builder.Default
-    private String university="";
+
+    @Column(nullable = true)
+    private String university;
 
 }

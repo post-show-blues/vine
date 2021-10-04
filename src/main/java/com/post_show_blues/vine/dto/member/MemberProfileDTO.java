@@ -12,7 +12,7 @@ public class MemberProfileDTO {
     private String nickname;
     private String text;
     private String instaurl;
-    private String twitterurl;
+    private String facebookurl;
     private MemberImgDTO memberImgDTO;
     private Boolean isFollow;
 }
