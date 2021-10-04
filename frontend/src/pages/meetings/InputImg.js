@@ -12,7 +12,7 @@ const InputImg = () => {
     justify-content: center;
     width: 100%;
     height: 272px;
-    margin: 1rem 0;
+    margin: 0.5rem 0;
     box-shadow: ${innerShadow};
   `
   return (

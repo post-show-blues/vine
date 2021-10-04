@@ -9,7 +9,7 @@ const Button = ({name, icon}) => {
   const buttonStyle = css`
     width: 208px;
     height: 54px;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
     background-color: #c4c4c4;
     box-shadow: ${innerShadow};

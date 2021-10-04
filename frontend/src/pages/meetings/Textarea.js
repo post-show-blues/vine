@@ -9,7 +9,7 @@ const Textarea = (props) => {
     border-radius: 25px;
     height: ${props.height}px;
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
     label {
       border-radius: 25px;
       background-color: #575757;
@@ -35,7 +35,7 @@ const Textarea = (props) => {
   `
   return (
     <div css={inputStyle} className="flex">
-      <label css={css`width: 168px;`} className="font-bold">{props.name}</label>
+      <label css={css`width: 168px; font-weight: 700;`}>{props.name}</label>
       <textarea type={props.type} />
     </div>
   )

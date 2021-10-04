@@ -14,7 +14,7 @@ export const Index = () => {
   const rightImgTitleStyle = css `
     border-radius: 25px;
     width: 100%;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.5rem;
     box-shadow: innerShadow;
     background-color: #333333;
@@ -41,7 +41,7 @@ export const Index = () => {
         <NavBlack />
         <div className="grid h-full grid-cols-12 bg-black" css={css`height: ${meetingsContentHeight}px;`} >
           <div className="flex flex-col items-center justify-between col-span-7 px-8 py-12" css={css`max-height: 955px;`}>
-            <span className="font-bold text-white" css={css`font-size: 2.25rem;`}>Join Activity Room</span>
+            <span className="text-white" css={css`font-size: 2.25rem; font-weight: 700;`}>Join Activity Room</span>
             <Input name="DATE" type="date" height={meetingsInputHeight} />
             <Input name="TITLE" type="text" height={meetingsInputHeight} />
             <Input name="INTEREST" type="date" height={meetingsInputHeight} />

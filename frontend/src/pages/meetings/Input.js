@@ -10,7 +10,7 @@ const Input = (props) => {
     border-radius: 25px;
     height: ${props.height}px;
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
     box-shadow: ${innerShadow};
     
     input {
@@ -37,7 +37,7 @@ const Input = (props) => {
         color: #090909;
         min-width: 168px;
         width: 168px;
-        font-weight: bold;
+        font-weight: 700;
         position: absolute;
         content: attr(data-descr);
         z-index: 2;
@@ -46,7 +46,6 @@ const Input = (props) => {
   `
   return (
     <div css={inputStyle} className="flex" data-descr={props.name}>
-      {/* <label>{props.name}</label> */}
       <input type={props.type} />
     </div>
   )
