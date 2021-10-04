@@ -166,7 +166,7 @@ class NoticeServiceImplTest {
         //then
         Optional<Notice> result = noticeRepository.findById(notice.getId());
         Notice notice1 = result.get();
-        Assertions.assertThat(notice1.getState()).isTrue();
+        Assertions.assertThat(notice1.getReadState()).isTrue();
     }
 
     @Test
@@ -189,7 +189,7 @@ class NoticeServiceImplTest {
                 .memberId(1L)
                 .text("형우님이 팔로우 신청을 했습니다.")
                 .link("/member/guddn")
-                .state(false)
+                .readState(false)
                 .build();
 
         noticeRepository.save(notice);

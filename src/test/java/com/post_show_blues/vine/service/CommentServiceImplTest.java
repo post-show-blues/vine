@@ -157,11 +157,33 @@ public class CommentServiceImplTest {
         commentService.remove(comment.getId());
 
         //then
-        NoSuchElementException e = assertThrows(NoSuchElementException.class,
-                () -> commentRepository.findById(comment.getId()).get());
+        Assertions.assertThat(comment.getExistState()).isFalse();
+    }
 
+    @Test
+    void 댓글삭제_대댓글존재o() throws Exception{
+        //given
+        //meeting 생성
+        Meeting meeting = createMeeting();
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("No value present");
+        //parentComment 생성
+        Comment parentComment = createComment(meeting.getMember()); //방장이 댓글 남김.
+        parentComment.setMeeting(meeting);
+        commentRepository.save(parentComment);
+
+        //childComment 생성
+        Comment childComment = createComment(meeting.getMember()); //방장이 대댓글 남김.
+        childComment.setMeeting(meeting);
+        childComment.setParent(parentComment);
+        commentRepository.save(childComment);
+
+        //when
+        commentService.remove(parentComment.getId()); //부모댓글 삭제
+
+        //then
+        //부모댓글 - existState = false, 자식댓글 - existState = true
+        Assertions.assertThat(parentComment.getExistState()).isFalse();
+        Assertions.assertThat(childComment.getExistState()).isTrue();
     }
 
     private Comment createComment(Member member) {

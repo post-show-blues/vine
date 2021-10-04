@@ -31,26 +31,18 @@ public class CommentDTO {
     @NotBlank
     private String content;
 
-    public Comment toEntity(Long principalId){
+    public Comment toEntity(Meeting meeting, Comment parentComment){
 
-        Comment comment;
 
-        if(parentId == null){
+        Comment comment = Comment.builder()
+                .member(Member.builder().id(memberId).build())
+                .content(content)
+                .build();
 
-            comment = Comment.builder()
-                    .meeting(Meeting.builder().id(meetingId).build())
-                    .member(Member.builder().id(principalId).build())
-                    .content(content)
-                    .build();
+        comment.setMeeting(meeting);
 
-        }else{
-
-            comment = Comment.builder()
-                    .meeting(Meeting.builder().id(meetingId).build())
-                    .member(Member.builder().id(principalId).build())
-                    .parent(Comment.builder().id(parentId).build())
-                    .content(content)
-                    .build();
+        if(parentComment != null){
+            comment.setParent(parentComment);
         }
 
         return comment;
