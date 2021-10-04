@@ -1,6 +1,5 @@
 # vine
-
-![0DB설계](https://user-images.githubusercontent.com/52027965/120803910-04fadd00-c57f-11eb-94c3-397e0b57e394.png)
+![db](https://user-images.githubusercontent.com/77663506/135832304-057998bf-836f-4ed9-b5f7-be3a099e3a83.png)
 
 <!-- # FrontEnd 실행방법
 1. h2 실행 => `./bin/h2.sh`
