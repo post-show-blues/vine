@@ -40,7 +40,7 @@ public class Member implements Serializable {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
-    private String university;
+    @Builder.Default
+    private String university="";
 
 }

@@ -93,14 +93,14 @@ public class AuthService {
     }
 
     private void validateDuplicateNickname(String nickname){
-        Member findMember = memberRepository.findByNickname(nickname).get();
+        Member findMember = memberRepository.findByNickname(nickname).orElse(null);
         if(findMember!=null){
             throw new IllegalStateException("중복된 닉네임입니다");
         }
     }
 
     private void validateDuplicateEmail(String email){
-        Member findMember = memberRepository.findByNickname(email).get();
+        Member findMember = memberRepository.findByEmail(email).orElse(null);
         if(findMember!=null){
             throw new IllegalStateException("중복된 이메일입니다");
         }

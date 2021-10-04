@@ -84,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //먼저 정해진 값은 불변
-                .antMatchers("/auth/signup", "/auth/signin").permitAll() //회원가입, 로그인은 토큰이 없는 상태로 요청
+                .antMatchers("/auth/**").permitAll() //회원가입, 로그인은 토큰이 없는 상태로 요청
 
                 .antMatchers("/member/find/**", "/member",
                         "/meetings", "/meetings/**").permitAll()

@@ -81,7 +81,6 @@ public class AuthServiceTest {
                 .nickname("memberNickname")
                 .password("1111")
                 .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
     }
 

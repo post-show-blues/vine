@@ -25,8 +25,6 @@ public class  SignupDto {
     private String password;
     @NotEmpty
     private String phone;
-    @NotEmpty
-    private String university;
 
     private MultipartFile file;
 
@@ -37,7 +35,6 @@ public class  SignupDto {
                 .password(password)
                 .email(email)
                 .phone(phone)
-                .university(university)
                 .build();
     }
 
