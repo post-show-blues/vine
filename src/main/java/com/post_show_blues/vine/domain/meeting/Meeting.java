@@ -122,6 +122,10 @@ public class Meeting extends BaseEntity {
        this.currentNumber -=1;
     }
 
+    public void changeDDay(){
+        this.dDay = Duration.between(LocalDate.now().atStartOfDay(), this.reqDeadline.toLocalDate().atStartOfDay()).toDays();
+    }
+
     public void updateDDay(){
         this.dDay -= 1;
     }

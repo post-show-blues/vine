@@ -50,7 +50,7 @@ public interface MeetingService {
                 .currentNumber(meetingDTO.getCurrentNumber())
                 .meetDate(meetingDTO.getMeetDate())
                 .reqDeadline(meetingDTO.getReqDeadline())
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(), meetingDTO.getMeetDate().toLocalDate().atStartOfDay()).toDays())
+                .dDay(Duration.between(LocalDate.now().atStartOfDay(), meetingDTO.getReqDeadline().toLocalDate().atStartOfDay()).toDays())
                 .chatLink(meetingDTO.getChatLink())
                 .build();
 

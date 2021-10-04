@@ -60,30 +60,6 @@ public class MeetingServiceImpl implements MeetingService{
     public Long register(MeetingDTO meetingDTO) throws IOException {
 
         //활동날짜, 신청 마감날짜 비교
-        /*
-       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-
-        String meetDate = meetingDTO.getMeetDate();
-        String reqDeadline = meetingDTO.getReqDeadline();
-
-        try{
-            Date meetDateType = dateFormat.parse(meetDate);
-            Date deadlineDateType = dateFormat.parse(reqDeadline);
-
-            if(meetDateType.before(deadlineDateType)){
-                throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
-            }
-        }catch (ParseException e){
-            e.printStackTrace();
-            throw new IllegalStateException("형식에 맞게 입력해주세요.");
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
-        }
-
-         */
-
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
         }
@@ -148,8 +124,6 @@ public class MeetingServiceImpl implements MeetingService{
         Meeting meeting = meetingRepository.findById(meetingDTO.getMeetingId()).orElseThrow(() ->
                 new IllegalStateException("존재하는 않은 모임입니다."));
 
-
-
         //수정한 meetDate, reqDeadline 체크
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
@@ -164,6 +138,7 @@ public class MeetingServiceImpl implements MeetingService{
         meeting.changeMaxNumber(meetingDTO.getMaxNumber());
         meeting.changeMeetDate(meetingDTO.getMeetDate());
         meeting.changeReqDeadline(meetingDTO.getReqDeadline());
+        meeting.changeDDay();
         meeting.changeChatLink(meetingDTO.getChatLink());
 
 
