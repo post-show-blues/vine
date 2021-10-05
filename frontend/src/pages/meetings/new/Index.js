@@ -16,7 +16,7 @@ export const Index = () => {
         <NavBlack />
         <div className="grid h-full grid-cols-12 bg-black" css={css`height: ${meetingsContentHeight}px;`} >
           <div className="flex flex-col items-center justify-between col-span-7 px-8 py-12" css={css`max-height: 955px;`}>
-            <span className="text-white" css={css`font-size: 2.25rem;  700;`}>Create an activity room</span>
+            <span className="text-white" css={css`font-size: 2.25rem; font-weight: 700;`}>Create an activity room</span>
             <Input name="DATE" type="date" height={meetingsInputHeight} />
             <Input name="DUE DATE" type="date" height={meetingsInputHeight} />
             <Input name="TITLE" type="text" height={meetingsInputHeight} />
@@ -30,7 +30,7 @@ export const Index = () => {
               <InputImg />
               <InputImg />
             </div>
-            <div className="flex mt-16 justify-evenly" style={{marginTop: "169px"}}>
+            <div className="flex mt-16 justify-evenly" style={{ marginTop: "169px" }}>
               <Button name="DRAFTS" />
               <Button name="UPLOAD" />
             </div>

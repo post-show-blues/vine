@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import samplePerson from '../../assets/images/samplePerson.png';
-import gear from '../../assets/images/gear.svg';
+import gear from '../../assets/icon/gear.svg';
 import AddSns from "./AddSns";
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
 import { innerShadow } from "../constant";
