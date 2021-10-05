@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { defaultPd } from "../../constant";
 
-export const MainImg = ({url, alt}) => {
+const MainImg = ({url, alt}) => {
   const imgStyle = css`
     width: 100%;
     height: 420px;
@@ -14,3 +14,5 @@ export const MainImg = ({url, alt}) => {
     <img src={url} alt={alt} css={imgStyle}/>
   )
 }
+
+export default MainImg;

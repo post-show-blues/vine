@@ -4,8 +4,8 @@ import LeftSidebar from "../../LeftSidebar"
 import NavBlack from "../../NavBlack"
 import SectionTitle from "../SectionTitle";
 import { defaultContentPadding } from "../../constant";
-import { MainImg } from "./MainImg";
-import mainImg from "../../../assets/images/main-image.png";
+import MainImg from "./MainImg";
+import { mainImg } from "../../../assets/images/images";
 import CardList from "../CardList";
 
 export const Index = () => {
@@ -17,7 +17,7 @@ export const Index = () => {
         <div className="flex flex-col" css={css`${defaultContentPadding}`}>
           <SectionTitle text="WHAT IS NEW" />
           <MainImg url={mainImg} alt="대문이미지" />
-          <SectionTitle text="FOLLOWING" marginTop="1rem"/>
+          <SectionTitle text="FOLLOWING" marginTop="1rem" />
           <CardList />
         </div>
       </div>

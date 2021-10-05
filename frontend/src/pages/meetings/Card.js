@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { innerShadow } from "../constant";
 import samplePerson from "../../assets/images/samplePerson.png";
-import MainImg from '../../assets/images/main-image.png';
+import { mainImg } from '../../assets/images/images';
 import { CardIcon } from "./CardIcon";
 import { starActive, starDeactvie, likeActive, likeDeactive, comment } from "../../assets/icon/Icon";
 
@@ -82,13 +82,13 @@ const Card = () => {
         </div>
         <div css={cardPersonnel}>2/4</div>
       </div>
-      <img src={MainImg} alt="" css={placeImg} />
+      <img src={mainImg} alt="" css={placeImg} />
       <span css={cardTitle}>여기는 제목. 캠핑할 사람 모집하고 있어요.</span>
       <span css={cardContent}>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Exercitationem nobis natus quidem vero deserunt voluptates, sapiente accusamus quis vel. Sed labore laudantium, optio asperiores voluptas a expedita aspernatur? Soluta, esse.</span>
       <div className="flex items-center justify-between mt-auto">
-        <CardIcon icon={likeActive} value="20" alt="좋아요"/>
-        <CardIcon icon={comment} value="15" alt="댓글"/>
-        <CardIcon icon={starActive} value="10" alt="북마크"/>
+        <CardIcon icon={likeActive} value="20" alt="좋아요" />
+        <CardIcon icon={comment} value="15" alt="댓글" />
+        <CardIcon icon={starActive} value="10" alt="북마크" />
       </div>
     </div>
   )
