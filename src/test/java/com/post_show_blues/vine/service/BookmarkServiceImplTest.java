@@ -49,7 +49,7 @@ public class BookmarkServiceImplTest {
         Assertions.assertThat(bookmark.getId()).isNotNull();
         Assertions.assertThat(bookmark.getMeeting().getId()).isEqualTo(meeting.getId());
         Assertions.assertThat(bookmark.getMember().getId()).isEqualTo(member.getId());
-        Assertions.assertThat(member.getBookmarkList().size()).isEqualTo(1);
+        Assertions.assertThat(meeting.getBookmarkList().size()).isEqualTo(1);
     }
 
     private Meeting createMeeting(Member master) {

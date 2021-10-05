@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface SearchMeetingRepository {
 
-    Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long userId, Pageable pageable);
+    Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long principalId, Pageable pageable);
+
+    Page<Object[]> bookmarkPage(Long principalId, Pageable pageable);
 
 }

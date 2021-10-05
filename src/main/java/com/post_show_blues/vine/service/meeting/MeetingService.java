@@ -1,5 +1,6 @@
 package com.post_show_blues.vine.service.meeting;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
@@ -7,6 +8,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.*;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
@@ -27,9 +29,11 @@ public interface MeetingService {
 
     void remove(Long meetingId);
 
-    PageResultDTO<MeetingDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO);
+    PageResultDTO<MeetingResDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
 
-    PageResultDTO<MeetingDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
+    PageResultDTO<MeetingResDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
+
+    PageResultDTO<MeetingResDTO, Object[]> getBookmarkMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
 
     MeetingDTO getMeeting(Long meetingId);
 
@@ -70,44 +74,52 @@ public interface MeetingService {
 
     }
 
-    default MeetingDTO listEntityToDTO(Meeting meeting, MemberImg masterImg, MemberImg participantImg){
+    default MeetingResDTO listEntityToDTO(Meeting meeting, MeetingImg meetingImg,
+                                          Member master, MemberImg masterImg, Long principalId){
 
-        MeetingDTO meetingDTO = MeetingDTO.builder()
+        MeetingResDTO meetingResDTO = MeetingResDTO.builder()
                 .meetingId(meeting.getId())
-                .masterId(meeting.getMember().getId())
-                .category(meeting.getCategory())
-                .commentCount(meeting.getCommentList().size())
+                .masterId(master.getId())
+                .masterNickname(master.getNickname())
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())
                 .maxNumber(meeting.getMaxNumber())
                 .currentNumber(meeting.getCurrentNumber())
-                .meetDate(meeting.getMeetDate())
-                .reqDeadline(meeting.getReqDeadline())
                 .dDay(meeting.getDDay())
-                .chatLink(meeting.getChatLink())
-                .regDate(meeting.getRegDate())
-                .modDate(meeting.getModDate())
+                .commentCount(meeting.getCommentList().size())
+                .bookmarkState(false)
                 .build();
 
+        //현재 사용자 모임 북마크
+        for(Bookmark bookmark : meeting.getBookmarkList()){
+            if(bookmark.getMember().getId() == principalId){
+                meetingResDTO.setBookmarkState(true);
+                break;
+            }
+        }
+
+        //모임 사진
+        if(meetingImg != null){
+            MeetingImgDTO meetingImgDTO = MeetingImgDTO.builder()
+                    .folderPath(meetingImg.getFolderPath())
+                    .storeFileName(meetingImg.getStoreFileName())
+                    .build();
+
+            meetingResDTO.setMeetingImgDTO(meetingImgDTO);
+        }
+
+        //방장 프로필 사진
         if(masterImg != null){
             MemberImgDTO masterImgDTO = MemberImgDTO.builder()
                     .folderPath(masterImg.getFolderPath())
                     .storeFileName(masterImg.getStoreFileName())
                     .build();
 
-            meetingDTO.setMasterImg(masterImgDTO);
+            meetingResDTO.setMasterImgDTO(masterImgDTO);
         }
 
-        if(participantImg != null){
-            MemberImgDTO participantImgDTO = MemberImgDTO.builder()
-                    .folderPath(participantImg.getFolderPath())
-                    .storeFileName(participantImg.getStoreFileName())
-                    .build();
-
-            meetingDTO.setParticipantImg(participantImgDTO);
-        }
-        return meetingDTO;
+        return meetingResDTO;
     }
 
     default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList){

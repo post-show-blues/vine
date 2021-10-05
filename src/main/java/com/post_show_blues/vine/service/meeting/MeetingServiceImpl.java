@@ -13,11 +13,12 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
-import com.post_show_blues.vine.service.memberImg.MemberImgService;
+import com.post_show_blues.vine.service.meetingImg.MeetingImgService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +50,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final NoticeRepository noticeRepository;
     private final ParticipantRepository participantRepository;
     private final RequestParticipantRepository requestParticipantRepository;
-    private final MemberImgService memberImgService;
+    private final MeetingImgService meetingImgService;
     private final FollowRepository followRepository;
 
     /**
@@ -221,7 +222,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO) {
+    public PageResultDTO<MeetingResDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
 
         Pageable pageable;
 
@@ -236,10 +237,12 @@ public class MeetingServiceImpl implements MeetingService{
                                                             pageRequestDTO.getKeyword(),
                                                             null, pageable);
 
-        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
-                (MemberImg)arr[1], //모임장 프로필 사진
-                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
         );
 
         return new PageResultDTO<>(result, fn);
@@ -250,7 +253,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
+    public PageResultDTO<MeetingResDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
 
         Pageable pageable;
 
@@ -263,10 +266,41 @@ public class MeetingServiceImpl implements MeetingService{
 
         Page<Object[]> result = meetingRepository.searchPage(null, null, principalId, pageable);
 
-        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
-                (MemberImg)arr[1], //모임장 프로필 사진
-                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
+        );
+
+        return new PageResultDTO<>(result, fn);
+    }
+
+    /**
+     * 북마크 모임리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PageResultDTO<MeetingResDTO, Object[]> getBookmarkMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
+
+        Pageable pageable;
+
+        if(pageRequestDTO.getSort().get(1).equals("ASC")){
+
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).ascending());
+        }else{
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
+        }
+
+        Page<Object[]> result = meetingRepository.bookmarkPage(principalId, pageable);
+
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
+                (Meeting)arr[0], //모임 엔티티
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
         );
 
         return new PageResultDTO<>(result, fn);

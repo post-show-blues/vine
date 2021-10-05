@@ -3,6 +3,7 @@ package com.post_show_blues.vine.controller.api;
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
@@ -26,12 +27,12 @@ public class MeetingApiController {
     public ResponseEntity<?> meetingList(PageRequestDTO requestDTO,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        PageResultDTO<MeetingDTO, Object[]> result;
+        PageResultDTO<MeetingResDTO, Object[]> result;
 
         //전체 모임리스트 조회
         if(requestDTO.getUserId() == null){
 
-            result = meetingService.getAllMeetingList(requestDTO);
+            result = meetingService.getAllMeetingList(requestDTO, principalDetails.getMember().getId());
 
             return new ResponseEntity<>(new CMRespDto<>(1, "모임 목록 불러오기 성공", result), HttpStatus.OK);
         }

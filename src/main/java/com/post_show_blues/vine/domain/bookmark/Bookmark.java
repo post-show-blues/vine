@@ -35,9 +35,9 @@ public class Bookmark {
     private Meeting meeting;
 
     //연관관계 메서드
-    public void setMember(Member member){
-        this.member = member;
-        member.getBookmarkList().add(this);
+    public void setMeeting(Meeting meeting){
+        this.meeting = meeting;
+        meeting.getBookmarkList().add(this);
     }
 
 }

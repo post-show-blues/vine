@@ -64,6 +64,14 @@ class MeetingRepositoryTest {
             System.out.println(Arrays.toString(object));
         }
     }
+    
+    @Test
+    void testbookmark() throws Exception{
+        //given
+        
+        //when
+        //then
+    }
 
     private Member createMember() {
         Member member = Member.builder()

@@ -19,6 +19,7 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
@@ -475,13 +476,13 @@ class MeetingServiceImplTest {
          * meeting2 참여자 3
          * meeting4 참여자 x
          */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, meeting2.getMember().getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
@@ -489,94 +490,6 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
-    @Test
-    void 전체_모임리스트조회_참여자사진X() throws Exception{
-        //given
-        //meeting 생성
-        IntStream.rangeClosed(1,5).forEach(i -> {
-
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
-
-            MemberImg memberImg = MemberImg.builder()
-                    .member(member)
-                    .folderPath("vine/2021/09/21")
-                    .storeFileName("231qqf@Rfl_file1.jpeg")
-                    .build();
-            memberImgRepository.save(memberImg);
-
-            Meeting meeting = Meeting.builder()
-                    .category(Category.SPORTS)
-                    .member(member)
-                    .title("Meeting"+i)
-                    .text("meet")
-                    .place("A")
-                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
-                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
-                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,6,04,00,00)
-                                    .toLocalDate().atStartOfDay()).toDays())
-                    .maxNumber(4)
-                    .currentNumber(3)
-                    .build();
-            meetingRepository.save(meeting);
-
-        });
-
-        List<Meeting> meetingList = meetingRepository.findAll();
-
-        //첫번째 미팅
-        Meeting meeting = meetingList.get(0);
-
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
-
-            Participant participant = Participant.builder()
-                    .meeting(meeting)
-                    .member(member)
-                    .build();
-
-            participantRepository.save(participant);
-        });
-
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(1)
-                .size(36)
-                .build();
-
-        //when
-        /**
-            첫번째 모임에만 참여자가 존재하며 프로필 사진은 x
-         */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
-
-        //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
-
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
-        }
-
-        Assertions.assertThat(result.getPage()).isEqualTo(1);
-        Assertions.assertThat(result.getDtoList().size()).isEqualTo(5);
-        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
-    }
 
     @Test
     void 팔로우_모임리스트() throws Exception{
@@ -646,13 +559,13 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getFollowMeetingList(pageRequestDTO, memberUser.getId());
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getFollowMeetingList(pageRequestDTO, memberUser.getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
@@ -725,18 +638,18 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, meetingA.getMember().getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
-        Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
+        Assertions.assertThat(meetingResDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 

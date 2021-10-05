@@ -7,4 +7,6 @@ public interface BookmarkService {
 
     Bookmark bookmark(Long meetingId, Long principalId);
 
+
+
 }

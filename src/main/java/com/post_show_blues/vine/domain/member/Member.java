@@ -46,8 +46,4 @@ public class Member implements Serializable {
     @Column(nullable = false)
     private String university;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Bookmark> bookmarkList = new ArrayList<>();
-
 }
