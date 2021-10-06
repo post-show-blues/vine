@@ -12,13 +12,16 @@ import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
 import com.post_show_blues.vine.service.meetingImg.MeetingImgService;
+import com.post_show_blues.vine.service.participant.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +55,7 @@ public class MeetingServiceImpl implements MeetingService{
     private final RequestParticipantRepository requestParticipantRepository;
     private final MeetingImgService meetingImgService;
     private final FollowRepository followRepository;
+    private final ParticipantService participantService;
 
     /**
      * 모임등록
@@ -311,11 +315,10 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public MeetingDTO getMeeting(Long meetingId) {
+    public DetailMeetingDTO getMeeting(Long meetingId, Long participantId) {
         List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
 
         Meeting meeting =(Meeting)result.get(0)[0];
-
 
         List<MeetingImg> meetingImgList = new ArrayList<>();
 
@@ -326,7 +329,16 @@ public class MeetingServiceImpl implements MeetingService{
             });
         }
 
-        return readEntitiesToDTO(meeting, meetingImgList);
+        Member master = (Member) result.get(0)[2];
+
+        MemberImg masterImg = (MemberImg) result.get(0)[3];
+
+
+        //참여자 리스트
+        List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meeting.getId());
+
+        return readEntitiesToDTO(meeting, meetingImgList, master, masterImg,
+                participantDTOList, participantId);
     }
 
     /**

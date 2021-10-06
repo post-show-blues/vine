@@ -5,6 +5,8 @@ import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.dto.MemberImgDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
+import com.post_show_blues.vine.dto.member.MemberListDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,15 +28,12 @@ public class DetailMeetingDTO {
 
     private Long meetingId;
 
-    private Long masterId;
-
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Builder.Default
-    private List<Comment> commentList = new ArrayList<>();
-
     private int commentCount;
+
+    private Boolean bookmarkState;
 
     private String title;
 
@@ -50,23 +49,16 @@ public class DetailMeetingDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetDate;
 
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime reqDeadline;
-
     private Long dDay;
 
     private String chatLink;
 
-    private LocalDateTime regDate, modDate;
+    private MemberListDTO masterDTO;
 
-    private List<MultipartFile> imageFiles;
+    @Builder.Default
+    private List<ParticipantDTO> participantDTOList = new ArrayList<>();
 
     @Builder.Default
     private List<MeetingImgDTO> imgDTOList = new ArrayList<>();
-
-    private MemberImgDTO masterImg;
-
-    private MemberImgDTO participantImg;
 
 }

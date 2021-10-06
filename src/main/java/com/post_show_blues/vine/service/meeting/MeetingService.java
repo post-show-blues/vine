@@ -6,12 +6,16 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.dto.*;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
+import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.file.ResultFileStore;
 
 import java.io.IOException;
@@ -35,7 +39,7 @@ public interface MeetingService {
 
     PageResultDTO<MeetingResDTO, Object[]> getBookmarkMeetingList(PageRequestDTO pageRequestDTO, Long principalId);
 
-    MeetingDTO getMeeting(Long meetingId);
+    DetailMeetingDTO getMeeting(Long meetingId, Long participantId);
 
     Meeting findOne(Long id);
 
@@ -124,48 +128,70 @@ public interface MeetingService {
         return meetingResDTO;
     }
 
-    default MeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList){
+    default DetailMeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,
+                                               Member master, MemberImg masterImg,
+                                               List<ParticipantDTO> participantDTOList, Long principalId){
 
-        List<Comment> commentList = new ArrayList<>();
-
-        if(meeting.getCommentList() != null && meeting.getCommentList().size() > 0){
-            for(Comment comment : meeting.getCommentList()){
-                if(comment.getParent() == null){
-                    commentList.add(comment);
-                }
-            }
-        }
-
-        MeetingDTO meetingDTO = MeetingDTO.builder()
+        DetailMeetingDTO detailMeetingDTO = DetailMeetingDTO.builder()
                 .meetingId(meeting.getId())
-                .masterId(meeting.getMember().getId())
                 .category(meeting.getCategory())
-                .commentList(commentList)
                 .commentCount(meeting.getCommentList().size())
+                .bookmarkState(false)
                 .title(meeting.getTitle())
                 .text(meeting.getText())
                 .place(meeting.getPlace())
                 .maxNumber(meeting.getMaxNumber())
                 .currentNumber(meeting.getCurrentNumber())
                 .meetDate(meeting.getMeetDate())
-                .reqDeadline(meeting.getReqDeadline())
                 .dDay(meeting.getDDay())
                 .chatLink(meeting.getChatLink())
-                .regDate(meeting.getRegDate())
-                .modDate(meeting.getModDate())
                 .build();
 
+        //현재 사용자 모임 북마크
+        if(principalId != null) {
+            for (Bookmark bookmark : meeting.getBookmarkList()) {
+                if (bookmark.getMember().getId() == principalId) {
+                    detailMeetingDTO.setBookmarkState(true);
+                    break;
+                }
+            }
+        }
 
-        List<MeetingImgDTO> meetingImgDTOList = meetingImgList.stream().map(meetingImg -> {
-            return MeetingImgDTO.builder()
-                    .folderPath(meetingImg.getFolderPath())
-                    .storeFileName(meetingImg.getStoreFileName())
+        //모임 사진
+        if(meetingImgList != null && meetingImgList.size() > 0){
+            List<MeetingImgDTO> meetingImgDTOList = meetingImgList.stream().map(meetingImg -> {
+                return MeetingImgDTO.builder()
+                        .folderPath(meetingImg.getFolderPath())
+                        .storeFileName(meetingImg.getStoreFileName())
+                        .build();
+            }).collect(Collectors.toList());
+
+            detailMeetingDTO.setImgDTOList(meetingImgDTOList);
+        }
+
+        //방장 memberListDTO 생성
+        MemberListDTO memberListDTO = MemberListDTO.builder()
+                .id(master.getId())
+                .nickname(master.getNickname())
+                .text(master.getText())
+                .build();
+
+        //방장 프로필 사진
+        if(masterImg != null){
+            MemberImgDTO masterImgDTO = MemberImgDTO.builder()
+                    .folderPath(masterImg.getFolderPath())
+                    .storeFileName(masterImg.getStoreFileName())
                     .build();
-        }).collect(Collectors.toList());
 
-        meetingDTO.setImgDTOList(meetingImgDTOList);
+            //memberListDTO 프로필 사진 넣기
+            memberListDTO.setMemberImgDTO(masterImgDTO);
+        }
 
-        return meetingDTO;
+        if(participantDTOList.size() > 0){
+            detailMeetingDTO.setParticipantDTOList(participantDTOList);
+        }
+
+        return detailMeetingDTO;
     }
 
 
