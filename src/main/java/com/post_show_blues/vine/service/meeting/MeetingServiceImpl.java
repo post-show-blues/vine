@@ -1,6 +1,5 @@
 package com.post_show_blues.vine.service.meeting;
 
-import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;

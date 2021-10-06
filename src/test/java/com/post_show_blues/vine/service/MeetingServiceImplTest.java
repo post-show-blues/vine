@@ -20,10 +20,14 @@ import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
+import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
+import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -899,6 +903,16 @@ class MeetingServiceImplTest {
         //given
         Meeting meeting = createMeeting();
 
+        //방장 프로필 사진 생성
+        MemberImg masterImg = MemberImg.builder()
+                .member(meeting.getMember())
+                .storeFileName(UUID.randomUUID().toString() + "_masterImg1")
+                .folderPath("/hyeongwoo1")
+                .build();
+
+        memberImgRepository.save(masterImg);
+
+        //모임 사진 2개 생성
         MeetingImg meetingImg1 = MeetingImg.builder()
                 .meeting(meeting)
                 .storeFileName(UUID.randomUUID().toString() + "_MeetingImg1")
@@ -930,31 +944,142 @@ class MeetingServiceImplTest {
 
         commentRepository.save(commentB);
 
+        //참여자 생성 - 5명
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .text("반가워요")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            Participant participant = Participant.builder()
+                    .member(member)
+                    .meeting(meeting)
+                    .build();
+
+            participantRepository.save(participant);
+
+            //참여자 프로필 사진 생성
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("123Rfl_file1.jpeg")
+                    .storeFileName("231f@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+        });
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //현재 유저 북마크 생성 - meeting 모임을 북마크
+        Bookmark bookmark = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmark.setMeeting(meeting);
+
+        bookmarkRepository.save(bookmark);
+
 
         //when
-        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+        DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
         //then
-        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
-        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
-        Assertions.assertThat(meetingDTO.getCommentList().size()).isEqualTo(1);
-        Assertions.assertThat(meetingDTO.getCommentList().get(0).getChild().size()).isEqualTo(1);
-        Assertions.assertThat(meetingDTO.getCommentCount()).isEqualTo(2);
+        //모임 관련
+        Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(detailMeetingDTO.getCategory()).isEqualTo(meeting.getCategory());
+        Assertions.assertThat(detailMeetingDTO.getCommentCount()).isEqualTo(2);
+        Assertions.assertThat(detailMeetingDTO.getBookmarkState()).isTrue();
+        Assertions.assertThat(detailMeetingDTO.getDDay()).isEqualTo(meeting.getDDay());
+
+        //모임 사진 관련
+        Assertions.assertThat(detailMeetingDTO.getImgDTOList().size()).isEqualTo(2);
+
+        //방장 관련
+        MemberListDTO masterDTO = detailMeetingDTO.getMasterDTO();
+
+        Assertions.assertThat(masterDTO.getId()).isEqualTo(meeting.getMember().getId());
+        Assertions.assertThat(masterDTO.getText()).isEqualTo(meeting.getMember().getText());
+        Assertions.assertThat(masterDTO.getNickname()).isEqualTo(meeting.getMember().getNickname());
+
+        //방장 프로필 사진 관련
+        MemberImgDTO masterImgDTO = masterDTO.getMemberImgDTO();
+        Assertions.assertThat(masterImgDTO.getFolderPath()).isEqualTo(masterImg.getFolderPath());
+        Assertions.assertThat(masterImgDTO.getStoreFileName()).isEqualTo(masterImg.getStoreFileName());
+
+        //참여자 리스트 관련
+        List<ParticipantDTO> participantDTOList = detailMeetingDTO.getParticipantDTOList();
+        for(ParticipantDTO participantDTO : participantDTOList){
+            System.out.println(participantDTO);
+        }
+
+        Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(5);
     }
+
 
     @Test
     void 모임_조회페이지DTO_사진x() throws Exception{
         //given
+        //미팅 생성 - 모임 사진 x
         Meeting meeting = createMeeting();
 
+        //현재 사용 유저 생성 - meeting 모임 북마크 x
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        /**
+         * 모임사진 x , 방장 프로필사진 x, 댓글 x, 참여자 x, 사용자 - 모임 북마크 x
+         */
         //when
-        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+        DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
         //then
-        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
-        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(0);
+        //모임 관련
+        Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(detailMeetingDTO.getCategory()).isEqualTo(meeting.getCategory());
+        Assertions.assertThat(detailMeetingDTO.getCommentCount()).isEqualTo(0);
+        Assertions.assertThat(detailMeetingDTO.getBookmarkState()).isFalse();
+        Assertions.assertThat(detailMeetingDTO.getDDay()).isEqualTo(meeting.getDDay());
+
+        //모임 사진 관련
+        Assertions.assertThat(detailMeetingDTO.getImgDTOList().size()).isEqualTo(0);
+
+        //방장 관련
+        MemberListDTO masterDTO = detailMeetingDTO.getMasterDTO();
+
+        Assertions.assertThat(masterDTO.getId()).isEqualTo(meeting.getMember().getId());
+        Assertions.assertThat(masterDTO.getText()).isEqualTo(meeting.getMember().getText());
+        Assertions.assertThat(masterDTO.getNickname()).isEqualTo(meeting.getMember().getNickname());
+
+        //방장 프로필 사진 관련
+        MemberImgDTO masterImgDTO = masterDTO.getMemberImgDTO();
+        Assertions.assertThat(masterImgDTO).isNull();
+
+        //참여자 리스트 관련
+        List<ParticipantDTO> participantDTOList = detailMeetingDTO.getParticipantDTOList();
+        Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(0);
     }
 
     @Test

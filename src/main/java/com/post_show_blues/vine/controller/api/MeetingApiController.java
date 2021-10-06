@@ -2,6 +2,7 @@ package com.post_show_blues.vine.controller.api;
 
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
@@ -58,11 +59,13 @@ public class MeetingApiController {
     }
 
     @GetMapping("/{meeting-id}") //모임조회
-    public ResponseEntity<?> readMeeting(@PathVariable("meeting-id") Long meetingId){
+    public ResponseEntity<?> readMeeting(@PathVariable("meeting-id") Long meetingId,
+                                         @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        MeetingDTO meetingDTO = meetingService.getMeeting(meetingId);
+        DetailMeetingDTO detailMeetingDTO =
+                meetingService.getMeeting(meetingId, principalDetails.getMember().getId());
 
-        return new ResponseEntity<>(new CMRespDto<>(1, "모임 상세보기 성공", meetingDTO), HttpStatus.OK);
+        return new ResponseEntity<>(new CMRespDto<>(1, "모임 상세보기 성공", detailMeetingDTO), HttpStatus.OK);
     }
 
     @PutMapping("/{meeting-id}") //모임 수정

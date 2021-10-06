@@ -8,6 +8,7 @@ import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,22 +23,19 @@ import java.util.*;
 @Transactional
 class MeetingRepositoryTest {
 
-    @Autowired
-    MeetingRepository meetingRepository;
-    @Autowired
-    MemberRepository memberRepository;
+    @Autowired MeetingRepository meetingRepository;
+    @Autowired MemberRepository memberRepository;
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired ParticipantRepository participantRepository;
-    @Autowired
-    MeetingImgRepository meetingImgRepository;
+    @Autowired MeetingImgRepository meetingImgRepository;
 
 
     @Test
     void testGetMeetingWithAll() throws Exception {
         //given
-
         Meeting meeting = createMeeting();
 
+        //모임 사진 2개 생성
         MeetingImg meetingImg1 = MeetingImg.builder()
                 .meeting(meeting)
                 .storeFileName(UUID.randomUUID().toString() + "_MeetingImg1")
@@ -54,7 +52,16 @@ class MeetingRepositoryTest {
 
         meetingImgRepository.save(meetingImg2);
 
+        //방장 프로필 사진 생성
+        Member master = meeting.getMember();
 
+        MemberImg masterImg = MemberImg.builder()
+                .member(master)
+                .storeFileName(UUID.randomUUID().toString() + "_masterImg1")
+                .folderPath("/hyeongwoo1")
+                .build();
+
+        memberImgRepository.save(masterImg);
 
         //when
         List<Object[]> objects = meetingRepository.getMeetingWithAll(meeting.getId());
@@ -63,14 +70,8 @@ class MeetingRepositoryTest {
         for (Object[] object : objects){
             System.out.println(Arrays.toString(object));
         }
-    }
-    
-    @Test
-    void testbookmark() throws Exception{
-        //given
-        
-        //when
-        //then
+
+        Assertions.assertThat(objects.size()).isEqualTo(2);
     }
 
     private Member createMember() {
@@ -87,22 +88,6 @@ class MeetingRepositoryTest {
 
         return member;
     }
-
-    private MemberImg createMemberImg() {
-
-        Member member = createMember();
-
-        MemberImg memberImg = MemberImg.builder()
-                .member(member)
-                .folderPath("vine/2021/09/21")
-                .storeFileName("231dfsaf@Rfl_file1.jpeg")
-                .build();
-
-        memberImgRepository.save(memberImg);
-
-        return memberImg;
-    }
-
 
     private Meeting createMeeting() {
         Member member = createMember();

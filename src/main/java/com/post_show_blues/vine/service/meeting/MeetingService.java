@@ -187,6 +187,9 @@ public interface MeetingService {
             memberListDTO.setMemberImgDTO(masterImgDTO);
         }
 
+        detailMeetingDTO.setMasterDTO(memberListDTO);
+
+        //participantDTO 리스트
         if(participantDTOList.size() > 0){
             detailMeetingDTO.setParticipantDTOList(participantDTOList);
         }
