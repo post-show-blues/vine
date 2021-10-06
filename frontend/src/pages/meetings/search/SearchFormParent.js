@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { useState } from 'react';
 import { innerShadow } from "../../constant";
+import AccountSearch from "./AccountSearch";
 
 const SearchFormParent = () => {
   const [isAccountActive, setIsAccountActive] = useState(false);
@@ -50,6 +51,7 @@ const SearchFormParent = () => {
         <div css={accountButtonStyle} onClick={() => { setIsAccountActive(true); setIsRoomActive(false) }}>ACCOUNT</div>
         <div css={roomButtonStyle} onClick={() => { setIsAccountActive(false); setIsRoomActive(true) }}>ROOM</div>
       </div>
+      {isAccountActive && <AccountSearch />}
     </div>
   )
 }

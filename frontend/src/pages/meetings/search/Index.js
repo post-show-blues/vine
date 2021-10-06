@@ -27,7 +27,6 @@ export const Index = () => {
           <SectionTitle text="WHAT IS NEW" />
           <MainImg url={mainImg} alt="대문이미지" />
           <SearchBar onInputClick={onInputClick}/>
-
           {!isInputFocus ?
             <>
               <SectionTitle text="TOP VIEW" marginTop="1rem" />
@@ -35,8 +34,6 @@ export const Index = () => {
             </> : 
             <SearchFormParent />
           }
-
-
         </div>
       </div>
     </div>
