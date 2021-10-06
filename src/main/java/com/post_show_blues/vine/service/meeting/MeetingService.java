@@ -92,10 +92,12 @@ public interface MeetingService {
                 .build();
 
         //현재 사용자 모임 북마크
-        for(Bookmark bookmark : meeting.getBookmarkList()){
-            if(bookmark.getMember().getId() == principalId){
-                meetingResDTO.setBookmarkState(true);
-                break;
+        if(principalId != null) {
+            for (Bookmark bookmark : meeting.getBookmarkList()) {
+                if (bookmark.getMember().getId() == principalId) {
+                    meetingResDTO.setBookmarkState(true);
+                    break;
+                }
             }
         }
 

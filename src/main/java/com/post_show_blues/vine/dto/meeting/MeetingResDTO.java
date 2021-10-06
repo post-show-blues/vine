@@ -34,7 +34,7 @@ public class MeetingResDTO {
 
     private int commentCount;
 
-    private boolean bookmarkState;
+    private Boolean bookmarkState;
 
     private MeetingImgDTO meetingImgDTO;
 

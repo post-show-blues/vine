@@ -22,8 +22,11 @@ public class MeetingImgServiceImpl implements MeetingImgService{
     @Override
     public MeetingImg findOne(Long meetingImgId) {
 
-        return meetingImgRepository.findById(meetingImgId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 모임사진입니다."));
-
+        if(meetingImgId == null){
+            return null;
+        }else{
+            return meetingImgRepository.findById(meetingImgId).orElseThrow(() ->
+                    new IllegalStateException("존재하지 않은 모임사진입니다."));
+        }
     }
 }

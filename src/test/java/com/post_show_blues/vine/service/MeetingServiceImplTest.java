@@ -1,5 +1,7 @@
 package com.post_show_blues.vine.service;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
+import com.post_show_blues.vine.domain.bookmark.BookmarkRepository;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.comment.CommentRepository;
@@ -56,6 +58,7 @@ class MeetingServiceImplTest {
     @Autowired FollowRepository followRepository;
     @Autowired NoticeRepository noticeRepository;
     @Autowired CommentRepository commentRepository;
+    @Autowired BookmarkRepository bookmarkRepository;
 
 
    @Test
@@ -360,9 +363,8 @@ class MeetingServiceImplTest {
     }
 
     @Test
-    void 전체_모임리스트조회() throws Exception{
+    void 전체_모임리스트조회_로그인x() throws Exception{
         //given
-
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
 
@@ -418,32 +420,20 @@ class MeetingServiceImplTest {
         meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
         meeting4.changeTitle("풋살할 사람"); //meeting4
 
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
 
-            MemberImg memberImg = MemberImg.builder()
-                    .member(member)
-                    .folderPath("vine/2021/09/21")
-                    .storeFileName("123Rfl_file1.jpeg")
-                    .build();
-            memberImgRepository.save(memberImg);
-
-            Participant participant = Participant.builder()
-                    .meeting(meeting2)
-                    .member(member)
-                    .build();
-
-            participantRepository.save(participant);
-        });
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
         
         //댓글 생성 - meeting2 모임에만 생성
         Comment commentA = createComment(meeting2.getMember());
@@ -460,7 +450,6 @@ class MeetingServiceImplTest {
 
         commentRepository.save(commentB);
 
-
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
                 .keyword("풋살")
@@ -473,10 +462,10 @@ class MeetingServiceImplTest {
          * meeting2,3 (스포츠), meeting4 (춤)
          * meeting2,4 title =  ~풋살~
          * = meeting2,4만 출력
-         * meeting2 참여자 3
-         * meeting4 참여자 x
+         * meeting2 모임 사진 2개 -> id 제일 작은거 1개만 출력
+         * meeting4 모임 사진 x
          */
-        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, meeting2.getMember().getId());
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, null);
 
         //then
         List<MeetingResDTO> meetingResDTOList = result.getDtoList();
@@ -490,6 +479,153 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
+    @Test
+    void 전체_모임리스트조회_로그인o() throws Exception{
+        //given
+        //meeting 생성
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("231f@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+
+            Meeting meeting = Meeting.builder()
+                    .category(Category.SPORTS)
+                    .member(member)
+                    .title("Meeting"+i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2023,8,04,00,00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
+                    .build();
+            meetingRepository.save(meeting);
+
+        });
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting2 = meetingList.get(1);
+        Meeting meeting3 = meetingList.get(2);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
+
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
+
+        meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
+        meeting4.changeTitle("풋살할 사람"); //meeting4
+
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
+
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
+
+        //댓글 생성 - meeting2 모임에만 생성
+        Comment commentA = createComment(meeting2.getMember());
+
+        commentA.setMeeting(meeting2);
+
+        commentRepository.save(commentA);
+
+        Comment commentB = createComment(meeting1.getMember()); //meeting1 방장이 meeting2에 댓글 작성
+
+        commentB.setMeeting(meeting2);
+
+        commentB.setParent(commentA);
+
+        commentRepository.save(commentB);
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //memberUser 가 meeting2,5 를 북마크 등록
+        Bookmark bookmarkA = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkA.setMeeting(meeting2);
+
+        bookmarkRepository.save(bookmarkA);
+
+        Bookmark bookmarkB = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkB.setMeeting(meeting5);
+
+        bookmarkRepository.save(bookmarkB);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
+                .keyword("풋살")
+                .page(1)
+                .size(36)
+                .build();
+
+        //when
+        /**
+         * memberUser 는 meeting2,5 북마크 등록
+         * meeting2,3 (스포츠), meeting4 (춤)
+         * meeting2,4 title =  ~풋살~
+         * = meeting2,4만 출력 -> 2번만 bookmark = true
+         * meeting2 모임 사진 2개 -> id 제일 작은거 1개만 출력
+         * meeting4 모임 사진 x
+         */
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, memberUser.getId());
+
+        //then
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
+
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
+        }
+
+        Assertions.assertThat(result.getPage()).isEqualTo(1);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
+        Assertions.assertThat(result.getDtoList().get(0).getBookmarkState()).isFalse();
+        Assertions.assertThat(result.getDtoList().get(1).getBookmarkState()).isTrue();
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+    }
 
     @Test
     void 팔로우_모임리스트() throws Exception{
@@ -573,6 +709,111 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
         Assertions.assertThat(result.getSize()).isEqualTo(36);
     }
+    
+    @Test
+    void 북마크_모임리스트() throws Exception{
+        //given
+        //meeting 생성
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("231qqf@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+
+            Meeting meeting = Meeting.builder()
+                    .category(Category.SPORTS)
+                    .member(member)
+                    .title("Meeting"+i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2023,6,04,00,00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
+                    .build();
+            meetingRepository.save(meeting);
+
+        });
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //memberUser 가 meeting1,4,5 를 북마크 등록
+        Bookmark bookmarkA = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkA.setMeeting(meeting1);
+
+        bookmarkRepository.save(bookmarkA);
+
+        Bookmark bookmarkB = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkB.setMeeting(meeting4);
+
+        bookmarkRepository.save(bookmarkB);
+
+        Bookmark bookmarkC = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkC.setMeeting(meeting5);
+
+        bookmarkRepository.save(bookmarkC);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(36)
+                .build();
+
+        //when
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getBookmarkMeetingList(
+                pageRequestDTO, memberUser.getId());
+
+        //then
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
+
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
+        }
+
+        Assertions.assertThat(result.getPage()).isEqualTo(1);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(3);
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+        Assertions.assertThat(result.getSize()).isEqualTo(36);
+    }
 
     @Test
     void 정렬_활동일_가까운순() throws Exception{
@@ -593,7 +834,7 @@ class MeetingServiceImplTest {
                 .text("meet")
                 .place("A")
                 .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
-                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 05, 00, 00))
                 .dDay(-1L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -607,7 +848,7 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2023, 8, 02, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
                 .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
                 .dDay(0L)
                 .maxNumber(4)
@@ -622,8 +863,8 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2023, 8, 03, 00, 00))
-                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 06, 00, 00))
                 .dDay(1L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -634,7 +875,7 @@ class MeetingServiceImplTest {
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(1)
                 .size(36)
-                .sort(List.of("meetDate", "ASC"))
+                .sort(List.of("reqDeadline", "ASC"))
                 .build();
 
         //when
