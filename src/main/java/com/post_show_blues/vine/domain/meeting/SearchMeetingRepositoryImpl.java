@@ -44,8 +44,9 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
         QMeetingImg meetingImg = QMeetingImg.meetingImg;
 
-        QMember master = new QMember("member");
-        QMemberImg masterImg = new QMemberImg("memberImg");
+        QMember master = QMember.member;
+
+        QMemberImg masterImg = QMemberImg.memberImg;
 
         QFollow follow = QFollow.follow;
 
@@ -53,9 +54,9 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         JPQLQuery<Meeting> jpqlQuery = from(meeting);
 
         //방장
+        jpqlQuery.leftJoin(meetingImg).on(meetingImg.meeting.eq(meeting));
         jpqlQuery.leftJoin(master).on(meeting.member.eq(master));
         jpqlQuery.leftJoin(masterImg).on(masterImg.member.eq(master));
-
 
         if(principalId != null){
             jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(master));

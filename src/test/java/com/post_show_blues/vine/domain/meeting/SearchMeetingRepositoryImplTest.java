@@ -1,8 +1,12 @@
 package com.post_show_blues.vine.domain.meeting;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
+import com.post_show_blues.vine.domain.bookmark.BookmarkRepository;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.Follow;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
+import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
@@ -34,6 +38,8 @@ class SearchMeetingRepositoryImplTest {
     @Autowired MemberImgRepository memberImgRepository;
     @Autowired ParticipantRepository participantRepository;
     @Autowired FollowRepository followRepository;
+    @Autowired MeetingImgRepository meetingImgRepository;
+    @Autowired BookmarkRepository bookmarkRepository;
 
     @Test
     void 검색리스트() throws Exception{
@@ -93,32 +99,20 @@ class SearchMeetingRepositoryImplTest {
         meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
         meeting4.changeTitle("풋살할 사람"); //meeting4
 
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
 
-            MemberImg memberImg = MemberImg.builder()
-                    .member(member)
-                    .folderPath("vine/2021/09/21")
-                    .storeFileName(i+"231f@Rfl_file1.jpeg")
-                    .build();
-            memberImgRepository.save(memberImg);
-
-            Participant participant = Participant.builder()
-                    .meeting(meeting2)
-                    .member(member)
-                    .build();
-
-            participantRepository.save(participant);
-        });
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
@@ -132,8 +126,8 @@ class SearchMeetingRepositoryImplTest {
          * meeting2,3 (스포츠), meeting4 (춤)
          * meeting2,4 title =  ~풋살~
          * = meeting2,4만 출력
-         * meeting2 참여자 3
-         * meeting4 참여자 x
+         * meeting2 사진 2개 등록 -> id 제일 작은 사진 1개 출력
+         * meeting4 사진 x
          */
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
                 pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
@@ -425,7 +419,7 @@ class SearchMeetingRepositoryImplTest {
         followRepository.rFollow(memberUser.getId(), meeting4.getMember().getId());
         followRepository.rFollow(memberUser.getId(), meeting5.getMember().getId());
 
-
+        //본인이 만든 모임 - 출력되면 x (키워드 "풋살" 포함, 카테코리 "SPORTS")
         Meeting meetingUser = Meeting.builder()
                 .category(Category.SPORTS)
                 .member(memberUser)
@@ -443,8 +437,55 @@ class SearchMeetingRepositoryImplTest {
         meetingRepository.save(meetingUser);
 
 
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
+
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
+                .keyword("풋살")
+                .page(1)
+                .size(10)
+                .userId(memberUser.getId())
+                .build();
+
+        //when
+        /**
+         * meeting1,2,3,4,5 는 팔로우 / meetingUser 은 자기자신이 만든 모임 (팔로우x)
+         * meeting2,3 (스포츠), meeting4 (춤)
+         * meeting2,4 title =  ~풋살~
+         * = meeting2,4만 출력
+         * meeting2 모임 사진 2개 -> id 제일 작인거 1개만 출력
+         * meeting4 모임 사진 x
+         */
+        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+                memberUser.getId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
+
+        //then
+        for (Object[] arr : result.getContent()){
+            System.out.println(Arrays.toString(arr));
+        }
+
+        Assertions.assertThat(result.getTotalElements()).isEqualTo(2);
+    }
+
+    @Test
+    void 북마크_리스트() throws Exception{
+        //given
+        //meeting 생성
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
             Member member = Member.builder()
                     .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
@@ -462,34 +503,84 @@ class SearchMeetingRepositoryImplTest {
                     .build();
             memberImgRepository.save(memberImg);
 
-            Participant participant = Participant.builder()
-                    .meeting(meeting2)
+            Meeting meeting = Meeting.builder()
+                    .category(Category.SPORTS)
                     .member(member)
+                    .title("Meeting"+i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2023,8,05,00,00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
                     .build();
-
-            participantRepository.save(participant);
+            meetingRepository.save(meeting);
         });
 
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting2 = meetingList.get(1);
+        Meeting meeting3 = meetingList.get(2);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
+
+        //모임 사진 등록 meeting4 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting4)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
+
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting4)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //memberUser 가 meeting1,4 를 북마크 등록
+        Bookmark bookmarkA = Bookmark.builder()
+                .meeting(meeting1)
+                .member(memberUser)
+                .build();
+
+        bookmarkRepository.save(bookmarkA);
+
+        Bookmark bookmarkB = Bookmark.builder()
+                .meeting(meeting4)
+                .member(memberUser)
+                .build();
+
+        bookmarkRepository.save(bookmarkB);
+
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .categoryList(List.of(Category.SPORTS, Category.DANCE))
-                .keyword("풋살")
                 .page(1)
                 .size(10)
-                .userId(memberUser.getId())
                 .build();
 
         //when
-        /**
-         * meeting1,2,3,4,5 는 팔로우 / meetingUser 은 자기자신이 만든 모임 (팔로우x)
-         * meeting2,3 (스포츠), meeting4 (춤)
-         * meeting2,4 title =  ~풋살~
-         * = meeting2,4만 출력
-         * meeting2 참여자 3
-         * meeting4 참여자 x
-         */
-        Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
+        Page<Object[]> result = meetingRepository.bookmarkPage(
                 memberUser.getId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
+        /**
+         *
+         */
         //then
         for (Object[] arr : result.getContent()){
             System.out.println(Arrays.toString(arr));
@@ -497,5 +588,7 @@ class SearchMeetingRepositoryImplTest {
 
         Assertions.assertThat(result.getTotalElements()).isEqualTo(2);
     }
+
+
 
 }
