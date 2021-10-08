@@ -7,6 +7,6 @@ public interface BookmarkService {
 
     Bookmark bookmark(Long meetingId, Long principalId);
 
-
+    void cancelBookmark(Long meeting, Long principalId);
 
 }

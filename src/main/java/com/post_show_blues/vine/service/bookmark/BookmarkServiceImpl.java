@@ -40,5 +40,15 @@ public class BookmarkServiceImpl implements BookmarkService{
         return bookmark;
     }
 
+    /**
+     * 북마크 취소
+     */
+    @Transactional
+    @Override
+    public void cancelBookmark(Long meetingId, Long principalId) {
+
+        bookmarkRepository.deleteBookmark(meetingId, principalId);
+    }
+
 
 }
