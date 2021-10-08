@@ -1,17 +1,15 @@
 package com.post_show_blues.vine.service.meeting;
 
 import com.post_show_blues.vine.domain.bookmark.Bookmark;
-import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
-import com.post_show_blues.vine.domain.participant.Participant;
-import com.post_show_blues.vine.dto.*;
 import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
@@ -21,7 +19,6 @@ import com.post_show_blues.vine.file.ResultFileStore;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

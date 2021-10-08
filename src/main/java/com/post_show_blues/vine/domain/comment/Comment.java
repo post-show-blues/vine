@@ -34,7 +34,7 @@ public class Comment extends BaseEntity {
     private Comment parent;
 
     @Builder.Default
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<Comment> child  = new ArrayList<>();
 
     @Column(length = 100,nullable = false)

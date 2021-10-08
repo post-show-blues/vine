@@ -1,7 +1,7 @@
 package com.post_show_blues.vine.dto.meeting;
 
 
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,8 +2,6 @@ package com.post_show_blues.vine.dto.meeting;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.post_show_blues.vine.domain.category.Category;
-import com.post_show_blues.vine.domain.comment.Comment;
-import com.post_show_blues.vine.dto.MemberImgDTO;
 import com.post_show_blues.vine.dto.meetingImg.MeetingImgDTO;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
@@ -12,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

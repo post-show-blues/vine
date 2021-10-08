@@ -7,7 +7,11 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
+import com.post_show_blues.vine.dto.comment.CommentListDTO;
+import com.post_show_blues.vine.dto.comment.CommentResDTO;
 import com.post_show_blues.vine.service.comment.CommentService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,7 @@ public class CommentServiceImplTest {
     @Autowired MemberRepository memberRepository;
     @Autowired MeetingRepository meetingRepository;
     @Autowired CommentRepository commentRepository;
+    @Autowired MemberImgRepository memberImgRepository;
 
 
     @Test
@@ -232,6 +237,90 @@ public class CommentServiceImplTest {
         //부모댓글 - existState = false, 자식댓글 - existState = true
         Assertions.assertThat(parentComment.getExistState()).isFalse();
         Assertions.assertThat(childComment.getExistState()).isTrue();
+    }
+
+    @Test
+    void 댓글리스트_조회() throws Exception{
+        //given
+        Meeting meeting = createMeeting();
+
+        //방장 프로필 사진 생성
+        MemberImg masterImg = MemberImg.builder()
+                .member(meeting.getMember())
+                .folderPath("vine/2021/09/21")
+                .storeFileName("123Rfl_file1.jpeg")
+                .build();
+        memberImgRepository.save(masterImg);
+
+        //댓글 작성자 생성, 프로필 사진 생성
+        Member writer = Member.builder()
+                .name("writer")
+                .email("writer@kookmin.ac.kr")
+                .nickname("writer")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+
+        memberRepository.save(writer);
+
+        MemberImg writerImg = MemberImg.builder()
+                .member(writer)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("123Rfl_file1.jpeg")
+                .build();
+        memberImgRepository.save(writerImg);
+
+        //댓글 생성
+        /**
+         * parentCommentA -> childComment 1, childComment 3
+         * parentCommentB -> childComment 2
+         */
+        //parentComment 생성
+        Comment parentCommentA = createComment(meeting.getMember()); //parentCommentA 방장 댓글
+        parentCommentA.setMeeting(meeting);
+        commentRepository.save(parentCommentA);
+
+        Comment parentCommentB = createComment(writer); //parentCommentB 일반회원 댓글
+        parentCommentB.setMeeting(meeting);
+        commentRepository.save(parentCommentB);
+
+        //childComment 생성
+        Comment childComment1 = createComment(writer); //parentCommentA의 일반회원 대댓글
+        childComment1.setMeeting(meeting);
+        childComment1.setParent(parentCommentA);
+        commentRepository.save(childComment1);
+
+        Comment childComment2 = createComment(meeting.getMember()); //parentCommentB의 방장 대댓글
+        childComment2.setMeeting(meeting);
+        childComment2.setParent(parentCommentB);
+        commentRepository.save(childComment2);
+
+        Comment childComment3 = createComment(meeting.getMember()); //parentCommentA의 방장 대댓글
+        childComment3.setMeeting(meeting);
+        childComment3.setParent(parentCommentA);
+        commentRepository.save(childComment3);
+
+
+        //when
+        CommentListDTO result = commentService.getCommentList(meeting.getId());
+
+        //then
+        System.out.println(result.getCommentCount());
+        for (CommentResDTO commentResDTO : result.getCommentResDTOList()){
+            System.out.println(commentResDTO);
+        }
+
+        Assertions.assertThat(result.getCommentCount()).isEqualTo(5);
+        Assertions.assertThat(result.getCommentResDTOList().size()).isEqualTo(2);
+
+        //첫번째 댓글 - childList
+        CommentResDTO first = result.getCommentResDTOList().get(0);
+        Assertions.assertThat(first.getChildList().size()).isEqualTo(2);
+
+        //두번째 댓글 - childList
+        CommentResDTO second = result.getCommentResDTOList().get(1);
+        Assertions.assertThat(second.getChildList().size()).isEqualTo(1);
     }
 
     private Comment createComment(Member member) {

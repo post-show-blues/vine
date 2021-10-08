@@ -34,8 +34,6 @@ public class CommentDTO {
     @NotNull
     private Boolean open;
 
-    private Boolean existState;
-
     public Comment toEntity(Meeting meeting, Comment parentComment){
 
 

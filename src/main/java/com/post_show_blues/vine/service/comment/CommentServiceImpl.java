@@ -6,11 +6,18 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
+import com.post_show_blues.vine.dto.comment.CommentListDTO;
+import com.post_show_blues.vine.dto.comment.CommentResDTO;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -75,6 +82,43 @@ public class CommentServiceImpl implements CommentService{
 
         //existState = false
         comment.removeComment();
+    }
+
+    /**
+     * 댓글 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public CommentListDTO getCommentList(Long meetingId) {
+
+        List<Object[]> result = commentRepository.getCommentList(meetingId);
+
+        List<CommentResDTO> toResDTOList = result.stream().map(arr -> {
+            return toResDTO((Comment) arr[0], (Member) arr[1], (MemberImg) arr[2]);
+        }).collect(Collectors.toList());
+
+
+        //childList 세팅
+        List<CommentResDTO> commentResDTOList = new ArrayList<>();
+
+        for(CommentResDTO commentResDTO : toResDTOList){
+            if(commentResDTO.getParentId() == null){
+                for(CommentResDTO childResDTO : toResDTOList){
+                    if(childResDTO.getParentId() == commentResDTO.getCommentId()){
+                        commentResDTO.getChildList().add(childResDTO);
+                    }
+                }
+                commentResDTOList.add(commentResDTO);
+            }
+        }
+
+        CommentListDTO commentListDTO =
+                CommentListDTO.builder()
+                .commentCount(toResDTOList.size())
+                .commentResDTOList(commentResDTOList)
+                .build();
+
+        return commentListDTO;
     }
 
 
