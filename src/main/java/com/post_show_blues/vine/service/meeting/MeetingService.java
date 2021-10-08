@@ -144,6 +144,7 @@ public interface MeetingService {
                 .chatLink(meeting.getChatLink())
                 .build();
 
+
         //현재 사용자 모임 북마크
         if(principalId != null) {
             for (Bookmark bookmark : meeting.getBookmarkList()) {

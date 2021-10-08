@@ -36,11 +36,11 @@ public class Meeting extends BaseEntity {
     private Category category;
 
     @Builder.Default
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "meeting",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
     @Column(nullable = false)

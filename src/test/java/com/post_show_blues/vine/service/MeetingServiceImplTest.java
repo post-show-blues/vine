@@ -997,6 +997,8 @@ class MeetingServiceImplTest {
         //when
         DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
+        System.out.println(detailMeetingDTO);
+
         //then
         //모임 관련
         Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
@@ -1077,7 +1079,7 @@ class MeetingServiceImplTest {
 
         //참여자 리스트 관련
         List<ParticipantDTO> participantDTOList = detailMeetingDTO.getParticipantDTOList();
-        Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(0);
+        Assertions.assertThat(participantDTOList.size()).isEqualTo(0);
     }
 
     @Test

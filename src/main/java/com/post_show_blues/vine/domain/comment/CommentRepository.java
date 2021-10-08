@@ -17,4 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where c.meeting.id = :meetingId")
     List<Object[]> getCommentList(Long meetingId);
 
+    @Query("select c from Comment c where c.meeting.id = :meetingId and c.parent IS Null")
+    List<Comment> getCommentBy(Long meetingId);
 }
