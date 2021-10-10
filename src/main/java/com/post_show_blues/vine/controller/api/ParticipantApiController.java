@@ -18,7 +18,7 @@ import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/meetings/{meeting-id}/participant")
+@RequestMapping("/meetings/{meetingId}/participant")
 @Controller
 public class ParticipantApiController {
 
@@ -28,7 +28,7 @@ public class ParticipantApiController {
 
     @GetMapping //참여인원 목록
     public ResponseEntity<?> requestParticipantList(
-                                                @PathVariable("meeting-id") Long meetingId){
+                                                @PathVariable("meetingId") Long meetingId){
 
         
         List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meetingId);
@@ -37,7 +37,7 @@ public class ParticipantApiController {
     }
 
     @PostMapping //참여수락
-    public ResponseEntity<?> requestParticipant(@PathVariable("meeting-id") Long meetingId,
+    public ResponseEntity<?> requestParticipant(@PathVariable("meetingId") Long meetingId,
                                                 @RequestParam("req-id") Long requestParticipantId,
                                                 @AuthenticationPrincipal PrincipalDetails principalDetails){
 
@@ -46,8 +46,8 @@ public class ParticipantApiController {
         return new ResponseEntity<>(new CMRespDto<>(1, "참여수락 성공", null), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{par-id}") //참여인원 추방/나가기
-    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("par-id") Long participantId,
+    @DeleteMapping("/{parId}") //참여인원 추방/나가기
+    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("parId") Long participantId,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         participantService.remove(participantId, principalDetails.getMember().getId());

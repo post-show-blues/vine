@@ -17,14 +17,14 @@ import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/meetings/{meeting-id}/requests")
+@RequestMapping("/meetings/{meetingId}/requests")
 @Controller
 public class RequestParticipantApiController {
 
     private final RequestParticipantService requestParticipantService;
 
     @GetMapping //참여요청자 목록
-    public ResponseEntity<?> requestParticipantList(@PathVariable("meeting-id") Long meetingId){
+    public ResponseEntity<?> requestParticipantList(@PathVariable("meetingId") Long meetingId){
 
         List<RequestParticipantDTO> requestParticipantDTOList = requestParticipantService.getRequestParticipantList(meetingId);
 
@@ -32,7 +32,7 @@ public class RequestParticipantApiController {
     }
 
     @PostMapping //참여요청
-    public ResponseEntity<?> requestParticipant(@PathVariable("meeting-id") Long meetingId,
+    public ResponseEntity<?> requestParticipant(@PathVariable("meetingId") Long meetingId,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         requestParticipantService.request(meetingId, principalDetails.getMember().getId());
@@ -40,8 +40,8 @@ public class RequestParticipantApiController {
         return new ResponseEntity<>(new CMRespDto<>(1,"참여요청 성공", null), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{req-id}") //참여요청 거절/철회
-    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("req-id") Long requestParticipantId){
+    @DeleteMapping("/{reqId}") //참여요청 거절/철회
+    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("reqId") Long requestParticipantId){
 
         requestParticipantService.reject(requestParticipantId);
 

@@ -58,8 +58,8 @@ public class MeetingApiController {
         return new ResponseEntity<>(new CMRespDto<>(1, "모임등록 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{meeting-id}") //모임조회
-    public ResponseEntity<?> readMeeting(@PathVariable("meeting-id") Long meetingId,
+    @GetMapping("/{meetingId}") //모임조회
+    public ResponseEntity<?> readMeeting(@PathVariable("meetingId") Long meetingId,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         DetailMeetingDTO detailMeetingDTO =
@@ -68,8 +68,8 @@ public class MeetingApiController {
         return new ResponseEntity<>(new CMRespDto<>(1, "모임 상세보기 성공", detailMeetingDTO), HttpStatus.OK);
     }
 
-    @PutMapping("/{meeting-id}") //모임 수정
-    public ResponseEntity<?> ModifyMeeting(@PathVariable("meeting-id") Long meetingId,
+    @PutMapping("/{meetingId}") //모임 수정
+    public ResponseEntity<?> ModifyMeeting(@PathVariable("meetingId") Long meetingId,
                                            @RequestBody MeetingDTO meetingDTO) throws IOException {
 
         meetingService.modify(meetingDTO);
@@ -77,8 +77,8 @@ public class MeetingApiController {
         return new ResponseEntity<>(new CMRespDto<>(1, "모임수정 성공", null), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{meeting-id}") //모임삭제
-    public ResponseEntity<?> deleteMeeting(@PathVariable("meeting-id") Long meetingId){
+    @DeleteMapping("/{meetingId}") //모임삭제
+    public ResponseEntity<?> deleteMeeting(@PathVariable("meetingId") Long meetingId){
 
         meetingService.remove(meetingId);
 
