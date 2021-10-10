@@ -39,10 +39,10 @@ public class CommentApiController {
                                            @RequestBody CommentDTO commentDTO,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        Comment comment = commentService.register(commentDTO, principalDetails.getMember().getId());
+        commentService.register(commentDTO, principalDetails.getMember().getId());
 
         return new ResponseEntity<>(
-                new CMRespDto<>(1, "댓글 생성 성공", comment), HttpStatus.CREATED);
+                new CMRespDto<>(1, "댓글 생성 성공", null), HttpStatus.CREATED);
     }
 
     /**

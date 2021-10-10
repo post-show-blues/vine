@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.Optional;
 
 @Log4j2
 @RequestMapping("/meetings")
@@ -23,6 +24,15 @@ import java.io.IOException;
 public class MeetingApiController {
 
     private final MeetingService meetingService;
+
+    /**
+     *모임 리스트 조회
+     *
+     * 경우의 수
+     * 1. 미로그인 상태
+     * 2. 로그인 상태
+     * 3. 팔로우 모임 리스트
+     */
 
     @GetMapping//모임목록
     public ResponseEntity<?> meetingList(PageRequestDTO requestDTO,
@@ -33,7 +43,14 @@ public class MeetingApiController {
         //전체 모임리스트 조회
         if(requestDTO.getUserId() == null){
 
-            result = meetingService.getAllMeetingList(requestDTO, principalDetails.getMember().getId());
+            //로그인하지 않은 상태
+            if(principalDetails == null){
+                result = meetingService.getAllMeetingList(requestDTO, null);
+            }
+            //로그인한 상태
+            else{
+                result = meetingService.getAllMeetingList(requestDTO, principalDetails.getMember().getId());
+            }
 
             return new ResponseEntity<>(new CMRespDto<>(1, "모임 목록 불러오기 성공", result), HttpStatus.OK);
         }
@@ -70,7 +87,7 @@ public class MeetingApiController {
 
     @PutMapping("/{meetingId}") //모임 수정
     public ResponseEntity<?> ModifyMeeting(@PathVariable("meetingId") Long meetingId,
-                                           @RequestBody MeetingDTO meetingDTO) throws IOException {
+                                           MeetingDTO meetingDTO) throws IOException {
 
         meetingService.modify(meetingDTO);
 
