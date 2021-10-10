@@ -4,6 +4,7 @@ package com.post_show_blues.vine.controller.api;
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
 import com.post_show_blues.vine.service.participant.ParticipantService;
 import com.post_show_blues.vine.service.requestParticipant.RequestParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +39,10 @@ public class ParticipantApiController {
 
     @PostMapping //참여수락
     public ResponseEntity<?> requestParticipant(@PathVariable("meetingId") Long meetingId,
-                                                @RequestParam("req-id") Long requestParticipantId,
+                                                @RequestBody RequestParticipantDTO requestParticipantDTO,
                                                 @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        requestParticipantService.accept(requestParticipantId);
+        requestParticipantService.accept(requestParticipantDTO.getRequestParticipantId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "참여수락 성공", null), HttpStatus.OK);
     }
