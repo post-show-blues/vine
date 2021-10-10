@@ -4,7 +4,7 @@ import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
-import com.post_show_blues.vine.dto.comment.CommentListDTO;
+import com.post_show_blues.vine.dto.comment.CommentReadDTO;
 import com.post_show_blues.vine.dto.comment.CommentResDTO;
 import com.post_show_blues.vine.dto.member.MemberImgDTO;
 
@@ -16,7 +16,7 @@ public interface CommentService {
 
     void remove(Long commentId);
 
-    CommentListDTO getCommentList(Long meetingId);
+    CommentReadDTO getCommentList(Long meetingId);
 
     default CommentResDTO toResDTO(Comment comment, Member writer, MemberImg writerImg){
 

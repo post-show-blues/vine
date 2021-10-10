@@ -5,13 +5,11 @@ import com.post_show_blues.vine.domain.comment.CommentRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
-import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
-import com.post_show_blues.vine.dto.comment.CommentListDTO;
+import com.post_show_blues.vine.dto.comment.CommentReadDTO;
 import com.post_show_blues.vine.dto.comment.CommentResDTO;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +87,7 @@ public class CommentServiceImpl implements CommentService{
      */
     @Transactional(readOnly = true)
     @Override
-    public CommentListDTO getCommentList(Long meetingId) {
+    public CommentReadDTO getCommentList(Long meetingId) {
 
 
         List<Object[]> result = commentRepository.getCommentList(meetingId);
@@ -112,8 +110,8 @@ public class CommentServiceImpl implements CommentService{
             }
         }
 
-        CommentListDTO commentListDTO =
-                CommentListDTO.builder()
+        CommentReadDTO commentReadDTO =
+                CommentReadDTO.builder()
                 .commentCount(toResDTOList.size())
                 .commentResDTOList(commentResDTOList)
                 .build();
@@ -169,7 +167,7 @@ public class CommentServiceImpl implements CommentService{
                 .commentCount(5)
                 .build();
 */
-        return commentListDTO;
+        return commentReadDTO;
     }
 
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentListDTO {
+public class CommentReadDTO {
 
     private int commentCount;
 

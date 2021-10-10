@@ -10,19 +10,16 @@ import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
-import com.post_show_blues.vine.dto.comment.CommentListDTO;
+import com.post_show_blues.vine.dto.comment.CommentReadDTO;
 import com.post_show_blues.vine.dto.comment.CommentResDTO;
 import com.post_show_blues.vine.service.comment.CommentService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -303,7 +300,7 @@ public class CommentServiceImplTest {
 
 
         //when
-        CommentListDTO result = commentService.getCommentList(meeting.getId());
+        CommentReadDTO result = commentService.getCommentList(meeting.getId());
 
         //then
         System.out.println(result.getCommentCount());
