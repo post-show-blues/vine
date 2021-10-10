@@ -18,7 +18,7 @@ function App() {
       <Route exact path="/signup" component={HomeIndex} /> {/* 로그인 */}
       <Route exact path="/signin" component={HomeIndex} /> {/* 회원가입 */}
       <Route exact path="/participation" component={HomeIndex} /> {/* 회원가입 */}
-      {/* 여기에 라우팅 주소 추가해서 만드시면 됩니다 */}
+
     </div>
   );
 }
