@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchMeetingRepository {
 
-
-
-    @Query("select m, mi from Meeting m " +
-            "left join MeetingImg mi on mi.meeting = m " +
+    @Query("select m, mti, me, mbi from Meeting m " +
+            "left join MeetingImg mti on mti.meeting = m " +
+            "left join Member me on me.id = m.member.id " +
+            "left join MemberImg mbi on mbi.member.id = me.id " +
             "where m.id = :meetingId")
     List<Object[]> getMeetingWithAll(Long meetingId);
 

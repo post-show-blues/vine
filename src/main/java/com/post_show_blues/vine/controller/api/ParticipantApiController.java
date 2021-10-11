@@ -4,6 +4,7 @@ package com.post_show_blues.vine.controller.api;
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
 import com.post_show_blues.vine.service.participant.ParticipantService;
 import com.post_show_blues.vine.service.requestParticipant.RequestParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/meetings/{meeting-id}/participant")
+@RequestMapping("/meetings/{meetingId}/participant")
 @Controller
 public class ParticipantApiController {
 
@@ -28,7 +29,7 @@ public class ParticipantApiController {
 
     @GetMapping //참여인원 목록
     public ResponseEntity<?> requestParticipantList(
-                                                @PathVariable("meeting-id") Long meetingId){
+                                                @PathVariable("meetingId") Long meetingId){
 
         
         List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meetingId);
@@ -37,17 +38,17 @@ public class ParticipantApiController {
     }
 
     @PostMapping //참여수락
-    public ResponseEntity<?> requestParticipant(@PathVariable("meeting-id") Long meetingId,
-                                                @RequestParam("req-id") Long requestParticipantId,
+    public ResponseEntity<?> requestParticipant(@PathVariable("meetingId") Long meetingId,
+                                                @RequestBody RequestParticipantDTO requestParticipantDTO,
                                                 @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        requestParticipantService.accept(requestParticipantId);
+        requestParticipantService.accept(requestParticipantDTO.getRequestParticipantId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "참여수락 성공", null), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{par-id}") //참여인원 추방/나가기
-    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("par-id") Long participantId,
+    @DeleteMapping("/{parId}") //참여인원 추방/나가기
+    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("parId") Long participantId,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         participantService.remove(participantId, principalDetails.getMember().getId());

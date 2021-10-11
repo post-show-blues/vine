@@ -1,6 +1,5 @@
 package com.post_show_blues.vine.service.meeting;
 
-import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
@@ -12,12 +11,16 @@ import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
-import com.post_show_blues.vine.service.memberImg.MemberImgService;
+import com.post_show_blues.vine.service.meetingImg.MeetingImgService;
+import com.post_show_blues.vine.service.participant.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,8 +52,9 @@ public class MeetingServiceImpl implements MeetingService{
     private final NoticeRepository noticeRepository;
     private final ParticipantRepository participantRepository;
     private final RequestParticipantRepository requestParticipantRepository;
-    private final MemberImgService memberImgService;
+    private final MeetingImgService meetingImgService;
     private final FollowRepository followRepository;
+    private final ParticipantService participantService;
 
     /**
      * 모임등록
@@ -60,30 +64,6 @@ public class MeetingServiceImpl implements MeetingService{
     public Long register(MeetingDTO meetingDTO) throws IOException {
 
         //활동날짜, 신청 마감날짜 비교
-        /*
-       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-
-        String meetDate = meetingDTO.getMeetDate();
-        String reqDeadline = meetingDTO.getReqDeadline();
-
-        try{
-            Date meetDateType = dateFormat.parse(meetDate);
-            Date deadlineDateType = dateFormat.parse(reqDeadline);
-
-            if(meetDateType.before(deadlineDateType)){
-                throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
-            }
-        }catch (ParseException e){
-            e.printStackTrace();
-            throw new IllegalStateException("형식에 맞게 입력해주세요.");
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
-        }
-
-         */
-
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
         }
@@ -148,8 +128,6 @@ public class MeetingServiceImpl implements MeetingService{
         Meeting meeting = meetingRepository.findById(meetingDTO.getMeetingId()).orElseThrow(() ->
                 new IllegalStateException("존재하는 않은 모임입니다."));
 
-
-
         //수정한 meetDate, reqDeadline 체크
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
             throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
@@ -164,6 +142,7 @@ public class MeetingServiceImpl implements MeetingService{
         meeting.changeMaxNumber(meetingDTO.getMaxNumber());
         meeting.changeMeetDate(meetingDTO.getMeetDate());
         meeting.changeReqDeadline(meetingDTO.getReqDeadline());
+        meeting.changeDDay();
         meeting.changeChatLink(meetingDTO.getChatLink());
 
 
@@ -246,7 +225,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO) {
+    public PageResultDTO<MeetingResDTO, Object[]> getAllMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
 
         Pageable pageable;
 
@@ -261,10 +240,12 @@ public class MeetingServiceImpl implements MeetingService{
                                                             pageRequestDTO.getKeyword(),
                                                             null, pageable);
 
-        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
-                (MemberImg)arr[1], //모임장 프로필 사진
-                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
         );
 
         return new PageResultDTO<>(result, fn);
@@ -275,7 +256,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public PageResultDTO<MeetingDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
+    public PageResultDTO<MeetingResDTO, Object[]> getFollowMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
 
         Pageable pageable;
 
@@ -288,10 +269,41 @@ public class MeetingServiceImpl implements MeetingService{
 
         Page<Object[]> result = meetingRepository.searchPage(null, null, principalId, pageable);
 
-        Function<Object[], MeetingDTO> fn = (arr -> listEntityToDTO(
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
-                (MemberImg)arr[1], //모임장 프로필 사진
-                memberImgService.findOne((Long)arr[2])) //참여회원 프로필 사진
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
+        );
+
+        return new PageResultDTO<>(result, fn);
+    }
+
+    /**
+     * 북마크 모임리스트 조회
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PageResultDTO<MeetingResDTO, Object[]> getBookmarkMeetingList(PageRequestDTO pageRequestDTO, Long principalId) {
+
+        Pageable pageable;
+
+        if(pageRequestDTO.getSort().get(1).equals("ASC")){
+
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).ascending());
+        }else{
+            pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
+        }
+
+        Page<Object[]> result = meetingRepository.bookmarkPage(principalId, pageable);
+
+        Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
+                (Meeting)arr[0], //모임 엔티티
+                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                (Member)arr[2], //방장 엔티티
+                (MemberImg)arr[3], //모임장 프로필 사진
+                principalId) //현재 유저 id
         );
 
         return new PageResultDTO<>(result, fn);
@@ -302,11 +314,10 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional(readOnly = true)
     @Override
-    public MeetingDTO getMeeting(Long meetingId) {
+    public DetailMeetingDTO getMeeting(Long meetingId, Long participantId) {
         List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
 
         Meeting meeting =(Meeting)result.get(0)[0];
-
 
         List<MeetingImg> meetingImgList = new ArrayList<>();
 
@@ -317,7 +328,16 @@ public class MeetingServiceImpl implements MeetingService{
             });
         }
 
-        return readEntitiesToDTO(meeting, meetingImgList);
+        Member master = (Member) result.get(0)[2];
+
+        MemberImg masterImg = (MemberImg) result.get(0)[3];
+
+
+        //참여자 리스트
+        List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meeting.getId());
+
+        return readEntitiesToDTO(meeting, meetingImgList, master, masterImg,
+                participantDTOList, participantId);
     }
 
     /**

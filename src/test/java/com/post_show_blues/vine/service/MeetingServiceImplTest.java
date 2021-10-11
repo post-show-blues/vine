@@ -1,5 +1,7 @@
 package com.post_show_blues.vine.service;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
+import com.post_show_blues.vine.domain.bookmark.BookmarkRepository;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.comment.CommentRepository;
@@ -18,9 +20,14 @@ import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
+import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
+import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
+import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -28,7 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +61,7 @@ class MeetingServiceImplTest {
     @Autowired FollowRepository followRepository;
     @Autowired NoticeRepository noticeRepository;
     @Autowired CommentRepository commentRepository;
+    @Autowired BookmarkRepository bookmarkRepository;
 
 
    @Test
@@ -106,8 +113,8 @@ class MeetingServiceImplTest {
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2021,07,13,16,00))
-                .reqDeadline(LocalDateTime.of(2021,06,05,16,00))
+                .meetDate(LocalDateTime.of(2021,10,13,16,00))
+                .reqDeadline(LocalDateTime.of(2021,10,10,16,00))
                 .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                         LocalDateTime.of(2021,06,05,00,00)
                                 .toLocalDate().atStartOfDay()).toDays())
@@ -125,7 +132,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory()).isEqualTo(meetingDTO.getCategory());
         Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
-        //Assertions.assertThat(meeting.getDDay()).isEqualTo(2);
+        //Assertions.assertThat(meeting.getDDay()).isEqualTo(5);
 
         //모임 imgFiles 검증
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
@@ -214,11 +221,8 @@ class MeetingServiceImplTest {
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
-                .meetDate(LocalDateTime.of(2021,07,14,00,00)) //5 -> 6일로 변경
-                .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
+                .meetDate(LocalDateTime.of(2021,10,14,00,00))
+                .reqDeadline(LocalDateTime.of(2021,10,10,00,00))
                 .maxNumber(5) // 4 -> 5로 변경
                 .imageFiles(imgFiles)
                 .build();
@@ -231,7 +235,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meetingA.getTitle()).isEqualTo("MeetingB");
         Assertions.assertThat(meetingA.getMember().getId()).isEqualTo(memberB.getId());
         Assertions.assertThat(meetingA.getCategory()).isEqualTo(meetingDTO.getCategory());
-        //Assertions.assertThat(findMeeting.getDDay()).isEqualTo(3);
+        //Assertions.assertThat(meetingA.getDDay()).isEqualTo(5);
 
         //모임 사진 수정
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meetingA);
@@ -265,9 +269,6 @@ class MeetingServiceImplTest {
                 .place("B") // A -> B
                 .meetDate(LocalDateTime.of(2021,06,05,00,00))
                 .reqDeadline(LocalDateTime.of(2021,06,04,00,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(2) // 4 -> 2로 변경
                 .build();
 
@@ -365,9 +366,8 @@ class MeetingServiceImplTest {
     }
 
     @Test
-    void 전체_모임리스트조회() throws Exception{
+    void 전체_모임리스트조회_로그인x() throws Exception{
         //given
-
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
 
@@ -397,7 +397,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,8,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -423,32 +423,20 @@ class MeetingServiceImplTest {
         meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
         meeting4.changeTitle("풋살할 사람"); //meeting4
 
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
 
-            MemberImg memberImg = MemberImg.builder()
-                    .member(member)
-                    .folderPath("vine/2021/09/21")
-                    .storeFileName("123Rfl_file1.jpeg")
-                    .build();
-            memberImgRepository.save(memberImg);
-
-            Participant participant = Participant.builder()
-                    .meeting(meeting2)
-                    .member(member)
-                    .build();
-
-            participantRepository.save(participant);
-        });
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
         
         //댓글 생성 - meeting2 모임에만 생성
         Comment commentA = createComment(meeting2.getMember());
@@ -465,7 +453,6 @@ class MeetingServiceImplTest {
 
         commentRepository.save(commentB);
 
-
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
                 .keyword("풋살")
@@ -478,16 +465,16 @@ class MeetingServiceImplTest {
          * meeting2,3 (스포츠), meeting4 (춤)
          * meeting2,4 title =  ~풋살~
          * = meeting2,4만 출력
-         * meeting2 참여자 3
-         * meeting4 참여자 x
+         * meeting2 모임 사진 2개 -> id 제일 작은거 1개만 출력
+         * meeting4 모임 사진 x
          */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, null);
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
@@ -496,7 +483,7 @@ class MeetingServiceImplTest {
     }
 
     @Test
-    void 전체_모임리스트조회_참여자사진X() throws Exception{
+    void 전체_모임리스트조회_로그인o() throws Exception{
         //given
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
@@ -514,7 +501,7 @@ class MeetingServiceImplTest {
             MemberImg memberImg = MemberImg.builder()
                     .member(member)
                     .folderPath("vine/2021/09/21")
-                    .storeFileName("231qqf@Rfl_file1.jpeg")
+                    .storeFileName("231f@Rfl_file1.jpeg")
                     .build();
             memberImgRepository.save(memberImg);
 
@@ -527,7 +514,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,8,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -538,49 +525,108 @@ class MeetingServiceImplTest {
 
         List<Meeting> meetingList = meetingRepository.findAll();
 
-        //첫번째 미팅
-        Meeting meeting = meetingList.get(0);
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting2 = meetingList.get(1);
+        Meeting meeting3 = meetingList.get(2);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
 
-        //participant 생성
-        IntStream.rangeClosed(6,8).forEach(i->{
-            Member member = Member.builder()
-                    .name("member"+i)
-                    .email("member"+i+"@kookmin.ac.kr")
-                    .nickname("member"+i+"Nickname")
-                    .password("1111")
-                    .phone("010-0000-0000")
-                    .university("국민대학교")
-                    .build();
-            memberRepository.save(member);
+        meeting1.changeCategory(Category.MUSIC); // category = "음악"
+        meeting2.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting3.changeCategory(Category.SPORTS); // category = "스포츠"
+        meeting4.changeCategory(Category.DANCE); // category = "춤"
+        meeting5.changeCategory(Category.TRAVEL); // category = "여행"
 
-            Participant participant = Participant.builder()
-                    .meeting(meeting)
-                    .member(member)
-                    .build();
+        meeting2.changeTitle("10시까지 풋살 모집"); // meeting2
+        meeting4.changeTitle("풋살할 사람"); //meeting4
 
-            participantRepository.save(participant);
-        });
+        //모임 사진 등록 meeting2 -> 사진 2개
+        MeetingImg meetingImgA = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진1.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgA);
+
+        MeetingImg meetingImgB = MeetingImg.builder()
+                .meeting(meeting2)
+                .folderPath("vine/2021/09/21")
+                .storeFileName("231f@Rfl_사진2.jpeg")
+                .build();
+        meetingImgRepository.save(meetingImgB);
+
+        //댓글 생성 - meeting2 모임에만 생성
+        Comment commentA = createComment(meeting2.getMember());
+
+        commentA.setMeeting(meeting2);
+
+        commentRepository.save(commentA);
+
+        Comment commentB = createComment(meeting1.getMember()); //meeting1 방장이 meeting2에 댓글 작성
+
+        commentB.setMeeting(meeting2);
+
+        commentB.setParent(commentA);
+
+        commentRepository.save(commentB);
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //memberUser 가 meeting2,5 를 북마크 등록
+        Bookmark bookmarkA = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkA.setMeeting(meeting2);
+
+        bookmarkRepository.save(bookmarkA);
+
+        Bookmark bookmarkB = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkB.setMeeting(meeting5);
+
+        bookmarkRepository.save(bookmarkB);
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .categoryList(List.of(Category.SPORTS, Category.DANCE))
+                .keyword("풋살")
                 .page(1)
                 .size(36)
                 .build();
 
         //when
         /**
-            첫번째 모임에만 참여자가 존재하며 프로필 사진은 x
+         * memberUser 는 meeting2,5 북마크 등록
+         * meeting2,3 (스포츠), meeting4 (춤)
+         * meeting2,4 title =  ~풋살~
+         * = meeting2,4만 출력 -> 2번만 bookmark = true
+         * meeting2 모임 사진 2개 -> id 제일 작은거 1개만 출력
+         * meeting4 모임 사진 x
          */
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, memberUser.getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
-        Assertions.assertThat(result.getDtoList().size()).isEqualTo(5);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
+        Assertions.assertThat(result.getDtoList().get(0).getBookmarkState()).isFalse();
+        Assertions.assertThat(result.getDtoList().get(1).getBookmarkState()).isTrue();
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
@@ -616,7 +662,7 @@ class MeetingServiceImplTest {
                     .meetDate(LocalDateTime.of(2023,8,06,00,00))
                     .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                            LocalDateTime.of(2023,8,05,00,00)
+                            LocalDateTime.of(2023,6,04,00,00)
                                     .toLocalDate().atStartOfDay()).toDays())
                     .maxNumber(4)
                     .currentNumber(3)
@@ -652,17 +698,122 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getFollowMeetingList(pageRequestDTO, memberUser.getId());
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getFollowMeetingList(pageRequestDTO, memberUser.getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
+        Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
+        Assertions.assertThat(result.getSize()).isEqualTo(36);
+    }
+    
+    @Test
+    void 북마크_모임리스트() throws Exception{
+        //given
+        //meeting 생성
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("231qqf@Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+
+            Meeting meeting = Meeting.builder()
+                    .category(Category.SPORTS)
+                    .member(member)
+                    .title("Meeting"+i)
+                    .text("meet")
+                    .place("A")
+                    .meetDate(LocalDateTime.of(2023,8,06,00,00))
+                    .reqDeadline(LocalDateTime.of(2023,06,04,00,00))
+                    .dDay(Duration.between(LocalDate.now().atStartOfDay(),
+                            LocalDateTime.of(2023,6,04,00,00)
+                                    .toLocalDate().atStartOfDay()).toDays())
+                    .maxNumber(4)
+                    .currentNumber(3)
+                    .build();
+            meetingRepository.save(meeting);
+
+        });
+
+        List<Meeting> meetingList = meetingRepository.findAll();
+
+        Meeting meeting1 = meetingList.get(0);
+        Meeting meeting4 = meetingList.get(3);
+        Meeting meeting5 = meetingList.get(4);
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //memberUser 가 meeting1,4,5 를 북마크 등록
+        Bookmark bookmarkA = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkA.setMeeting(meeting1);
+
+        bookmarkRepository.save(bookmarkA);
+
+        Bookmark bookmarkB = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkB.setMeeting(meeting4);
+
+        bookmarkRepository.save(bookmarkB);
+
+        Bookmark bookmarkC = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmarkC.setMeeting(meeting5);
+
+        bookmarkRepository.save(bookmarkC);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(36)
+                .build();
+
+        //when
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getBookmarkMeetingList(
+                pageRequestDTO, memberUser.getId());
+
+        //then
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
+
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
+        }
+
+        Assertions.assertThat(result.getPage()).isEqualTo(1);
+        Assertions.assertThat(result.getDtoList().size()).isEqualTo(3);
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
         Assertions.assertThat(result.getSize()).isEqualTo(36);
     }
@@ -686,7 +837,7 @@ class MeetingServiceImplTest {
                 .text("meet")
                 .place("A")
                 .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
-                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 05, 00, 00))
                 .dDay(-1L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -700,7 +851,7 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2023, 8, 02, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
                 .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
                 .dDay(0L)
                 .maxNumber(4)
@@ -715,8 +866,8 @@ class MeetingServiceImplTest {
                 .title("Meeting")
                 .text("meet")
                 .place("A")
-                .meetDate(LocalDateTime.of(2023, 8, 03, 00, 00))
-                .reqDeadline(LocalDateTime.of(2023, 06, 04, 00, 00))
+                .meetDate(LocalDateTime.of(2023, 8, 01, 00, 00))
+                .reqDeadline(LocalDateTime.of(2023, 06, 06, 00, 00))
                 .dDay(1L)
                 .maxNumber(4)
                 .currentNumber(3)
@@ -727,22 +878,22 @@ class MeetingServiceImplTest {
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(1)
                 .size(36)
-                .sort(List.of("meetDate", "ASC"))
+                .sort(List.of("reqDeadline", "ASC"))
                 .build();
 
         //when
-        PageResultDTO<MeetingDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO);
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getAllMeetingList(pageRequestDTO, meetingA.getMember().getId());
 
         //then
-        List<MeetingDTO> meetingDTOList = result.getDtoList();
+        List<MeetingResDTO> meetingResDTOList = result.getDtoList();
 
-        for (MeetingDTO meetingDTO : meetingDTOList){
-            System.out.println(meetingDTO);
+        for (MeetingResDTO meetingResDTO : meetingResDTOList){
+            System.out.println(meetingResDTO);
         }
 
         Assertions.assertThat(result.getPage()).isEqualTo(1);
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
-        Assertions.assertThat(meetingDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
+        Assertions.assertThat(meetingResDTOList.get(0).getMeetingId()).isEqualTo(meetingB.getId());
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
@@ -751,6 +902,16 @@ class MeetingServiceImplTest {
         //given
         Meeting meeting = createMeeting();
 
+        //방장 프로필 사진 생성
+        MemberImg masterImg = MemberImg.builder()
+                .member(meeting.getMember())
+                .storeFileName(UUID.randomUUID().toString() + "_masterImg1")
+                .folderPath("/hyeongwoo1")
+                .build();
+
+        memberImgRepository.save(masterImg);
+
+        //모임 사진 2개 생성
         MeetingImg meetingImg1 = MeetingImg.builder()
                 .meeting(meeting)
                 .storeFileName(UUID.randomUUID().toString() + "_MeetingImg1")
@@ -782,31 +943,143 @@ class MeetingServiceImplTest {
 
         commentRepository.save(commentB);
 
+        //참여자 생성 - 5명
+        IntStream.rangeClosed(1,5).forEach(i -> {
+
+            Member member = Member.builder()
+                    .name("member"+i)
+                    .email("member"+i+"@kookmin.ac.kr")
+                    .nickname("member"+i+"Nickname")
+                    .text("반가워요")
+                    .password("1111")
+                    .phone("010-0000-0000")
+                    .university("국민대학교")
+                    .build();
+            memberRepository.save(member);
+
+            Participant participant = Participant.builder()
+                    .member(member)
+                    .meeting(meeting)
+                    .build();
+
+            participantRepository.save(participant);
+
+            //참여자 프로필 사진 생성
+            MemberImg memberImg = MemberImg.builder()
+                    .member(member)
+                    .folderPath("vine/2021/09/21")
+                    .storeFileName("123Rfl_file1.jpeg")
+                    .build();
+            memberImgRepository.save(memberImg);
+        });
+
+        //현재 사용 유저 생성
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        //현재 유저 북마크 생성 - meeting 모임을 북마크
+        Bookmark bookmark = Bookmark.builder()
+                .member(memberUser)
+                .build();
+
+        bookmark.setMeeting(meeting);
+
+        bookmarkRepository.save(bookmark);
+
 
         //when
-        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+        DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
+
+        System.out.println(detailMeetingDTO);
 
         //then
-        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
-        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(2);
-        Assertions.assertThat(meetingDTO.getCommentList().size()).isEqualTo(1);
-        Assertions.assertThat(meetingDTO.getCommentList().get(0).getChild().size()).isEqualTo(1);
-        Assertions.assertThat(meetingDTO.getCommentCount()).isEqualTo(2);
+        //모임 관련
+        Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(detailMeetingDTO.getCategory()).isEqualTo(meeting.getCategory());
+        Assertions.assertThat(detailMeetingDTO.getCommentCount()).isEqualTo(2);
+        Assertions.assertThat(detailMeetingDTO.getBookmarkState()).isTrue();
+        Assertions.assertThat(detailMeetingDTO.getDDay()).isEqualTo(meeting.getDDay());
+
+        //모임 사진 관련
+        Assertions.assertThat(detailMeetingDTO.getImgDTOList().size()).isEqualTo(2);
+
+        //방장 관련
+        MemberListDTO masterDTO = detailMeetingDTO.getMasterDTO();
+
+        Assertions.assertThat(masterDTO.getId()).isEqualTo(meeting.getMember().getId());
+        Assertions.assertThat(masterDTO.getText()).isEqualTo(meeting.getMember().getText());
+        Assertions.assertThat(masterDTO.getNickname()).isEqualTo(meeting.getMember().getNickname());
+
+        //방장 프로필 사진 관련
+        MemberImgDTO masterImgDTO = masterDTO.getMemberImgDTO();
+        Assertions.assertThat(masterImgDTO.getFolderPath()).isEqualTo(masterImg.getFolderPath());
+        Assertions.assertThat(masterImgDTO.getStoreFileName()).isEqualTo(masterImg.getStoreFileName());
+
+        //참여자 리스트 관련
+        List<ParticipantDTO> participantDTOList = detailMeetingDTO.getParticipantDTOList();
+        for(ParticipantDTO participantDTO : participantDTOList){
+            System.out.println(participantDTO);
+        }
+
+        Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(5);
     }
+
 
     @Test
     void 모임_조회페이지DTO_사진x() throws Exception{
         //given
+        //미팅 생성 - 모임 사진 x
         Meeting meeting = createMeeting();
 
+        //현재 사용 유저 생성 - meeting 모임 북마크 x
+        Member memberUser = Member.builder()
+                .name("memberUser")
+                .email("memberUser@kookmin.ac.kr")
+                .nickname("memberUserNickname")
+                .password("1111")
+                .phone("010-1111-1111")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberUser);
+
+        /**
+         * 모임사진 x , 방장 프로필사진 x, 댓글 x, 참여자 x, 사용자 - 모임 북마크 x
+         */
         //when
-        MeetingDTO meetingDTO = meetingService.getMeeting(meeting.getId());
+        DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
         //then
-        Assertions.assertThat(meetingDTO.getMeetingId()).isEqualTo(meeting.getId());
-        Assertions.assertThat(meetingDTO.getCategory()).isEqualTo(meeting.getCategory());
-        Assertions.assertThat(meetingDTO.getImgDTOList().size()).isEqualTo(0);
+        //모임 관련
+        Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
+        Assertions.assertThat(detailMeetingDTO.getCategory()).isEqualTo(meeting.getCategory());
+        Assertions.assertThat(detailMeetingDTO.getCommentCount()).isEqualTo(0);
+        Assertions.assertThat(detailMeetingDTO.getBookmarkState()).isFalse();
+        Assertions.assertThat(detailMeetingDTO.getDDay()).isEqualTo(meeting.getDDay());
+
+        //모임 사진 관련
+        Assertions.assertThat(detailMeetingDTO.getImgDTOList().size()).isEqualTo(0);
+
+        //방장 관련
+        MemberListDTO masterDTO = detailMeetingDTO.getMasterDTO();
+
+        Assertions.assertThat(masterDTO.getId()).isEqualTo(meeting.getMember().getId());
+        Assertions.assertThat(masterDTO.getText()).isEqualTo(meeting.getMember().getText());
+        Assertions.assertThat(masterDTO.getNickname()).isEqualTo(meeting.getMember().getNickname());
+
+        //방장 프로필 사진 관련
+        MemberImgDTO masterImgDTO = masterDTO.getMemberImgDTO();
+        Assertions.assertThat(masterImgDTO).isNull();
+
+        //참여자 리스트 관련
+        List<ParticipantDTO> participantDTOList = detailMeetingDTO.getParticipantDTOList();
+        Assertions.assertThat(participantDTOList.size()).isEqualTo(0);
     }
 
     @Test
@@ -855,6 +1128,7 @@ class MeetingServiceImplTest {
         Comment comment = Comment.builder()
                 .member(member)
                 .content("기대돼요!")
+                .open(true)
                 .build();
 
         return comment;

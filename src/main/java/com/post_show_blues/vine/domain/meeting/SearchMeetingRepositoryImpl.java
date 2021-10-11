@@ -1,7 +1,10 @@
 package com.post_show_blues.vine.domain.meeting;
 
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
+import com.post_show_blues.vine.domain.bookmark.QBookmark;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.QFollow;
+import com.post_show_blues.vine.domain.meetingimg.QMeetingImg;
 import com.post_show_blues.vine.domain.member.QMember;
 import com.post_show_blues.vine.domain.memberimg.QMemberImg;
 import com.post_show_blues.vine.domain.participant.QParticipant;
@@ -33,26 +36,17 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
 
     @Override
-    public Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long userId, Pageable pageable) {
+    public Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long principalId, Pageable pageable) {
 
-        log.info("search..............................");
 
         //객체 생성
         QMeeting meeting = QMeeting.meeting;
 
-        QMember member1 = new QMember("member1");
-        QMemberImg memberImg1 = new QMemberImg("memberImg1");
+        QMeetingImg meetingImg = QMeetingImg.meetingImg;
 
+        QMember master = QMember.member;
 
-        QMember member2 = new QMember("member2");
-        QMemberImg memberImg2 = new QMemberImg("memberImg2");
-
-        log.info("==============================");
-        log.info(memberImg1);
-        log.info(memberImg2);
-
-
-        QParticipant participant = QParticipant.participant;
+        QMemberImg masterImg = QMemberImg.memberImg;
 
         QFollow follow = QFollow.follow;
 
@@ -60,19 +54,16 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         JPQLQuery<Meeting> jpqlQuery = from(meeting);
 
         //방장
-        jpqlQuery.leftJoin(member1).on(meeting.member.eq(member1));
-        jpqlQuery.leftJoin(memberImg1).on(memberImg1.member.eq(member1));
+        jpqlQuery.leftJoin(meetingImg).on(meetingImg.meeting.eq(meeting));
+        jpqlQuery.leftJoin(master).on(meeting.member.eq(master));
+        jpqlQuery.leftJoin(masterImg).on(masterImg.member.eq(master));
 
-        //참여자들
-        jpqlQuery.leftJoin(participant).on(participant.meeting.eq(meeting));
-        jpqlQuery.leftJoin(member2).on(participant.member.eq(member2));
-        jpqlQuery.leftJoin(memberImg2).on(memberImg2.member.eq(member2));
-
-        if(userId != null){
-            jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(member1));
+        if(principalId != null){
+            jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(master));
         }
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, memberImg1, memberImg2.id.min());
+        //select 문
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), master, masterImg);
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -81,7 +72,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
 
         builder.and(expression);
 
-        //활동이 지난 모임은 출력하지 않음
+        //참가 마감일이 지난 모임은 출력하지 않음
         builder.and(meeting.dDay.goe(0));
 
         //카테고리 검색
@@ -104,9 +95,83 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         }
 
         //팔로우한 사람이 방장인 모임만 출력
-        if(userId != null){
-            builder.and(follow.fromMemberId.id.eq(userId));
+        if(principalId != null){
+            builder.and(follow.fromMemberId.id.eq(principalId));
             }
+
+        tuple.where(builder);
+
+        //order by절(meeting.id.desc());
+        Sort sort = pageable.getSort();
+
+        sort.stream().forEach(order ->{
+            Order direction = order.isAscending()? Order.ASC : Order.DESC;
+            String property = order.getProperty();
+
+            PathBuilder orderByExpression = new PathBuilder(Meeting.class, "meeting");
+
+            tuple.orderBy(new OrderSpecifier(direction, orderByExpression.get(property)));
+        });
+
+        //group by절
+        tuple.groupBy(meeting);
+
+        //page 처리
+        tuple.offset(pageable.getOffset()); //RequestDTO.page
+        tuple.limit(pageable.getPageSize()); //RequestDTO.size
+
+        log.info("++++++++++++++++++++++++++");
+        log.info(pageable.getOffset());
+
+        List<Tuple> result = tuple.fetch();
+
+        long count = tuple.fetchCount();
+        log.info("COUNT: " + count);
+
+        return new PageImpl<Object[]>(
+                result.stream().map(t -> t.toArray()).collect(Collectors.toList()),
+                pageable,
+                count
+        );
+    }
+
+    @Override
+    public Page<Object[]> bookmarkPage(Long userId, Pageable pageable) {
+
+        //객체 생성
+        QMeeting meeting = QMeeting.meeting;
+
+        QMeetingImg meetingImg = QMeetingImg.meetingImg;
+
+        QMember member = QMember.member;
+
+        QMemberImg memberImg = QMemberImg.memberImg;
+
+        QBookmark bookmark = QBookmark.bookmark;
+
+        //쿼리 작성
+        JPQLQuery<Meeting> jpqlQuery = from(meeting);
+
+        //방장 정보 - left join
+        jpqlQuery.leftJoin(meetingImg).on(meetingImg.meeting.eq(meeting));
+        jpqlQuery.leftJoin(member).on(member.eq(meeting.member));
+        jpqlQuery.leftJoin(memberImg).on(memberImg.member.eq(member));
+        jpqlQuery.leftJoin(bookmark).on(bookmark.meeting.eq(meeting));
+
+        //select 문
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), member, memberImg);
+
+        //where 문
+        BooleanBuilder builder = new BooleanBuilder();
+
+        BooleanExpression expression = meeting.id.gt(0L);
+        builder.and(expression);
+
+        //참가 마감일이 지난 모임은 출력하지 않음
+        builder.and(meeting.dDay.goe(0));
+
+        //현재 유저의 북마크 출력
+        builder.and(bookmark.member.id.eq(userId));
 
         tuple.where(builder);
 

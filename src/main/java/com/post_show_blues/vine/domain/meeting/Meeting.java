@@ -3,6 +3,7 @@ package com.post_show_blues.vine.domain.meeting;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.post_show_blues.vine.domain.BaseEntity;
+import com.post_show_blues.vine.domain.bookmark.Bookmark;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
@@ -35,8 +36,12 @@ public class Meeting extends BaseEntity {
     private Category category;
 
     @Builder.Default
-    @OneToMany(mappedBy = "meeting", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "meeting",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Bookmark> bookmarkList = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
@@ -120,6 +125,10 @@ public class Meeting extends BaseEntity {
 
     public void removeCurrentNumber(){
        this.currentNumber -=1;
+    }
+
+    public void changeDDay(){
+        this.dDay = Duration.between(LocalDate.now().atStartOfDay(), this.reqDeadline.toLocalDate().atStartOfDay()).toDays();
     }
 
     public void updateDDay(){

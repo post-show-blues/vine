@@ -1,6 +1,6 @@
 package com.post_show_blues.vine.dto.requestParticipant;
 
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

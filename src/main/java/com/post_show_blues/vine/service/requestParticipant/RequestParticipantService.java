@@ -3,7 +3,7 @@ package com.post_show_blues.vine.service.requestParticipant;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
 import com.post_show_blues.vine.dto.notice.NoticeResultDTO;

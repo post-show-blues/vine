@@ -18,14 +18,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/members/{member-id}/notices")
+@RequestMapping("/members/{memberId}/notices")
 @Controller
 public class NoticeApiController {
 
     private final NoticeService noticeService;
 
     @GetMapping //알림목록
-    public ResponseEntity<?> noticeList(@PathVariable("member-id") Long memberId,
+    public ResponseEntity<?> noticeList(@PathVariable("memberId") Long memberId,
                                      @RequestBody PageRequestDTO requestDTO){
 
         PageResultDTO<NoticeDTO, Notice> noticeDTOList = noticeService.getNoticeList(requestDTO, memberId);
@@ -34,8 +34,8 @@ public class NoticeApiController {
 
     }
 
-    @DeleteMapping("/{notice-id}") //알림삭제
-    public ResponseEntity<?> deleteNotice(@PathVariable("notice-id") Long noticeId){
+    @DeleteMapping("/{noticeId}") //알림삭제
+    public ResponseEntity<?> deleteNotice(@PathVariable("noticeId") Long noticeId){
 
         noticeService.remove(noticeId);
 

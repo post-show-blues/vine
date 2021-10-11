@@ -25,10 +25,10 @@ public class Notice extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean state=false;
+    private Boolean readState=false;
 
     public void changeState(){
-        this.state = true;
+        this.readState = true;
     }
 
 }

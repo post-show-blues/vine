@@ -31,26 +31,27 @@ public class CommentDTO {
     @NotBlank
     private String content;
 
-    public Comment toEntity(Long principalId){
+    @NotNull
+    private Boolean open;
 
-        Comment comment;
+    public Comment toEntity(Meeting meeting, Comment parentComment){
 
-        if(parentId == null){
 
-            comment = Comment.builder()
-                    .meeting(Meeting.builder().id(meetingId).build())
-                    .member(Member.builder().id(principalId).build())
-                    .content(content)
-                    .build();
+        Comment comment = Comment.builder()
+                .member(Member.builder().id(memberId).build())
+                .content(content)
+                .open(open)
+                .build();
 
-        }else{
+        comment.setMeeting(meeting);
 
-            comment = Comment.builder()
-                    .meeting(Meeting.builder().id(meetingId).build())
-                    .member(Member.builder().id(principalId).build())
-                    .parent(Comment.builder().id(parentId).build())
-                    .content(content)
-                    .build();
+        if(parentComment != null){
+            comment.setParent(parentComment);
+
+            //부모댓글이 비공개일 경우 - 자식 댓글로 비공개로 변경
+            if(parentComment.getOpen() == false){
+                comment.changeOpen(false);
+            }
         }
 
         return comment;

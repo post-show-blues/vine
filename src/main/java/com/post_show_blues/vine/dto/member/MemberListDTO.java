@@ -1,6 +1,5 @@
 package com.post_show_blues.vine.dto.member;
 
-import com.post_show_blues.vine.dto.MemberImgDTO;
 import lombok.*;
 
 @Getter

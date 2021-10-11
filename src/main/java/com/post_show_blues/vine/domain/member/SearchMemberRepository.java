@@ -2,7 +2,7 @@ package com.post_show_blues.vine.domain.member;
 
 import com.post_show_blues.vine.domain.follow.Follow;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
 import com.post_show_blues.vine.dto.member.QMyProfileDTO;

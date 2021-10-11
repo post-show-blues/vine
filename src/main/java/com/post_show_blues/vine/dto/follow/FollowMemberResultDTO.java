@@ -1,6 +1,6 @@
 package com.post_show_blues.vine.dto.follow;
 
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

@@ -4,7 +4,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.member.SearchMemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
-import com.post_show_blues.vine.dto.MemberImgDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
