@@ -1,9 +1,11 @@
 package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.member.Member;
+import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupResponse;
 import com.post_show_blues.vine.dto.member.MemberUpdateDto;
 import com.post_show_blues.vine.service.auth.AuthService;
 import com.post_show_blues.vine.service.member.MemberService;
@@ -31,6 +33,8 @@ public class MemberUpdateServiceTest {
     AuthService authService;
     @Autowired
     MemberImgRepository memberImgRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     Member memberA, memberB;
     MemberImg memberAImg;
@@ -38,13 +42,13 @@ public class MemberUpdateServiceTest {
     @BeforeEach
     void setUp() throws IOException {
         //사진이 있는 멤버
-        Object[] signupDto = createSignupDto();
-        memberA = (Member) signupDto[0];
-        memberAImg = (MemberImg) signupDto[1];
+        SignupResponse signupDto = createSignupDto();
+        memberA = memberRepository.findById(signupDto.getId()).get();
+        memberAImg = memberImgRepository.findByMember(memberA).get();
 
         //사진이 없는 멤버
-        Object[] signupDto2 = createSignupDto2();
-        memberB=(Member) signupDto2[0];
+        SignupResponse signupDto2 = createSignupDto2();
+        memberB=memberRepository.findById(signupDto2.getId()).get();
     }
 
     @Test
@@ -123,33 +127,29 @@ public class MemberUpdateServiceTest {
 
     }
 
-    Object[] createSignupDto() throws IOException {
+    SignupResponse createSignupDto() throws IOException {
         MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
 
         SignupDto signupDTO = SignupDto.builder()
-                .name("memberA")
                 .email("memberA@duksung.ac.kr")
                 .nickname("memberA")
                 .password("1111")
-                .phone("010-0000-0000")
                 .file(file1)
                 .build();
-        Object[] join = authService.join(signupDTO);
+        SignupResponse join = authService.join(signupDTO);
 
         return join;
     }
 
-    Object[] createSignupDto2() throws IOException {
+    SignupResponse createSignupDto2() throws IOException {
 
         SignupDto signupDTO = SignupDto.builder()
-                .name("memberB")
                 .email("memberB@duksung.ac.kr")
                 .nickname("memberB")
                 .password("1111")
-                .phone("010-0000-0000")
                 .build();
 
-        Object[] join = authService.join(signupDTO);
+        SignupResponse join = authService.join(signupDTO);
 
         return join;
     }

@@ -4,6 +4,7 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupResponse;
 import com.post_show_blues.vine.service.auth.AuthService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -32,12 +33,13 @@ public class AuthServiceTest {
         String nickname="memberNickname";
 
         //when
-        authService.join(memberA);
+        SignupResponse join = authService.join(memberA);
+        System.out.println(join);
 
         //then
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> authService.join(memberA));
 
-        assertThat(e.getMessage()).isEqualTo("중복된 이메일입니다");
+        assertThat(e.getMessage()).isEqualTo("중복된 닉네임입니다");
 
     }
 
@@ -47,14 +49,12 @@ public class AuthServiceTest {
         SignupDto signupDtoImg = createSignupDtoImg();
 
         //when
-        Object[] join = authService.join(signupDtoImg);
-        Member memberA = (Member) join[0];
-        MemberImg memberAImg = (MemberImg) join[1];
+        SignupResponse join = authService.join(signupDtoImg);
 
         //then
-        assertThat(memberA.getNickname()).isEqualTo(signupDtoImg.getNickname());
+        assertThat(join.getNickname()).isEqualTo(signupDtoImg.getNickname());
 
-        assertThat(memberAImg.getStoreFileName().split("_")[1]).isEqualTo(signupDtoImg.getFile().getOriginalFilename());
+        assertThat(join.getStoreFileName().split("_")[1]).isEqualTo(signupDtoImg.getFile().getOriginalFilename());
 
     }
 
@@ -64,23 +64,19 @@ public class AuthServiceTest {
         SignupDto memberA = createSignupDto();
 
         //when
-        Object[] join = authService.join(memberA);
-        Member memberEntityA = (Member) join[0];
-        Optional<MemberImg> memberAImg = Optional.ofNullable((MemberImg) join[1]);
+        SignupResponse join = authService.join(memberA);
 
         //then
-        assertThat(memberA.getNickname()).isEqualTo(memberEntityA.getNickname());
-        assertThat(memberAImg.isEmpty()).isEqualTo(true);
+        assertThat(memberA.getNickname()).isEqualTo(join.getNickname());
+        assertThat(join.getForderPath()).isEqualTo(null);
     }
 
 
     SignupDto createSignupDto(){
         return SignupDto.builder()
-                .name("memberA")
                 .email("member@kookmin.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-                .phone("010-0000-0000")
                 .build();
     }
 

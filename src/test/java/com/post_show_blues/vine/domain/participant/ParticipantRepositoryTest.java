@@ -88,12 +88,12 @@ class ParticipantRepositoryTest {
     private MemberImg createMemberImg () {
 
         Member memberC = Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberCNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
 
         memberRepository.save(memberC);
@@ -113,12 +113,12 @@ class ParticipantRepositoryTest {
         Meeting meeting = createMeeting();
 
         Member memberB =Member.builder()
-                .name("memberB")
+//                .name("memberB")
                 .email("memberB@kookmin.ac.kr")
                 .nickname("memberBNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(memberB);
 
@@ -127,12 +127,12 @@ class ParticipantRepositoryTest {
 
         //memberD 만들기
         Member memberD =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberD@kookmin.ac.kr")
                 .nickname("memberDNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(memberD);
 
@@ -199,12 +199,12 @@ class ParticipantRepositoryTest {
 
     private Member createMember(){
         Member member = Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberA@kookmin.ac.kr" )
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

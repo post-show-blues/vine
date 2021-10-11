@@ -41,12 +41,12 @@ class ParticipantServiceImplTest {
     void 추방_기능() throws Exception{
         //given
         Member member =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -87,12 +87,12 @@ class ParticipantServiceImplTest {
     void 나가기_기능() throws Exception{
         //given
         Member member =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -153,12 +153,12 @@ class ParticipantServiceImplTest {
         Meeting meeting = createMeeting();
 
         Member member1 =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(member1);
 
@@ -167,12 +167,12 @@ class ParticipantServiceImplTest {
 
         //member3 만들기
         Member memberC =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberCNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(memberC);
 
@@ -219,12 +219,12 @@ class ParticipantServiceImplTest {
     private MemberImg createMemberImg() {
 
         Member memberB =Member.builder()
-                .name("member")
+//                .name("member")
                 .email("memberB@kookmin.ac.kr")
                 .nickname("memberBNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
         memberRepository.save(memberB);
 
@@ -265,12 +265,12 @@ class ParticipantServiceImplTest {
 
     private Member createMember() {
         Member member = Member.builder()
-                .name("memberA")
+//                .name("memberA")
                 .email("member@kookmin.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

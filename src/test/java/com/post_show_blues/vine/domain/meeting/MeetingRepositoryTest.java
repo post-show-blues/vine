@@ -76,12 +76,9 @@ class MeetingRepositoryTest {
 
     private Member createMember() {
         Member member = Member.builder()
-                .name("memberA")
                 .email("member@kookmin.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

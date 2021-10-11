@@ -3,6 +3,7 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.follow.Follow;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.Member;
+import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
@@ -31,6 +32,8 @@ public class FollowServiceTest {
 
     @Autowired
     FollowService followService;
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired
     FollowRepository followRepository;
     @Autowired
@@ -141,40 +144,34 @@ public class FollowServiceTest {
     }
 
     Member memberA() throws IOException {
-        SignupDto memberA = SignupDto.builder()
-                .name("memberA")
+        Member memberA = Member.builder()
                 .email("member@duksung.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-                .phone("010-0000-0000")
                 .build();
-        Member memberEntityA = (Member) authService.join(memberA)[0];
+        Member memberEntityA = memberRepository.save(memberA);
         return memberEntityA;
     }
 
     Member memberB() throws IOException {
-        SignupDto memberB = SignupDto.builder()
-                .name("memberB")
+        Member memberB = Member.builder()
                 .email("member@kookmin.ac.kr")
                 .nickname("Nickname")
                 .password("1111")
-                .phone("010-0000-0000")
                 .build();
 
-        Member memberEntityB = (Member) authService.join(memberB)[0];
+        Member memberEntityB = memberRepository.save(memberB);
         return memberEntityB;
     }
 
     Member memberC() throws IOException {
-        SignupDto memberC = SignupDto.builder()
-                .name("memberC")
+        Member memberC = Member.builder()
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberC")
                 .password("1111")
-                .phone("010-0000-0000")
                 .build();
 
-        Member memberEntityC = (Member) authService.join(memberC)[0];
+        Member memberEntityC = memberRepository.save(memberC);
         return memberEntityC;
     }
 
