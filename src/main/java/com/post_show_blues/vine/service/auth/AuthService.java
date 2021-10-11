@@ -8,7 +8,7 @@ import com.post_show_blues.vine.dto.auth.SigninDto;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
-import com.post_show_blues.vine.jwt.TokenProvider;
+import com.post_show_blues.vine.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;

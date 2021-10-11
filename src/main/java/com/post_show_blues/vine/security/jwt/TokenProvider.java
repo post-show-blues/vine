@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.jwt;
+package com.post_show_blues.vine.security.jwt;
 
 import com.post_show_blues.vine.config.auth.PrincipalDetails;
 import io.jsonwebtoken.*;

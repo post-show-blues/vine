@@ -1,7 +1,7 @@
 package com.post_show_blues.vine.config;
 
 import com.post_show_blues.vine.config.auth.PrincipalDetailsService;
-import com.post_show_blues.vine.jwt.*;
+import com.post_show_blues.vine.security.jwt.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

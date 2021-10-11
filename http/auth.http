@@ -15,7 +15,7 @@ POST http://localhost:9200/auth/signin
 Content-Type: application/json
 
 {
-  "email" : "name@duksung.ac.kr",
+  "email" : "name2@duksung.ac.kr",
   "password" : "1111"
 }
 
@@ -35,7 +35,7 @@ Content-Type: application/json
 ### 로그인만 O
 GET http://localhost:9200/member/profile
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0NDkiLCJpYXQiOjE2MzMyNjgzNzEsImV4cCI6MTYzMzM1NDc3MX0.UChlCbStxpqTRpTbdnsW7mcyhPgfmukcUSBGYb3kvam2viHQSeGZYp9KjDUwTCdqiZ8YD3Owqe3cl_fFsWVFkw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2NSIsImlhdCI6MTYzMzk2MDMzMiwiZXhwIjoxNjM0MDQ2NzMyfQ._artTSAqfGIpCkBHl3QNWQU-Djn83mLStRlB9e9uRJIXtBIEsWhCEJD_Sjrp7yfFJta-J4ckojeUj7gZ9a05cQ
 
 
 ###

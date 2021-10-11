@@ -21,7 +21,7 @@ public class FollowApiController {
     private final FollowService followService;
 
     @PostMapping("/subscribe/{toMemberId}")
-    public ResponseEntity<?> follow(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable long toMemberId){
+    public ResponseEntity<?> follow(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable long toMemberId){ //UserDetailsService를 리턴한 값을 사용할 수 있음
         followService.isFollow(principalDetails.getMember().getId(), toMemberId);
         return new ResponseEntity<>(new CMRespDto<>(1, "구독하기 성공", null), HttpStatus.OK);
     }

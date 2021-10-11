@@ -1,4 +1,4 @@
-package com.post_show_blues.vine.jwt;
+package com.post_show_blues.vine.security.jwt;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
