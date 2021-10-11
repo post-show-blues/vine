@@ -12,9 +12,9 @@ public interface RequestParticipantService {
 
     Long request(Long meetingId, Long memberId);
 
-    void accept(Long requestParticipantId);
+    void accept(Long requestParticipantId, Long principalId);
 
-    void reject(Long requestParticipantId);
+    void reject(Long requestParticipantId, Long principalId);
 
     List<RequestParticipantDTO> getRequestParticipantList(Long meetingId);
 

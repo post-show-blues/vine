@@ -100,14 +100,17 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
      */
     @Transactional
     @Override
-    public void accept(Long requestParticipantId) {
+    public void accept(Long requestParticipantId, Long principalId) {
 
         RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
                 new IllegalStateException("존재하지 않은 요청입니다."));
 
         Meeting meeting = requestParticipant.getMeeting();
 
-        //TODO 방장만  수락 가능 체크
+        //방장 권한 체크
+        if(meeting.getMember().getId() != principalId){
+            throw new IllegalStateException("요청수락 권한이 없습니다.");
+        }
 
         //participant 참여명단 추가
         Participant participant = Participant.builder()
@@ -139,14 +142,17 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
      */
     @Transactional
     @Override
-    public void reject(Long requestParticipantId) {
+    public void reject(Long requestParticipantId, Long principalId) {
         RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
                 new IllegalStateException("존재하지 않은 요청입니다."));
 
         Member member = requestParticipant.getMember();
         Meeting meeting = requestParticipant.getMeeting();
 
-        //TODO 방장거절, 요청자 철회 가능 체크
+        //요청자 or 방장 권한 체크
+        if(member.getId() != principalId && meeting.getMember().getId() != principalId){
+            throw new IllegalStateException("거절 또는 철회 권한이 없습니다.");
+        }
 
        requestParticipantRepository.deleteById(requestParticipantId);
 

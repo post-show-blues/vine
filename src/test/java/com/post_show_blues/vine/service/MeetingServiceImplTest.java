@@ -363,6 +363,14 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e5.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e6.getMessage()).isEqualTo("No value present");
 
+        //알람 검증 -> 참여자들에게 생성
+        List<Notice> noticeList = noticeRepository.getNoticeList(participant.getMember().getId());
+
+        for (Notice notice : noticeList){
+            System.out.println(notice.toString());
+        }
+
+        Assertions.assertThat(noticeList.size()).isEqualTo(1);
     }
 
     @Test
@@ -997,8 +1005,6 @@ class MeetingServiceImplTest {
         //when
         DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
-        System.out.println(detailMeetingDTO);
-
         //then
         //모임 관련
         Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
@@ -1030,7 +1036,6 @@ class MeetingServiceImplTest {
 
         Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(5);
     }
-
 
     @Test
     void 모임_조회페이지DTO_사진x() throws Exception{
@@ -1095,7 +1100,7 @@ class MeetingServiceImplTest {
                     .text("meet")
                     .place("A")
                     .meetDate(LocalDateTime.of(2021, 8, i, 00, 00))
-                    .reqDeadline(LocalDateTime.of(2021, 05, 04, 00, 00))
+                    .reqDeadline(LocalDateTime.of(2021, 12, i, 00, 00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                             LocalDateTime.of(2021, 7, i+10, 00, 00)
                                     .toLocalDate().atStartOfDay()).toDays())
@@ -1112,14 +1117,15 @@ class MeetingServiceImplTest {
         //then
         List<Meeting> result = meetingRepository.findAll();
 
+        System.out.println("===============================");
+        for (Meeting meeting : result){
+            System.out.println(meeting.getDDay());
+        }
+
         Assertions.assertThat(result.get(4).getDDay() - result.get(3).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(3).getDDay() - result.get(2).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(2).getDDay() - result.get(1).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(1).getDDay() - result.get(0).getDDay()).isEqualTo(1);
-
-        for (Meeting meeting : result){
-            System.out.println(meeting.getDDay());
-        }
     }
 
 

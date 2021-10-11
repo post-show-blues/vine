@@ -116,57 +116,7 @@ public class CommentServiceImpl implements CommentService{
                 .commentResDTOList(commentResDTOList)
                 .build();
 
-/*
-        Meeting meeting = meetingRepository.findById(meetingId).get();
 
-        List<Comment> commentList = commentRepository.getCommentBy(meeting.getId());
-
-        List<CommentResDTO> commentResDTOList2 = new ArrayList<>();
-
-        for (Comment comment : commentList){
-
-            List<Comment> childList = comment.getChild();
-
-            List<CommentResDTO> childCommentResDTOList = new ArrayList<>();
-
-            for (Comment ChildComment : childList){
-
-                CommentResDTO commentResDTO = CommentResDTO.builder()
-                        .commentId(ChildComment.getId())
-                        .parentId(ChildComment.getParent().getId())
-                        .content(ChildComment.getContent())
-                        .open(ChildComment.getOpen())
-                        .existState(ChildComment.getExistState())
-                        .memberId(ChildComment.getMember().getId())
-                        .nickname(ChildComment.getMember().getNickname())
-                        .regDate(ChildComment.getRegDate())
-                        .modDate(ChildComment.getModDate())
-                        .build();
-
-                childCommentResDTOList.add(commentResDTO);
-
-            }
-
-            CommentResDTO commentResDTO = CommentResDTO.builder()
-                    .commentId(comment.getId())
-                    .content(comment.getContent())
-                    .open(comment.getOpen())
-                    .existState(comment.getExistState())
-                    .memberId(comment.getMember().getId())
-                    .nickname(comment.getMember().getNickname())
-                    .regDate(comment.getRegDate())
-                    .modDate(comment.getModDate())
-                    .childList(childCommentResDTOList)
-                    .build();
-
-            commentResDTOList2.add(commentResDTO);
-        }
-
-        CommentListDTO commentListDTO = CommentListDTO.builder()
-                .commentResDTOList(commentResDTOList2)
-                .commentCount(5)
-                .build();
-*/
         return commentReadDTO;
     }
 

@@ -38,8 +38,6 @@ public class ParticipantServiceImpl implements ParticipantService{
 
         meeting.removeCurrentNumber();
 
-        //TODO 방장, 참여자 확인
-
         /** 1.추방 -> 회원에게 알림
          *  2. 나가기 -> 방장에게 알림
          */
@@ -55,7 +53,7 @@ public class ParticipantServiceImpl implements ParticipantService{
 
         }
         //방장에게 알림 (회원 나감)
-        else{
+        else if(participant.getMember().getId() == principalId){
             String nicknameOfParticipant = participantRepository.getNicknameOfParticipant(participantId);
 
             Notice masterNotice = Notice.builder()
@@ -64,6 +62,10 @@ public class ParticipantServiceImpl implements ParticipantService{
                     .link("/meetings/"+meeting.getId())
                     .build();
             noticeRepository.save(masterNotice);
+        }
+        //방장, 참여자 둘다 아닌 경우
+        else {
+            throw new IllegalStateException("방 추방 또는 나가기 권한이 없습니다.");
         }
 
         //알림생성 후 참여 삭제
