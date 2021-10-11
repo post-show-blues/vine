@@ -9,11 +9,13 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.Notice;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
+import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.meeting.DetailMeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
+import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
@@ -196,8 +198,12 @@ public class MeetingServiceImpl implements MeetingService{
     @Transactional
     @Override
     public void remove(Long meetingId) {
-        Optional<Meeting> result = meetingRepository.findById(meetingId);
-        Meeting meeting = result.get();
+
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() ->
+                new IllegalStateException("존재하지 않은 모임입니다."));
+
+        //삭제후 알림 보낼 회원 리스트
+        List<Participant> participantList = participantRepository.findByMeeting(meeting);
 
         // participant -> requestParticipant -> 서버컴퓨터 사진삭제
         // -> meetingImg -> meeting 순으로 삭제 (meeting 삭제 시 cascade로 댓글도 삭제)
@@ -215,6 +221,19 @@ public class MeetingServiceImpl implements MeetingService{
 
         //meeting, comment 삭제
         meetingRepository.deleteById(meetingId);
+
+        //모임 참여자들에게 알림 생성
+        System.out.println("=================");
+        System.out.println(meeting.getText());
+        participantList.forEach(par -> {
+            Notice notice = Notice.builder()
+                    .memberId(par.getMember().getId())
+                    .text(meeting.getText() + " 활동이 취소되었습니다.")
+                    .build();
+
+            noticeRepository.save(notice);
+        });
+
     }
 
 
@@ -340,7 +359,7 @@ public class MeetingServiceImpl implements MeetingService{
     }
 
     /**
-     * 모임조회
+     * 모임 단건 조회
      */
     @Transactional(readOnly = true)
     @Override

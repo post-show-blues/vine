@@ -21,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-
 @Transactional
 @SpringBootTest
 public class CommentServiceImplTest {
@@ -319,6 +316,7 @@ public class CommentServiceImplTest {
         CommentResDTO second = result.getCommentResDTOList().get(1);
         Assertions.assertThat(second.getChildList().size()).isEqualTo(1);
     }
+
 
     private Comment createComment(Member member) {
 

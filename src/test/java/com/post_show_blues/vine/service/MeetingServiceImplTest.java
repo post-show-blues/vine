@@ -363,6 +363,14 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e5.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e6.getMessage()).isEqualTo("No value present");
 
+        //알람 검증 -> 참여자들에게 생성
+        List<Notice> noticeList = noticeRepository.getNoticeList(participant.getMember().getId());
+
+        for (Notice notice : noticeList){
+            System.out.println(notice.toString());
+        }
+
+        Assertions.assertThat(noticeList.size()).isEqualTo(1);
     }
 
     @Test
@@ -997,8 +1005,6 @@ class MeetingServiceImplTest {
         //when
         DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
 
-        System.out.println(detailMeetingDTO);
-
         //then
         //모임 관련
         Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
@@ -1030,7 +1036,6 @@ class MeetingServiceImplTest {
 
         Assertions.assertThat(detailMeetingDTO.getParticipantDTOList().size()).isEqualTo(5);
     }
-
 
     @Test
     void 모임_조회페이지DTO_사진x() throws Exception{

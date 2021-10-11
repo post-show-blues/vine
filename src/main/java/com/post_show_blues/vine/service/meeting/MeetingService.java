@@ -129,8 +129,6 @@ public interface MeetingService {
                                                Member master, MemberImg masterImg,
                                                List<ParticipantDTO> participantDTOList, Long principalId){
 
-        System.out.println("--------추가 쿼리 실행 시작 시점-------");
-
         DetailMeetingDTO detailMeetingDTO = DetailMeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .category(meeting.getCategory())
@@ -145,9 +143,6 @@ public interface MeetingService {
                 .dDay(meeting.getDDay())
                 .chatLink(meeting.getChatLink())
                 .build();
-
-        System.out.println("-------------추가 쿼리 실행 종료 시점------------");
-
 
         //현재 사용자 모임 북마크
         if(principalId != null) {
