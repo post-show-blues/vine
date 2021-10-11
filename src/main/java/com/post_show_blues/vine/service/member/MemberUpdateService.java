@@ -46,7 +46,6 @@ public class MemberUpdateService {
         member.setText(memberUpdateDto.getText());
     }
 
-    //TODO : 이미지 업데이트 분기 어떻게 할 지
     private void memberImgUpdate(Member member, Optional<MultipartFile> memberImgUploadDto) throws IOException {
         Optional<MemberImg> memberImgEntity = memberImgRepository.findByMember(member);
 
