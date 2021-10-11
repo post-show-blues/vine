@@ -3,17 +3,21 @@ package com.post_show_blues.vine.controller.api;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.auth.SigninDto;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupResponse;
 import com.post_show_blues.vine.dto.auth.TokenDto;
 import com.post_show_blues.vine.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 
+@Log4j2
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
@@ -22,9 +26,20 @@ public class AuthApiController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupDto signupDto) throws IOException {
-        System.out.println(signupDto);
-        Object[] join = authService.join(signupDto);
+    public ResponseEntity<?> signup(@RequestPart String nickname,
+                                    @RequestPart String email,
+                                    @RequestPart String password,
+                                    @RequestPart(required = false) MultipartFile file) throws IOException {
+        SignupDto signupDto = SignupDto.builder()
+                .nickname(nickname)
+                .email(email)
+                .password(password)
+                .file(file)
+                .build();
+        log.info(signupDto);
+
+        SignupResponse join = authService.join(signupDto);
+
         return new ResponseEntity<>(new CMRespDto<>(1, "회원가입 성공", join), HttpStatus.OK);
     }
 

@@ -6,6 +6,9 @@ import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SigninDto;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupResponse;
+import com.post_show_blues.vine.exception.AlreadyExistedEmailException;
+import com.post_show_blues.vine.exception.AlreadyExistedNicknameException;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
 import com.post_show_blues.vine.security.jwt.TokenProvider;
@@ -48,7 +51,7 @@ public class AuthService {
      * 회원가입
      */
     @Transactional
-    public Object[] join(SignupDto signupDto) throws IOException {
+    public SignupResponse join(SignupDto signupDto) throws IOException {
         //회원 정보
         Member member = signupDto.toMemberEntity();
 
@@ -65,7 +68,9 @@ public class AuthService {
             memberImgEntity = memberImgRepository.save(memberImg);
         }
 
-        return new Object[]{memberEntity, memberImgEntity};
+
+
+        return new SignupResponse(memberEntity, memberImgEntity);
     }
 
     /**
@@ -95,14 +100,14 @@ public class AuthService {
     private void validateDuplicateNickname(String nickname){
         Member findMember = memberRepository.findByNickname(nickname).orElse(null);
         if(findMember!=null){
-            throw new IllegalStateException("중복된 닉네임입니다");
+            throw new AlreadyExistedNicknameException("이미 사용중인 닉네임입니다.");
         }
     }
 
     private void validateDuplicateEmail(String email){
         Member findMember = memberRepository.findByEmail(email).orElse(null);
         if(findMember!=null){
-            throw new IllegalStateException("중복된 이메일입니다");
+            throw new AlreadyExistedEmailException("이미 사용중인 이메일입니다.");
         }
     }
 
