@@ -41,9 +41,10 @@ public class RequestParticipantApiController {
     }
 
     @DeleteMapping("/{reqId}") //참여요청 거절/철회
-    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("reqId") Long requestParticipantId){
+    public ResponseEntity<?> deleteRequestParticipant(@PathVariable("reqId") Long requestParticipantId,
+                                                      @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        requestParticipantService.reject(requestParticipantId);
+        requestParticipantService.reject(requestParticipantId, principalDetails.getMember().getId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "참여요청 삭제 성공", null), HttpStatus.OK);
     }

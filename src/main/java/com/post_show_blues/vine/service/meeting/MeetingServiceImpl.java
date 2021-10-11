@@ -205,7 +205,6 @@ public class MeetingServiceImpl implements MeetingService{
 
         requestParticipantRepository.deleteByMeeting(meeting);
 
-        //TODO 2021.06.16-실제 테스트 필요-hyeongwoo
         List<MeetingImg> meetingImgList = meetingImgRepository.findByMeeting(meeting);
 
         //서버 컴퓨터에 저장된 사진 삭제

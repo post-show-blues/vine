@@ -42,7 +42,7 @@ public class ParticipantApiController {
                                                 @RequestBody RequestParticipantDTO requestParticipantDTO,
                                                 @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        requestParticipantService.accept(requestParticipantDTO.getRequestParticipantId());
+        requestParticipantService.accept(requestParticipantDTO.getRequestParticipantId(), principalDetails.getMember().getId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "참여수락 성공", null), HttpStatus.OK);
     }

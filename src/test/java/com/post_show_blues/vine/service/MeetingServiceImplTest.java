@@ -1095,7 +1095,7 @@ class MeetingServiceImplTest {
                     .text("meet")
                     .place("A")
                     .meetDate(LocalDateTime.of(2021, 8, i, 00, 00))
-                    .reqDeadline(LocalDateTime.of(2021, 05, 04, 00, 00))
+                    .reqDeadline(LocalDateTime.of(2021, 12, i, 00, 00))
                     .dDay(Duration.between(LocalDate.now().atStartOfDay(),
                             LocalDateTime.of(2021, 7, i+10, 00, 00)
                                     .toLocalDate().atStartOfDay()).toDays())
@@ -1112,14 +1112,15 @@ class MeetingServiceImplTest {
         //then
         List<Meeting> result = meetingRepository.findAll();
 
+        System.out.println("===============================");
+        for (Meeting meeting : result){
+            System.out.println(meeting.getDDay());
+        }
+
         Assertions.assertThat(result.get(4).getDDay() - result.get(3).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(3).getDDay() - result.get(2).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(2).getDDay() - result.get(1).getDDay()).isEqualTo(1);
         Assertions.assertThat(result.get(1).getDDay() - result.get(0).getDDay()).isEqualTo(1);
-
-        for (Meeting meeting : result){
-            System.out.println(meeting.getDDay());
-        }
     }
 
 

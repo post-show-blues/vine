@@ -129,6 +129,50 @@ class ParticipantServiceImplTest {
     }
 
     @Test
+    void 추방_나가기_권한x() throws Exception{
+        //given
+        //참여자 생성
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
+
+        //모임 생성
+        Meeting meeting = createMeeting();
+
+        //참여
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+
+        participantRepository.save(participant);
+
+        //추방_나가기 권한 없는 회원 생성
+        Member memberX =Member.builder()
+                .name("memberX")
+                .email("memberX@kookmin.ac.kr")
+                .nickname("memberXNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberX);
+
+        //when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> participantService.remove(participant.getId(), memberX.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("방 추방 또는 나가기 권한이 없습니다.");
+    }
+
+    @Test
     void 참여자_리스트() throws Exception{
         //given
 

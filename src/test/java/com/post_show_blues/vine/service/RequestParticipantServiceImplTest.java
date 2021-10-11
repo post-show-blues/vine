@@ -179,7 +179,7 @@ class RequestParticipantServiceImplTest {
         requestParticipantRepository.save(requestParticipant);
 
         //when
-        requestParticipantService.accept(requestParticipant.getId());
+        requestParticipantService.accept(requestParticipant.getId(), meeting.getMember().getId());
 
         //then
         //기존 참여요청 명단에서 삭제
@@ -200,6 +200,40 @@ class RequestParticipantServiceImplTest {
             System.out.println(notice.toString());
         }
 
+    }
+
+    @Test
+    void 참여수락_권한x() throws Exception{
+        //given
+        //모임 생성
+        Meeting meeting = createMeeting();
+
+        //참여자 요청자 생성
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
+
+        //참여 요청 생성
+        RequestParticipant requestParticipant = RequestParticipant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+
+        requestParticipantRepository.save(requestParticipant);
+
+        //when
+        //참여 요청자가 수락 (참여 요청자는 방장이 x)
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> requestParticipantService.accept(requestParticipant.getId(), member.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("요청수락 권한이 없습니다.");
     }
 
     @Test
@@ -245,14 +279,14 @@ class RequestParticipantServiceImplTest {
 
         //when
         IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> requestParticipantService.accept(requestParticipant.getId()));
+                () -> requestParticipantService.accept(requestParticipant.getId(), meeting.getMember().getId()));
 
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
     }
 
     @Test
-    void 참여거절() throws Exception{
+    void 참여요청거절() throws Exception{
         //given
         Meeting meeting = createMeeting();
         Member member =Member.builder()
@@ -273,7 +307,7 @@ class RequestParticipantServiceImplTest {
         requestParticipantRepository.save(requestParticipant);
 
         //when
-        requestParticipantService.reject(requestParticipant.getId());
+        requestParticipantService.reject(requestParticipant.getId(), meeting.getMember().getId());
 
         //then
         NoSuchElementException e = assertThrows(NoSuchElementException.class,
@@ -289,6 +323,51 @@ class RequestParticipantServiceImplTest {
         for (Notice notice : noticeList){
             System.out.println(notice.toString());
         }
+    }
+
+    @Test
+    void 참여요청_거절_철회_권한x() throws Exception{
+        //given
+        //모임 생성
+        Meeting meeting = createMeeting();
+
+        //참여 요청자 생성
+        Member member =Member.builder()
+                .name("member")
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(member);
+
+        //참여 요청 생성
+        RequestParticipant requestParticipant = RequestParticipant.builder()
+                .member(member)
+                .meeting(meeting)
+                .build();
+
+        requestParticipantRepository.save(requestParticipant);
+
+        //참여 거절_철회 권한 없는 회원 생성
+        Member memberX =Member.builder()
+                .name("memberX")
+                .email("memberX@kookmin.ac.kr")
+                .nickname("memberXNickname")
+                .password("1111")
+                .phone("010-0000-0000")
+                .university("국민대학교")
+                .build();
+        memberRepository.save(memberX);
+
+        //when
+        //참여 요청 거절_철회 권한이 없는 회원이 거절_철회할 경우
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> requestParticipantService.accept(requestParticipant.getId(), memberX.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("요청수락 권한이 없습니다.");
     }
 
     @Test
