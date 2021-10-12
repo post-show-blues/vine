@@ -254,15 +254,17 @@ public class MeetingServiceImpl implements MeetingService{
             pageable = pageRequestDTO.getPageable(Sort.by(pageRequestDTO.getSort().get(0)).descending());
         }
 
+
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
                                                             pageRequestDTO.getKeyword(),
                                                             null, pageable);
 
         Function<Object[], MeetingResDTO> fn = (arr -> listEntityToDTO(
                 (Meeting)arr[0], //모임 엔티티
-                meetingImgService.findOne((Long)arr[1]), //모임 사진
+                meetingImgService.findOne((Long)arr[1]), //모임 사진  //추가 쿼리 발생
                 (Member)arr[2], //방장 엔티티
-                (MemberImg)arr[3], //모임장 프로필 사진
+                (MemberImg)arr[3],//모임장 프로필 사진
+                (Integer)arr[4],//댓글 수
                 principalId) //현재 유저 id
         );
 
@@ -291,7 +293,8 @@ public class MeetingServiceImpl implements MeetingService{
                 (Meeting)arr[0], //모임 엔티티
                 meetingImgService.findOne((Long)arr[1]), //모임 사진
                 (Member)arr[2], //방장 엔티티
-                (MemberImg)arr[3], //모임장 프로필 사진
+                (MemberImg)arr[3],//모임장 프로필 사진
+                (Integer)arr[4],//댓글 수
                 principalId) //현재 유저 id
         );
 
@@ -320,7 +323,8 @@ public class MeetingServiceImpl implements MeetingService{
                 (Meeting)arr[0], //모임 엔티티
                 meetingImgService.findOne((Long)arr[1]), //모임 사진
                 (Member)arr[2], //방장 엔티티
-                (MemberImg)arr[3], //모임장 프로필 사진
+                (MemberImg)arr[3],//모임장 프로필 사진
+                (Integer)arr[4],//댓글 수
                 principalId) //현재 유저 id
         );
 

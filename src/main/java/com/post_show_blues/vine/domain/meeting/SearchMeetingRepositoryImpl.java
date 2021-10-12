@@ -7,7 +7,6 @@ import com.post_show_blues.vine.domain.follow.QFollow;
 import com.post_show_blues.vine.domain.meetingimg.QMeetingImg;
 import com.post_show_blues.vine.domain.member.QMember;
 import com.post_show_blues.vine.domain.memberimg.QMemberImg;
-import com.post_show_blues.vine.domain.participant.QParticipant;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -22,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +33,6 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
     public SearchMeetingRepositoryImpl() {
         super(Meeting.class);
     }
-
 
     @Override
     public Page<Object[]> searchPage(List<Category> categoryList, String keyword, Long principalId, Pageable pageable) {
@@ -63,7 +62,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         }
 
         //select 문
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), master, masterImg);
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), master, masterImg, meeting.commentList.size());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -136,7 +135,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public Page<Object[]> bookmarkPage(Long userId, Pageable pageable) {
+    public Page<Object[]> bookmarkPage(Long principalId, Pageable pageable) {
 
         //객체 생성
         QMeeting meeting = QMeeting.meeting;
@@ -159,7 +158,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         jpqlQuery.leftJoin(bookmark).on(bookmark.meeting.eq(meeting));
 
         //select 문
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), member, memberImg);
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), member, memberImg, meeting.commentList.size());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -171,7 +170,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         builder.and(meeting.dDay.goe(0));
 
         //현재 유저의 북마크 출력
-        builder.and(bookmark.member.id.eq(userId));
+        builder.and(bookmark.member.id.eq(principalId));
 
         tuple.where(builder);
 

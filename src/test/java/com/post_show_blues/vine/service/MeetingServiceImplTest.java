@@ -490,6 +490,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
+
     @Test
     void 전체_모임리스트조회_로그인o() throws Exception{
         //given
@@ -720,7 +721,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
         Assertions.assertThat(result.getSize()).isEqualTo(36);
     }
-    
+
     @Test
     void 북마크_모임리스트() throws Exception{
         //given
@@ -825,6 +826,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
         Assertions.assertThat(result.getSize()).isEqualTo(36);
     }
+
 
     @Test
     void 정렬_활동일_가까운순() throws Exception{

@@ -76,7 +76,8 @@ public interface MeetingService {
     }
 
     default MeetingResDTO listEntityToDTO(Meeting meeting, MeetingImg meetingImg,
-                                          Member master, MemberImg masterImg, Long principalId){
+                                          Member master, MemberImg masterImg,
+                                          Integer commentCount, Long principalId){
 
         MeetingResDTO meetingResDTO = MeetingResDTO.builder()
                 .meetingId(meeting.getId())
@@ -88,7 +89,7 @@ public interface MeetingService {
                 .maxNumber(meeting.getMaxNumber())
                 .currentNumber(meeting.getCurrentNumber())
                 .dDay(meeting.getDDay())
-                .commentCount(meeting.getCommentList().size())
+                .commentCount(commentCount) //추가 쿼리 발생
                 .bookmarkState(false)
                 .build();
 
