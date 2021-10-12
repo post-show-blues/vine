@@ -64,7 +64,7 @@ const Participation = ({ status }) => {
       </div>
 
       {(status === "continue") &&
-        <div className="flex mt-auto">
+        <div className="flex mt-auto ml-auto">
           <ButtonCard text="PARTICIPANTS" data="2/4" color="white" />
           <ButtonCard text="DUE-DATE" data="D-1" color="#A0FF94" />
         </div>

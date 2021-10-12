@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import logo from "../assets/images/logo.svg";
+import logo from "../assets/icon/logo.svg";
 import {navBlackHeight} from './constant';
 const NavBlack = () => {
   return (
