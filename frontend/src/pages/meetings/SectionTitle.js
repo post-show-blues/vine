@@ -8,6 +8,7 @@ const SectionTitle = ({text, marginTop}) => {
     font-size: 36px;
     font-style: italic;
     margin-top: ${marginTop};
+    white-space: nowrap;
   `
 
   return (

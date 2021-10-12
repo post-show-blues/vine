@@ -6,6 +6,7 @@ import likeDeactive from './like_deactive.svg';
 import logo from './logo.svg';
 import starActive from './star_active.svg';
 import starDeactvie from './star_deactive.svg';
+import searchIcon from './search_icon.svg';
 
 export {
   camera,
@@ -16,4 +17,5 @@ export {
   logo,
   starActive,
   starDeactvie,
+  searchIcon,
 }
