@@ -56,7 +56,7 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         jpqlQuery.leftJoin(meetingImg).on(meetingImg.meeting.eq(meeting));
         jpqlQuery.leftJoin(master).on(meeting.member.eq(master));
         jpqlQuery.leftJoin(masterImg).on(masterImg.member.eq(master));
-
+        
         if(principalId != null){
             jpqlQuery.leftJoin(follow).on(follow.toMemberId.eq(master));
         }

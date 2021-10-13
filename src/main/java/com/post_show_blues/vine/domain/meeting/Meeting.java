@@ -8,6 +8,7 @@ import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.Duration;
@@ -39,6 +40,7 @@ public class Meeting extends BaseEntity {
     @OneToMany(mappedBy = "meeting",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
+    @BatchSize(size = 36) //처음 지연 로딩시 36 레코드를 한번에 가져옴.
     @Builder.Default
     @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Bookmark> bookmarkList = new ArrayList<>();
