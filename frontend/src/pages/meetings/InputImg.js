@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import camera from "../../assets/images/camera.svg";
+import camera from "../../assets/icon/camera.svg";
 import { innerShadow } from "../constant";
 
 const InputImg = () => {

@@ -5,30 +5,30 @@ import LeftSidebar from "../LeftSidebar"
 import NavBlack from "../NavBlack"
 import Participation from "./Participation";
 import Profile from "./Profile";
+import { defaultContentPadding, defaultPd } from "../constant";
 
 export const Index = () => {
   const titleReference = useRef(null);
   const [hrHeight, setHrHeight] = useState(0);
-  const hrPl = 47;
 
   const cardListStyle = css`
     background-color: black;
     width: 100%;
-    padding: 1rem ${hrPl}px 0 ${hrPl}px;
+    padding: ${defaultContentPadding};
 
     .title {
       color: #A0FF94;
       font-size: 30px;
       font-weight: 700;
+      margin-left: ${defaultPd}px;
     }
   `
-  
 
   const hrStyle = css`
     border-top: 1px solid #404040;
     position:relative;
     &::after {
-      left: ${hrPl}px;
+      left: ${defaultPd}px;
       position:absolute;
       top: -6px;
       content: '';
