@@ -14,6 +14,7 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.requestParticipant.RequestParticipantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,7 +106,7 @@ class RequestParticipantServiceImplTest {
         meetingRepository.save(meeting);
 
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> participantService.request(meeting.getId(), member1.getId()));
 
         //then
@@ -147,7 +148,7 @@ class RequestParticipantServiceImplTest {
         meetingRepository.save(meeting);
 
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> requestParticipantService.request(meeting.getId(), member1.getId()));
 
         //then
@@ -229,7 +230,7 @@ class RequestParticipantServiceImplTest {
 
         //when
         //참여 요청자가 수락 (참여 요청자는 방장이 x)
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> requestParticipantService.accept(requestParticipant.getId(), member.getId()));
 
         //then
@@ -278,7 +279,7 @@ class RequestParticipantServiceImplTest {
         requestParticipantRepository.save(requestParticipant);
 
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> requestParticipantService.accept(requestParticipant.getId(), meeting.getMember().getId()));
 
         //then
@@ -363,7 +364,7 @@ class RequestParticipantServiceImplTest {
 
         //when
         //참여 요청 거절_철회 권한이 없는 회원이 거절_철회할 경우
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> requestParticipantService.accept(requestParticipant.getId(), memberX.getId()));
 
         //then

@@ -12,6 +12,7 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.participant.ParticipantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -165,7 +166,7 @@ class ParticipantServiceImplTest {
         memberRepository.save(memberX);
 
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> participantService.remove(participant.getId(), memberX.getId()));
 
         //then

@@ -7,6 +7,7 @@ import com.post_show_blues.vine.domain.bookmark.Bookmark;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.member.Member;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
@@ -96,7 +97,7 @@ public class Meeting extends BaseEntity {
 
     public void changeMaxNumber (int maxNumber){
         if(maxNumber < this.currentNumber){
-            throw new IllegalStateException("참여인원 초과입니다.");
+            throw new CustomException("참여인원 초과입니다.");
         }
         else{
             this.maxNumber = maxNumber;
@@ -118,7 +119,7 @@ public class Meeting extends BaseEntity {
 
     public void addCurrentNumber(){
         if( (this.currentNumber + 1) > this.maxNumber){
-            throw new IllegalStateException("참여인원 초과입니다.");
+            throw new CustomException("참여인원 초과입니다.");
         }
         else{
             this.currentNumber += 1;

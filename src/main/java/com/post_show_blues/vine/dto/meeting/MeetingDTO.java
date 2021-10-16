@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,47 +29,39 @@ public class MeetingDTO {
 
     private Long meetingId;
 
+    @NotNull
     private Long masterId;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Builder.Default
-    private List<Comment> commentList = new ArrayList<>();
-
-    private int commentCount;
-
+    @NotBlank
     private String title;
 
+    @NotBlank
     private String text;
 
+    @NotBlank
     private String place;
 
+    @NotNull
     private int maxNumber;
 
+    @NotNull
     private int currentNumber;
 
+    @NotNull
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetDate;
 
+    @NotNull
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime reqDeadline;
 
-    private Long dDay;
-
     private String chatLink;
 
-    private LocalDateTime regDate, modDate;
-
     private List<MultipartFile> imageFiles;
-
-    @Builder.Default
-    private List<MeetingImgDTO> imgDTOList = new ArrayList<>();
-
-    private MemberImgDTO masterImg;
-
-    private MemberImgDTO participantImg;
-
 }

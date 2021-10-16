@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class BookmarkServiceImpl implements BookmarkService{
     public Bookmark bookmark(Long meetingId, Long principalId) {
 
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 모임입니다."));
+                new CustomException("존재하지 않은 모임입니다."));
 
         Bookmark bookmark = Bookmark.builder()
                 .member(Member.builder().id(principalId).build())

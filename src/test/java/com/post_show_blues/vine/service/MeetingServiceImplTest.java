@@ -28,6 +28,7 @@ import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -115,9 +116,6 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,10,13,16,00))
                 .reqDeadline(LocalDateTime.of(2021,10,10,16,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .imageFiles(imgFiles) //이미지 파일
                 .build();
@@ -164,14 +162,11 @@ class MeetingServiceImplTest {
                 .place("A")
                 .meetDate(LocalDateTime.of(2021,06,04,16,30))
                 .reqDeadline(LocalDateTime.of(2021,06,04,17,00))
-                .dDay(Duration.between(LocalDate.now().atStartOfDay(),
-                        LocalDateTime.of(2021,06,05,00,00)
-                                .toLocalDate().atStartOfDay()).toDays())
                 .maxNumber(4)
                 .build();
         
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> meetingService.register(meetingDTO));
 
         //then
@@ -273,7 +268,7 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        CustomException e = assertThrows(CustomException.class,
                 () -> meetingService.modify(meetingDTO));
 
         //then

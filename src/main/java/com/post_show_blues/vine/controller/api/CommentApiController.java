@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequestMapping("/meetings/{meetingId}/comments")
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class CommentApiController {
      */
     @PostMapping
     public ResponseEntity<?> createComment(@PathVariable("meetingId") Long meetingId,
-                                           @RequestBody CommentDTO commentDTO,
+                                           @Valid @RequestBody CommentDTO commentDTO, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         commentService.register(commentDTO, principalDetails.getMember().getId());
@@ -51,7 +54,7 @@ public class CommentApiController {
     @PutMapping("/{commentId}")
     public ResponseEntity<?> modifyComment(@PathVariable("meetingId") Long meetingId,
                                            @PathVariable("commentId") Long commentId,
-                                           @RequestBody CommentDTO commentDTO,
+                                           @Valid @RequestBody CommentDTO commentDTO, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         //TODO 수정 권한 체크 필요

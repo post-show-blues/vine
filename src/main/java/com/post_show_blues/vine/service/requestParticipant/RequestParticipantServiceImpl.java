@@ -12,6 +12,7 @@ import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipant;
 import com.post_show_blues.vine.domain.requestParticipant.RequestParticipantRepository;
 import com.post_show_blues.vine.dto.requestParticipant.RequestParticipantDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +41,13 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     @Override
     public Long request(Long meetingId, Long memberId) {
 
-        Optional<Meeting> findMeeting = meetingRepository.findById(meetingId);
-        Meeting meeting = findMeeting.get();
 
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        Member member = findMember.get();
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() ->
+                new CustomException("존재하지 않은 모임입니다."));
+
+
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new CustomException("존재하지 않은 회원입니다."));
 
 
         //요청마감일 체크
@@ -56,15 +59,15 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
             Date deadlineDate = dateFormat.parse(reqDeadline);
             Date now = new Date();
             if(deadlineDate.before(now)){
-                throw new IllegalStateException("참여 가능일이 지났습니다.");
+                throw new CustomException("참여 가능일이 지났습니다.");
             }
         }catch (ParseException e){
             e.printStackTrace();
-            throw new IllegalStateException("형식에 맞게 입력해주세요.");
+            throw new CustomException("형식에 맞게 입력해주세요.");
         }
         catch (Exception e){
             e.printStackTrace();
-            throw new IllegalStateException("참여 가능일이 지났습니다.");
+            throw new CustomException("참여 가능일이 지났습니다.");
         }
         */
 
@@ -73,7 +76,7 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
         int currentNumber = meeting.getCurrentNumber();
 
         if(maxNumber <= currentNumber){
-            throw new IllegalStateException("참여인원 초과입니다.");
+            throw new CustomException("참여인원 초과입니다.");
         }
 
         RequestParticipant requestParticipant = RequestParticipant.builder()
@@ -103,13 +106,13 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     public void accept(Long requestParticipantId, Long principalId) {
 
         RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 요청입니다."));
+                new CustomException("존재하지 않은 요청입니다."));
 
         Meeting meeting = requestParticipant.getMeeting();
 
         //방장 권한 체크
         if(meeting.getMember().getId() != principalId){
-            throw new IllegalStateException("요청수락 권한이 없습니다.");
+            throw new CustomException("요청수락 권한이 없습니다.");
         }
 
         //participant 참여명단 추가
@@ -144,14 +147,14 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
     @Override
     public void reject(Long requestParticipantId, Long principalId) {
         RequestParticipant requestParticipant = requestParticipantRepository.findById(requestParticipantId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 요청입니다."));
+                new CustomException("존재하지 않은 요청입니다."));
 
         Member member = requestParticipant.getMember();
         Meeting meeting = requestParticipant.getMeeting();
 
         //요청자 or 방장 권한 체크
         if(member.getId() != principalId && meeting.getMember().getId() != principalId){
-            throw new IllegalStateException("거절 또는 철회 권한이 없습니다.");
+            throw new CustomException("거절 또는 철회 권한이 없습니다.");
         }
 
        requestParticipantRepository.deleteById(requestParticipantId);

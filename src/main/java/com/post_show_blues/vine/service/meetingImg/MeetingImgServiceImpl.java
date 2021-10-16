@@ -2,7 +2,7 @@ package com.post_show_blues.vine.service.meetingImg;
 
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
-import com.post_show_blues.vine.domain.memberimg.MemberImg;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class MeetingImgServiceImpl implements MeetingImgService{
             return null;
         }else{
             return meetingImgRepository.findById(meetingImgId).orElseThrow(() ->
-                    new IllegalStateException("존재하지 않은 모임사진입니다."));
+                    new CustomException("존재하지 않은 모임사진입니다."));
         }
     }
 }
