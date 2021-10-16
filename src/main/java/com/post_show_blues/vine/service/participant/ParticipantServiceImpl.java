@@ -8,6 +8,7 @@ import com.post_show_blues.vine.domain.notice.NoticeRepository;
 import com.post_show_blues.vine.domain.participant.Participant;
 import com.post_show_blues.vine.domain.participant.ParticipantRepository;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class ParticipantServiceImpl implements ParticipantService{
     public void remove(Long participantId, Long principalId) {
 
         Participant participant = participantRepository.findById(participantId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 참여자입니다."));
+                new CustomException("존재하지 않은 참여자입니다."));
 
         Meeting meeting = participant.getMeeting();
 
@@ -65,7 +66,7 @@ public class ParticipantServiceImpl implements ParticipantService{
         }
         //방장, 참여자 둘다 아닌 경우
         else {
-            throw new IllegalStateException("방 추방 또는 나가기 권한이 없습니다.");
+            throw new CustomException("방 추방 또는 나가기 권한이 없습니다.");
         }
 
         //알림생성 후 참여 삭제

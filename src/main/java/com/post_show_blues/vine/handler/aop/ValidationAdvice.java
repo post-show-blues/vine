@@ -1,6 +1,6 @@
 package com.post_show_blues.vine.handler.aop;
 
-import com.post_show_blues.vine.handler.exception.CustomValidationApiException;
+import com.post_show_blues.vine.handler.exception.CustomValidationException;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,7 +34,7 @@ public class ValidationAdvice {
                         errorMap.put(error.getField(),error.getDefaultMessage());
                         log.info(error.getDefaultMessage());
                     }
-                    throw new CustomValidationApiException("유효성 검사 실패", errorMap);
+                    throw new CustomValidationException("유효성 검사 실패", errorMap);
                 }
             }
         }

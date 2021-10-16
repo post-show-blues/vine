@@ -9,6 +9,7 @@ import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
 import com.post_show_blues.vine.dto.comment.CommentReadDTO;
 import com.post_show_blues.vine.dto.comment.CommentResDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class CommentServiceImpl implements CommentService{
     public Comment register(CommentDTO commentDTO, Long principalId) {
 
         Meeting meeting = meetingRepository.findById(commentDTO.getMeetingId()).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 모임입니다."));
+                new CustomException("존재하지 않은 모임입니다."));
 
 
         Comment comment;
@@ -40,7 +41,7 @@ public class CommentServiceImpl implements CommentService{
         if(commentDTO.getParentId() != null){
             //부모댓글이 있는 경우
             Comment parentComment = commentRepository.findById(commentDTO.getParentId()).orElseThrow(() ->
-                    new IllegalStateException("존재하지 않은 댓글입니다."));
+                    new CustomException("존재하지 않은 댓글입니다."));
 
             comment = commentDTO.toEntity(meeting, parentComment);
 
@@ -62,7 +63,7 @@ public class CommentServiceImpl implements CommentService{
     public void modify(Long commentId, String content) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 댓글입니다."));
+                new CustomException("존재하지 않은 댓글입니다."));
 
         comment.changeContent(content);
 
@@ -76,7 +77,7 @@ public class CommentServiceImpl implements CommentService{
     public void remove(Long commentId) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 댓글입니다."));
+                new CustomException("존재하지 않은 댓글입니다."));
 
         //existState = false
         comment.removeComment();

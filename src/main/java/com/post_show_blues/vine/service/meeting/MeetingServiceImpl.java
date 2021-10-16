@@ -21,6 +21,7 @@ import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.dto.participant.ParticipantDTO;
 import com.post_show_blues.vine.file.FileStore;
 import com.post_show_blues.vine.file.ResultFileStore;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.meetingImg.MeetingImgService;
 import com.post_show_blues.vine.service.participant.ParticipantService;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +68,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //활동날짜, 신청 마감날짜 비교
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
-            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+            throw new CustomException("활동일이 신청마감일보다 빠릅니다.");
         }
 
 
@@ -128,11 +129,11 @@ public class MeetingServiceImpl implements MeetingService{
     public void modify(MeetingDTO meetingDTO) throws IOException {
 
         Meeting meeting = meetingRepository.findById(meetingDTO.getMeetingId()).orElseThrow(() ->
-                new IllegalStateException("존재하는 않은 모임입니다."));
+                new CustomException("존재하는 않은 모임입니다."));
 
         //수정한 meetDate, reqDeadline 체크
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
-            throw new IllegalStateException("활동일이 신청마감일보다 빠릅니다.");
+            throw new CustomException("활동일이 신청마감일보다 빠릅니다.");
         }
 
         //변경
@@ -200,7 +201,7 @@ public class MeetingServiceImpl implements MeetingService{
     public void remove(Long meetingId) {
 
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() ->
-                new IllegalStateException("존재하지 않은 모임입니다."));
+                new CustomException("존재하지 않은 모임입니다."));
 
         //삭제후 알림 보낼 회원 리스트
         List<Participant> participantList = participantRepository.findByMeeting(meeting);

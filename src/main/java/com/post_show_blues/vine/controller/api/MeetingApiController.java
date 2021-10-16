@@ -7,6 +7,7 @@ import com.post_show_blues.vine.dto.meeting.MeetingDTO;
 import com.post_show_blues.vine.dto.meeting.MeetingResDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -62,7 +63,7 @@ public class MeetingApiController {
         else {
 
             if(!requestDTO.getUserId().equals(principalDetails.getMember().getId())){
-                throw new IllegalStateException("조회 권한이 없습니다.");
+                throw new CustomException("조회 권한이 없습니다.");
             }
             result = meetingService.getFollowMeetingList(requestDTO, principalDetails.getMember().getId());
 
@@ -90,7 +91,7 @@ public class MeetingApiController {
 
     @PutMapping("/{meetingId}") //모임 수정
     public ResponseEntity<?> ModifyMeeting(@PathVariable("meetingId") Long meetingId,
-                                           MeetingDTO meetingDTO) throws IOException {
+                                           @Valid MeetingDTO meetingDTO, BindingResult bindingResult) throws IOException {
 
         meetingService.modify(meetingDTO);
 
