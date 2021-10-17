@@ -5,14 +5,15 @@ import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.notice.NoticeRepository;
-import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.follow.FollowMemberResultDTO;
 import com.post_show_blues.vine.dto.follow.FollowerMemberResultDTO;
+import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.notice.NoticeResultDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,7 +106,9 @@ public class FollowService {
         return followerMembers.stream().map(fm -> {
             Member member = (Member) fm[0];
             MemberImg memberImg = (MemberImg) fm[1];
-            Boolean isFollow = followRepository.existsByFromMemberIdAndToMemberId(member.getId(), id);
+            System.out.println("fromMemberId " + member.getId());
+            System.out.println("toMemberId " + id);
+            Boolean isFollow = followRepository.existsByFromMemberIdAndToMemberId(id, member.getId()); //내가 해당 멤버를 팔로우 했는지 여부
 
             if (memberImg != null) {
                 MemberImgDTO memberImgDTO = MemberImgDTO.builder()
