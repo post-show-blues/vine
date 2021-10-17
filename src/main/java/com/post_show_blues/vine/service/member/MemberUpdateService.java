@@ -65,7 +65,7 @@ public class MemberUpdateService {
         memberTextUpdate(memberEntity, myProfileUpdateRequestDTO);
         memberImgUpdate(memberEntity, Optional.ofNullable(myProfileUpdateRequestDTO.getFile()));
 
-        MemberImg memberImg = memberImgRepository.findByMember(memberEntity).orElseGet(null);
+        MemberImg memberImg = memberImgRepository.findByMember(memberEntity).orElse(null);
 
         MemberUpdateResultDTO memberUpdateResultDTO = new MemberUpdateResultDTO(memberEntity, memberImg);
 
@@ -74,8 +74,13 @@ public class MemberUpdateService {
 
     private void memberTextResult(Member member, MyProfileUpdateResultDTO myProfileUpdateResultDTO) {
         myProfileUpdateResultDTO.setEmail(member.getEmail());
-        myProfileUpdateResultDTO.setFacebookurl(member.getFacebookurl());
-        myProfileUpdateResultDTO.setInstaurl(member.getInstaurl());
+
+        if (!member.getFacebookurl().isEmpty())
+            myProfileUpdateResultDTO.setFacebookurl(member.getFacebookurl());
+
+        if (!member.getInstaurl().isEmpty())
+            myProfileUpdateResultDTO.setInstaurl(member.getInstaurl());
+
         myProfileUpdateResultDTO.setNickname(member.getNickname());
         myProfileUpdateResultDTO.setText(member.getText());
     }

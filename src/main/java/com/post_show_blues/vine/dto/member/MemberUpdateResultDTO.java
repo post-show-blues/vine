@@ -14,16 +14,17 @@ public class MemberUpdateResultDTO {
     private Long id;
     private String nickname;
     private String email;
-    private String forderPath = "";
-    private String storeFileName = "";
+    private MemberImgDTO memberImgDTO;
 
     public MemberUpdateResultDTO(Member member, MemberImg memberImg) {
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
         if (memberImg != null) {
-            this.forderPath = memberImg.getFolderPath();
-            this.storeFileName = memberImg.getStoreFileName();
+            this.memberImgDTO = MemberImgDTO.builder()
+                    .folderPath(memberImg.getFolderPath())
+                    .storeFileName(memberImg.getStoreFileName())
+                    .build();
         }
     }
 }

@@ -55,9 +55,11 @@ public class MemberUpdateServiceTest {
     public void 회원정보수정() throws Exception {
         //given
         MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
+        myProfileUpdateRequestDTO.setEmail(memberA.getEmail());
+        myProfileUpdateRequestDTO.setNickname(memberA.getNickname());
 
         //when
-        Member updateMember = memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
+        Member updateMember = (Member) memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO)[0];
 
         //then
         assertThat(updateMember.getInstaurl()).isEqualTo(myProfileUpdateRequestDTO.getInstaurl());
@@ -70,6 +72,9 @@ public class MemberUpdateServiceTest {
         //given
         MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
         myProfileUpdateRequestDTO.setFile(memberImgUploadDto_O());
+        myProfileUpdateRequestDTO.setEmail(memberA.getEmail());
+        myProfileUpdateRequestDTO.setNickname(memberA.getNickname());
+
 
         memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
 
@@ -86,6 +91,8 @@ public class MemberUpdateServiceTest {
         //given
         MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
         myProfileUpdateRequestDTO.setFile(memberImgUploadDto_O());
+        myProfileUpdateRequestDTO.setEmail(memberB.getEmail());
+        myProfileUpdateRequestDTO.setNickname(memberB.getNickname());
 
         memberUpdateService.memberUpdate(memberB.getId(), myProfileUpdateRequestDTO);
 
@@ -102,6 +109,8 @@ public class MemberUpdateServiceTest {
         //given
         MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
         myProfileUpdateRequestDTO.setFile(memberImgUploadDto_X());
+        myProfileUpdateRequestDTO.setEmail(memberA.getEmail());
+        myProfileUpdateRequestDTO.setNickname(memberA.getNickname());
 
         memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
 
@@ -117,6 +126,8 @@ public class MemberUpdateServiceTest {
         //given
         MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
         myProfileUpdateRequestDTO.setFile(memberImgUploadDto_X());
+        myProfileUpdateRequestDTO.setEmail(memberB.getEmail());
+        myProfileUpdateRequestDTO.setNickname(memberB.getNickname());
         memberUpdateService.memberUpdate(memberB.getId(), myProfileUpdateRequestDTO);
 
         //when

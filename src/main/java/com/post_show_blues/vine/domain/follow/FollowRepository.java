@@ -1,13 +1,11 @@
 package com.post_show_blues.vine.domain.follow;
 
-import com.post_show_blues.vine.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
@@ -31,8 +29,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             "where f.toMemberId.id=:toMemberId ")
     List<Object[]> findFollowerMembers(@Param("toMemberId") long toMemberId);
 
-    @Query("select count(f)>0 from Follow f " +
-            "where f.fromMemberId.id=:fromMemberId " +
-            "and f.toMemberId.id=:toMemberId")
+    @Query(value = "select count(*)>0 from Follow f " +
+            "where f.from_member_id=:fromMemberId " +
+            "and f.to_member_id=:toMemberId", nativeQuery = true)
     Boolean existsByFromMemberIdAndToMemberId(@Param("fromMemberId") long fromMemberId, @Param("toMemberId") long toMemberId);
 }

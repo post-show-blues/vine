@@ -38,12 +38,12 @@ public class AuthService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public void isDuplicateNickname(String nickname){
+    public void isDuplicateNickname(String nickname) {
         validateDuplicateNickname(nickname);
     }
 
     @Transactional
-    public void isDuplicateEmail(String email){
+    public void isDuplicateEmail(String email) {
         validateDuplicateEmail(email);
     }
 
@@ -67,7 +67,6 @@ public class AuthService {
             MemberImg memberImg = signupDto.toMemberImgEntity(resultFileStore.getFolderPath(), resultFileStore.getStoreFileName(), member);
             memberImgEntity = memberImgRepository.save(memberImg);
         }
-
 
 
         return new SignupResponse(memberEntity, memberImgEntity);
@@ -97,16 +96,16 @@ public class AuthService {
         return memberRepository.findAll();
     }
 
-    private void validateDuplicateNickname(String nickname){
+    private void validateDuplicateNickname(String nickname) {
         Member findMember = memberRepository.findByNickname(nickname).orElse(null);
-        if(findMember!=null){
+        if (findMember != null) {
             throw new AlreadyExistedNicknameException("이미 사용중인 닉네임입니다.");
         }
     }
 
-    private void validateDuplicateEmail(String email){
+    private void validateDuplicateEmail(String email) {
         Member findMember = memberRepository.findByEmail(email).orElse(null);
-        if(findMember!=null){
+        if (findMember != null) {
             throw new AlreadyExistedEmailException("이미 사용중인 이메일입니다.");
         }
     }
