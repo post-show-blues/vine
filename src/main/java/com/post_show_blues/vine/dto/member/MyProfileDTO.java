@@ -19,13 +19,16 @@ public class MyProfileDTO {
     //TODO : 참여활동, 팔로잉/팔로워 명수  넘겨주기 추가
 
     @QueryProjection
-    public MyProfileDTO(Long id, String email, String nickname, String text, String instaurl, String facebookurl,String folderPath, String storeFileName) {
+    public MyProfileDTO(Long id, String email, String nickname, String text, String instaurl, String facebookurl, String folderPath, String storeFileName) {
         this.id = id;
-        this.email=email;
+        this.email = email;
         this.nickname = nickname;
         this.text = text;
         this.instaurl = instaurl;
         this.facebookurl = facebookurl;
-        this.memberImgDTO = new MemberImgDTO(folderPath, storeFileName);
+
+        if (folderPath != null && storeFileName != null) {
+            this.memberImgDTO = new MemberImgDTO(folderPath, storeFileName);
+        }
     }
 }
