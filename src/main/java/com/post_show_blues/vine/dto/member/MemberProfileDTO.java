@@ -8,6 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MemberProfileDTO {
+    private Long id;
+    private String email;
     private String nickname;
     private String text;
     private String instaurl;

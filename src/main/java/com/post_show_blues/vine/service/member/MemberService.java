@@ -44,7 +44,6 @@ public class MemberService {
             }
             memberList.setId(member.getId());
             memberList.setNickname(member.getNickname());
-            memberList.setText(member.getText());
 
             return memberList;
         }).collect(Collectors.toList());

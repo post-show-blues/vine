@@ -22,7 +22,7 @@ import static com.post_show_blues.vine.domain.memberimg.QMemberImg.memberImg;
 @Log4j2
 @RequiredArgsConstructor
 @Repository
-public class SearchMemberRepository{
+public class SearchMemberRepository {
     private final JPAQueryFactory queryFactory;
 
     public Optional<MemberProfileDTO> findMemberProfile(Long myId, Long findId) {
@@ -30,36 +30,38 @@ public class SearchMemberRepository{
                 .leftJoin(memberImg).on(member.eq(memberImg.member));
 
         if (myId != null) {
-            query=query.leftJoin(follow).on(member.eq(follow.toMemberId).and(follow.fromMemberId.id.eq(myId).and(follow.toMemberId.id.eq(findId))));
+            query = query.leftJoin(follow).on(member.eq(follow.toMemberId).and(follow.fromMemberId.id.eq(myId).and(follow.toMemberId.id.eq(findId))));
         }
         Object[] objects = query.where(member.id.eq(findId)).fetchOne().toArray();
 
-        Member resultMember = (Member)objects[0];
-        MemberImg resultMemberImg = (MemberImg)objects[1];
-        Follow resultFollow = (Follow)objects[2];
-        MemberProfileDTO memberProfileDTO=new MemberProfileDTO();
+        Member resultMember = (Member) objects[0];
+        MemberImg resultMemberImg = (MemberImg) objects[1];
+        Follow resultFollow = (Follow) objects[2];
+        MemberProfileDTO memberProfileDTO = new MemberProfileDTO();
 
-        if(resultMemberImg!=null){
+        if (resultMemberImg != null) {
             memberProfileDTO.setMemberImgDTO(new MemberImgDTO(resultMemberImg.getFolderPath(), resultMemberImg.getStoreFileName()));
 
         }
+        memberProfileDTO.setId(resultMember.getId());
         memberProfileDTO.setInstaurl(resultMember.getInstaurl());
         memberProfileDTO.setFacebookurl(resultMember.getFacebookurl());
         memberProfileDTO.setNickname(resultMember.getNickname());
         memberProfileDTO.setText(resultMember.getText());
+        memberProfileDTO.setEmail(resultMember.getText());
 
-        if(resultFollow!=null){
+        if (resultFollow != null) {
             memberProfileDTO.setIsFollow(true);
-        }else{
+        } else {
             memberProfileDTO.setIsFollow(false);
         }
 
         return Optional.ofNullable(memberProfileDTO);
     }
 
-    public MyProfileDTO findMyProfile(Long id){
-        MyProfileDTO result = queryFactory.select(new QMyProfileDTO(member.id, member.nickname, member.text, member.instaurl, member.facebookurl,
-                         memberImg.folderPath, memberImg.storeFileName)).from(member)
+    public MyProfileDTO findMyProfile(Long id) {
+        MyProfileDTO result = queryFactory.select(new QMyProfileDTO(member.id, member.email, member.nickname, member.text, member.instaurl, member.facebookurl,
+                        memberImg.folderPath, memberImg.storeFileName)).from(member)
                 .leftJoin(memberImg).on(memberImg.member.eq(member))
                 .where(member.id.eq(id)).fetchOne();
 
