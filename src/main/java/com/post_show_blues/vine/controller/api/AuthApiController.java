@@ -26,16 +26,7 @@ public class AuthApiController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestPart String nickname,
-                                    @RequestPart String email,
-                                    @RequestPart String password,
-                                    @RequestPart(required = false) MultipartFile file) throws IOException {
-        SignupDto signupDto = SignupDto.builder()
-                .nickname(nickname)
-                .email(email)
-                .password(password)
-                .file(file)
-                .build();
+    public ResponseEntity<?> signup(@ModelAttribute SignupDto signupDto) throws IOException {
         log.info(signupDto);
 
         SignupResponse join = authService.join(signupDto);

@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @ToString
 public class MemberUpdateDto {
+    
+    //TOOD : 수정필요
     private String instaurl;
     private String facebookurl;
     private String text;

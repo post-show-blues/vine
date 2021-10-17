@@ -12,4 +12,5 @@ public class MemberListDTO {
     private String nickname;
     private String text;
     private MemberImgDTO memberImgDTO;
+    //TODO : 팔로워, 팔로잉 명 수 추가
 }
