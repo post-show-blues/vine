@@ -8,7 +8,6 @@ import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.service.bookmark.BookmarkService;
-import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,12 +103,12 @@ public class BookmarkServiceImplTest {
 
     private Member createMember(String email, String nickname) {
         Member member = Member.builder()
-                .name("member")
+//                .name("member")
                 .email(email)
                 .nickname(nickname)
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
+//                .phone("010-0000-0000")
+//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

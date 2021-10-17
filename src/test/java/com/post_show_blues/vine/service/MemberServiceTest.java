@@ -2,9 +2,11 @@ package com.post_show_blues.vine.service;
 
 import com.post_show_blues.vine.domain.follow.FollowRepository;
 import com.post_show_blues.vine.domain.member.Member;
+import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
+import com.post_show_blues.vine.dto.auth.SignupResponse;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
@@ -37,15 +39,17 @@ public class MemberServiceTest {
     FollowService followService;
     @Autowired
     FollowRepository followRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     Member memberA;
     MemberImg memberAImg;
 
     @BeforeEach
     void setUp() throws IOException {
-        Object[] signupDto = createSignupDto();
-        memberA = (Member) signupDto[0];
-        memberAImg = (MemberImg) signupDto[1];
+        SignupResponse signupDto = createSignupDto();
+        memberA = memberRepository.findById(signupDto.getId()).get();
+        memberAImg = memberImgRepository.findByMember(memberA).get();
     }
 
 
@@ -65,9 +69,7 @@ public class MemberServiceTest {
     @Test
     public void 회원프로필_조회_팔로우x() throws Exception {
         //given
-        Object[] signupDto = createSignupDto2();
-        Member memberB = (Member) signupDto[0];
-        MemberImg memberBImg = (MemberImg) signupDto[1];
+        SignupResponse memberB = createSignupDto2();
 
         //when
         //멤버A가 멤버 B의 프로필 검색
@@ -82,9 +84,7 @@ public class MemberServiceTest {
     @Test
     public void 회원프로필_조회_팔로우o() throws Exception {
         //given
-        Object[] signupDto = createSignupDto2();
-        Member memberB = (Member) signupDto[0];
-        MemberImg memberBImg = (MemberImg) signupDto[1];
+        SignupResponse memberB = createSignupDto2();
 
         followService.isFollow(memberA.getId(), memberB.getId());
 
@@ -111,34 +111,30 @@ public class MemberServiceTest {
 
     }
 
-    Object[] createSignupDto() throws IOException {
+    SignupResponse createSignupDto() throws IOException {
         MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
 
         SignupDto signupDTO = SignupDto.builder()
-                .name("memberA")
                 .email("member@duksung.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-                .phone("010-0000-0000")
                 .file(file1)
                 .build();
-        Object[] join = authService.join(signupDTO);
+        SignupResponse join = authService.join(signupDTO);
 
         return join;
     }
 
-    Object[] createSignupDto2() throws IOException {
+    SignupResponse createSignupDto2() throws IOException {
         MockMultipartFile file1 = new MockMultipartFile("file", "filename-1.jpeg", "image/jpeg", "some-image".getBytes());
 
         SignupDto signupDTO = SignupDto.builder()
-                .name("memberB")
                 .email("memberB@duksung.ac.kr")
                 .nickname("memberB")
                 .password("1111")
-                .phone("010-0000-0000")
                 .file(file1)
                 .build();
-        Object[] join = authService.join(signupDTO);
+        SignupResponse join = authService.join(signupDTO);
 
         return join;
     }

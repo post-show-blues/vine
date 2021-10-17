@@ -38,6 +38,8 @@ public class MemberApiController {
         throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다");
     }
 
+    //TODO : 내 프로필 정보, 다른 유저 프로필 정보
+    //TODO : 미팅 좋아요 표시
     //    로그인 된 사용자 -> 팔로우 여부 표시
 //    로그인 안 된 사용자 -> 팔로우 여부 표시 x
     @GetMapping("/profile/{id}")

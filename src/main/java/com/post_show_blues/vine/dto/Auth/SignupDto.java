@@ -16,25 +16,19 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class  SignupDto {
     @NotEmpty
-    private String name;
-    @NotEmpty
     private String nickname;
     @NotEmpty
     private String email;
     @NotEmpty
     private String password;
-    @NotEmpty
-    private String phone;
 
     private MultipartFile file;
 
     public Member toMemberEntity() {
         return Member.builder()
-                .name(name)
                 .nickname(nickname)
-                .password(password)
                 .email(email)
-                .phone(phone)
+                .password(password)
                 .build();
     }
 

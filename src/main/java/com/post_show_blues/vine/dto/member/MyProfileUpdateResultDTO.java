@@ -2,18 +2,18 @@ package com.post_show_blues.vine.dto.member;
 
 import lombok.*;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberProfileDTO {
-    private Long id;
-    private String email;
+@ToString
+public class MyProfileUpdateResultDTO {
     private String nickname;
-    private String text;
+    private String email;
     private String instaurl;
     private String facebookurl;
-    private MemberImgDTO memberImgDTO;
-    private Boolean isFollow;
+    private String text;
+    private MemberImgDTO file;
 }
+

@@ -27,7 +27,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<MemberListDTO> memberList(String keyword) {
-        List<Object[]> members = memberRepository.findMemberByNicknameOrEmail(keyword);
+        List<Object[]> members = memberRepository.findMemberByNickname(keyword);
 
 
         if (members.isEmpty()) {
@@ -44,7 +44,6 @@ public class MemberService {
             }
             memberList.setId(member.getId());
             memberList.setNickname(member.getNickname());
-            memberList.setText(member.getText());
 
             return memberList;
         }).collect(Collectors.toList());

@@ -19,9 +19,6 @@ public class Member implements Serializable {
     @Column(name="member_id")
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(nullable = false, unique = true)
     private String nickname;
 
@@ -39,12 +36,5 @@ public class Member implements Serializable {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private String phone;
-
-
-    @Column(nullable = true)
-    private String university;
 
 }
