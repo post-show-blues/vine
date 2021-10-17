@@ -6,7 +6,7 @@ import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.domain.memberimg.MemberImgRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.auth.SignupResponse;
-import com.post_show_blues.vine.dto.member.MemberUpdateDto;
+import com.post_show_blues.vine.dto.member.MyProfileUpdateRequestDTO;
 import com.post_show_blues.vine.service.auth.AuthService;
 import com.post_show_blues.vine.service.member.MemberService;
 import com.post_show_blues.vine.service.member.MemberUpdateService;
@@ -48,62 +48,62 @@ public class MemberUpdateServiceTest {
 
         //사진이 없는 멤버
         SignupResponse signupDto2 = createSignupDto2();
-        memberB=memberRepository.findById(signupDto2.getId()).get();
+        memberB = memberRepository.findById(signupDto2.getId()).get();
     }
 
     @Test
     public void 회원정보수정() throws Exception {
         //given
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
+        MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
 
         //when
-        Member updateMember = memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
+        Member updateMember = memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
 
         //then
-        assertThat(updateMember.getInstaurl()).isEqualTo(memberUpdateDto.getInstaurl());
+        assertThat(updateMember.getInstaurl()).isEqualTo(myProfileUpdateRequestDTO.getInstaurl());
 
 
     }
 
     @Test
-    public void 회원사진수정_DTO_O_DB_O () throws Exception {
+    public void 회원사진수정_DTO_O_DB_O() throws Exception {
         //given
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
-        memberUpdateDto.setFile(memberImgUploadDto_O());
+        MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
+        myProfileUpdateRequestDTO.setFile(memberImgUploadDto_O());
 
-        memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
+        memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
 
         //when
         MemberImg memberImg = memberImgRepository.findByMember(memberA).get();
 
         //then
-        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberUpdateDto.getFile().getOriginalFilename());
+        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(myProfileUpdateRequestDTO.getFile().getOriginalFilename());
 
     }
 
     @Test
-    public void 회원사진수정_DTO_O_DB_X () throws Exception { //이름이 동일함
+    public void 회원사진수정_DTO_O_DB_X() throws Exception { //이름이 동일함
         //given
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
-        memberUpdateDto.setFile(memberImgUploadDto_O());
+        MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
+        myProfileUpdateRequestDTO.setFile(memberImgUploadDto_O());
 
-        memberUpdateService.memberUpdate(memberB.getId(), memberUpdateDto);
+        memberUpdateService.memberUpdate(memberB.getId(), myProfileUpdateRequestDTO);
 
         //when
         MemberImg memberImg = memberImgRepository.findByMember(memberB).get();
 
         //then
-        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(memberUpdateDto.getFile().getOriginalFilename());
+        assertThat(memberImg.getStoreFileName().split("_")[1]).isEqualTo(myProfileUpdateRequestDTO.getFile().getOriginalFilename());
 
     }
 
     @Test
-    public void 회원사진수정_DTO_X_DB_O () throws Exception {
+    public void 회원사진수정_DTO_X_DB_O() throws Exception {
         //given
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
-        memberUpdateDto.setFile(memberImgUploadDto_X());
+        MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
+        myProfileUpdateRequestDTO.setFile(memberImgUploadDto_X());
 
-        memberUpdateService.memberUpdate(memberA.getId(), memberUpdateDto);
+        memberUpdateService.memberUpdate(memberA.getId(), myProfileUpdateRequestDTO);
 
         //when
         boolean empty = memberImgRepository.findByMember(memberA).isEmpty();
@@ -113,11 +113,11 @@ public class MemberUpdateServiceTest {
     }
 
     @Test
-    public void 회원사진수정_DTO_X_DB_X () throws Exception {
+    public void 회원사진수정_DTO_X_DB_X() throws Exception {
         //given
-        MemberUpdateDto memberUpdateDto = createMemberUpdateDto();
-        memberUpdateDto.setFile(memberImgUploadDto_X());
-        memberUpdateService.memberUpdate(memberB.getId(), memberUpdateDto);
+        MyProfileUpdateRequestDTO myProfileUpdateRequestDTO = createMemberUpdateDto();
+        myProfileUpdateRequestDTO.setFile(memberImgUploadDto_X());
+        memberUpdateService.memberUpdate(memberB.getId(), myProfileUpdateRequestDTO);
 
         //when
         boolean empty = memberImgRepository.findByMember(memberB).isEmpty();
@@ -154,8 +154,8 @@ public class MemberUpdateServiceTest {
         return join;
     }
 
-    MemberUpdateDto createMemberUpdateDto() {
-        return MemberUpdateDto.builder()
+    MyProfileUpdateRequestDTO createMemberUpdateDto() {
+        return MyProfileUpdateRequestDTO.builder()
                 .text("안녕하세요")
                 .instaurl("https://www.instagram.com/dlwlrma/?hl=ko")
                 .facebookurl("https://twitter.com/BTS_twt?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor")
