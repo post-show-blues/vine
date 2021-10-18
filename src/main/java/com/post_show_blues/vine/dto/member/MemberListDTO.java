@@ -12,5 +12,12 @@ public class MemberListDTO {
     private String nickname;
     private String text;
     private MemberImgDTO memberImgDTO;
-    //TODO : 팔로워, 팔로잉 명 수 추가
+    private FollowDTO followDTO;
+
+    public MemberListDTO(Long id, String nickname, String text, Long followings, Long followers) {
+        this.id = id;
+        this.nickname = nickname;
+        this.text = text;
+        this.followDTO = new FollowDTO(followings, followers);
+    }
 }

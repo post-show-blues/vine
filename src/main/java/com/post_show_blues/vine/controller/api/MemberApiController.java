@@ -55,6 +55,7 @@ public class MemberApiController {
 
     @GetMapping("/find/{keyword}")
     public CMRespDto<?> memberList(@PathVariable String keyword) {
+        System.out.println(keyword);
         List<MemberListDTO> findMemberResultDTO = memberService.memberList(keyword);
         return new CMRespDto<>(1, "회원 검색 완료", findMemberResultDTO);
     }

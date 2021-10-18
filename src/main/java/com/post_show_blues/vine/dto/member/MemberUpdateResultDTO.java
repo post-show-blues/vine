@@ -14,8 +14,8 @@ public class MemberUpdateResultDTO {
     private Long id;
     private String nickname;
     private String email;
-    private String forderPath = "";
-    private String storeFileName = "";
+    private String forderPath;
+    private String storeFileName;
 
     public MemberUpdateResultDTO(Member member, MemberImg memberImg) {
         this.id = member.getId();

@@ -1,17 +1,13 @@
 package com.post_show_blues.vine.service.member;
 
-import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.domain.member.SearchMemberRepository;
-import com.post_show_blues.vine.domain.memberimg.MemberImg;
-import com.post_show_blues.vine.dto.member.MemberImgDTO;
-import com.post_show_blues.vine.dto.member.MemberListDTO;
-import com.post_show_blues.vine.dto.member.MemberProfileDTO;
-import com.post_show_blues.vine.dto.member.MyProfileDTO;
+import com.post_show_blues.vine.dto.member.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,23 +23,20 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<MemberListDTO> memberList(String keyword) {
-        List<Object[]> members = memberRepository.findMemberByNickname(keyword);
-
+        List<MemberListSQLDTO> members = memberRepository.findMemberByNickname(keyword);
 
         if (members.isEmpty()) {
-            throw new IllegalArgumentException("일치하는 회원이 없습니다");
+            return Collections.EMPTY_LIST;
         }
         List<MemberListDTO> memberListDTO = members.stream().map(m -> {
-            Member member = (Member) m[0];
-            MemberImg memberImg = (MemberImg) m[1];
+            MemberListDTO memberList = new MemberListDTO(m.getMember_Id(), m.getNickname(), m.getText(), m.getFollowing(), m.getFollower());
 
-            MemberListDTO memberList = new MemberListDTO();
+            String folderPath = m.getFolder_Path();
+            String storeFileName = m.getStore_File_Name();
 
-            if (memberImg != null) {
-                memberList.setMemberImgDTO(new MemberImgDTO(memberImg.getFolderPath(), memberImg.getStoreFileName()));
+            if (folderPath != null && storeFileName != null) {
+                memberList.setMemberImgDTO(new MemberImgDTO(folderPath, storeFileName));
             }
-            memberList.setId(member.getId());
-            memberList.setNickname(member.getNickname());
 
             return memberList;
         }).collect(Collectors.toList());
