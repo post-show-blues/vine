@@ -13,19 +13,19 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/heart")
 public class HeartApiController {
 
     private final HeartService heartService;
 
-    @GetMapping("/heart/{meetingId}")
+    @GetMapping("/{meetingId}")
     public ResponseEntity<?> heart(@PathVariable Long meetingId, @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         heartService.heart(principalDetails.getMember().getId(), meetingId);
 
         return new ResponseEntity<>(new CMRespDto<>(1, "좋아요 성공", null), HttpStatus.OK);
     }
 
-    @DeleteMapping("/heart/{meetingId}")
+    @DeleteMapping("/{meetingId}")
     public ResponseEntity<?> unheart(@PathVariable Long meetingId, @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         heartService.unheart(principalDetails.getMember().getId(), meetingId);
 
