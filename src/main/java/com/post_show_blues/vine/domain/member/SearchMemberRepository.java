@@ -30,9 +30,8 @@ public class SearchMemberRepository {
         JPAQuery<Tuple> query = queryFactory.select(member, memberImg, follow).from(member)
                 .leftJoin(memberImg).on(member.eq(memberImg.member));
 
-        if (myId != null) {
-            query = query.leftJoin(follow).on(member.eq(follow.toMemberId).and(follow.fromMemberId.id.eq(myId).and(follow.toMemberId.id.eq(findId))));
-        }
+        query = query.leftJoin(follow).on(member.eq(follow.toMemberId).and(follow.fromMemberId.id.eq(myId).and(follow.toMemberId.id.eq(findId))));
+
         Object[] objects = query.where(member.id.eq(findId)).fetchOne().toArray();
 
         Member resultMember = (Member) objects[0];
@@ -49,7 +48,7 @@ public class SearchMemberRepository {
         memberProfileDTO.setFacebookurl(resultMember.getFacebookurl());
         memberProfileDTO.setNickname(resultMember.getNickname());
         memberProfileDTO.setText(resultMember.getText());
-        memberProfileDTO.setEmail(resultMember.getText());
+        memberProfileDTO.setEmail(resultMember.getEmail());
 
         if (resultFollow != null) {
             memberProfileDTO.setIsFollow(true);
