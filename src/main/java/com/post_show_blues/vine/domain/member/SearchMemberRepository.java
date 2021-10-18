@@ -1,6 +1,7 @@
 package com.post_show_blues.vine.domain.member;
 
 import com.post_show_blues.vine.domain.follow.Follow;
+import com.post_show_blues.vine.domain.follow.QFollow;
 import com.post_show_blues.vine.domain.memberimg.MemberImg;
 import com.post_show_blues.vine.dto.member.MemberImgDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
@@ -60,9 +61,13 @@ public class SearchMemberRepository {
     }
 
     public MyProfileDTO findMyProfile(Long id) {
+        QFollow following = new QFollow("following");
+        QFollow follower = new QFollow("follower");
         MyProfileDTO result = queryFactory.select(new QMyProfileDTO(member.id, member.email, member.nickname, member.text, member.instaurl, member.facebookurl,
-                        memberImg.folderPath, memberImg.storeFileName)).from(member)
+                        memberImg.folderPath, memberImg.storeFileName, following.count(), follower.count())).from(member)
                 .leftJoin(memberImg).on(memberImg.member.eq(member))
+                .leftJoin(following).on(following.fromMemberId.eq(member))
+                .leftJoin(follower).on(follower.toMemberId.eq(member))
                 .where(member.id.eq(id)).fetchOne();
 
         return result;
