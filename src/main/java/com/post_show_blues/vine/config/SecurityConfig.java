@@ -1,7 +1,9 @@
 package com.post_show_blues.vine.config;
 
 import com.post_show_blues.vine.config.auth.PrincipalDetailsService;
-import com.post_show_blues.vine.security.jwt.*;
+import com.post_show_blues.vine.security.jwt.JwtAccessDeniedHandler;
+import com.post_show_blues.vine.security.jwt.JwtAuthenticationEntryPoint;
+import com.post_show_blues.vine.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -86,10 +88,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //먼저 정해진 값은 불변
                 .antMatchers("/auth/**").permitAll() //회원가입, 로그인은 토큰이 없는 상태로 요청
 
-                .antMatchers("/member/find/**", "/member",
-                        "/meetings", "/meetings/**").permitAll()
+                .antMatchers("/member/find/**", "/meetings/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/meetings").permitAll()
                 .antMatchers(HttpMethod.GET, "/meetings/**/requests").permitAll()
                 .antMatchers(HttpMethod.GET, "/meetings/**/participants").permitAll()
+                .antMatchers(HttpMethod.GET, "/meetings/**/comments").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
