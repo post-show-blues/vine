@@ -74,13 +74,8 @@ public class MemberUpdateService {
 
     private void memberTextResult(Member member, MyProfileUpdateResultDTO myProfileUpdateResultDTO) {
         myProfileUpdateResultDTO.setEmail(member.getEmail());
-
-        if (!member.getFacebookurl().isEmpty())
-            myProfileUpdateResultDTO.setFacebookurl(member.getFacebookurl());
-
-        if (!member.getInstaurl().isEmpty())
-            myProfileUpdateResultDTO.setInstaurl(member.getInstaurl());
-
+        myProfileUpdateResultDTO.setFacebookurl(member.getFacebookurl());
+        myProfileUpdateResultDTO.setInstaurl(member.getInstaurl());
         myProfileUpdateResultDTO.setNickname(member.getNickname());
         myProfileUpdateResultDTO.setText(member.getText());
     }

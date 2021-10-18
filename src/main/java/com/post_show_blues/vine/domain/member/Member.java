@@ -24,7 +24,6 @@ public class Member implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(columnDefinition = "varchar(255) default ''")
     private String text;
 
     private String instaurl;
