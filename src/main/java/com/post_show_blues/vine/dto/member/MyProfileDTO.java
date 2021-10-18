@@ -27,9 +27,6 @@ public class MyProfileDTO {
         this.instaurl = instaurl;
         this.facebookurl = facebookurl;
         this.followDTO = new FollowDTO(following, follower);
-
-        if (folderPath != null && storeFileName != null) {
-            this.memberImgDTO = new MemberImgDTO(folderPath, storeFileName);
-        }
+        this.memberImgDTO = new MemberImgDTO(folderPath, storeFileName);
     }
 }
