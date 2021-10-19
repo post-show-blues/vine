@@ -5,6 +5,7 @@ import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.comment.CommentDTO;
 import com.post_show_blues.vine.dto.comment.CommentReadDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,10 @@ public class CommentApiController {
                                            @Valid @RequestBody CommentDTO commentDTO, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
+        if(!commentDTO.getMemberId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("생성 권한이 없습니다.");
+        }
+
         commentService.register(commentDTO, principalDetails.getMember().getId());
 
         return new ResponseEntity<>(
@@ -57,7 +62,9 @@ public class CommentApiController {
                                            @Valid @RequestBody CommentDTO commentDTO, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        //TODO 수정 권한 체크 필요
+        if(!commentDTO.getMemberId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("수정 권한이 없습니다.");
+        }
 
         commentService.modify(commentId, commentDTO.getContent());
 
@@ -71,6 +78,7 @@ public class CommentApiController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> removeComment(@PathVariable("commentId") Long commentId,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
+
 
         commentService.remove(commentId);
 

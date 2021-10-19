@@ -6,6 +6,7 @@ import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.notice.NoticeDTO;
 import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
+import com.post_show_blues.vine.handler.exception.CustomException;
 import com.post_show_blues.vine.service.notice.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,12 @@ public class NoticeApiController {
     private final NoticeService noticeService;
 
     @GetMapping //알림목록
-    public ResponseEntity<?> noticeList(@PathVariable("memberId") Long memberId, PageRequestDTO requestDTO){
+    public ResponseEntity<?> noticeList(@PathVariable("memberId") Long memberId, PageRequestDTO requestDTO,
+                                        @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        if(!memberId.equals(principalDetails.getMember().getId())){
+            throw new CustomException("조회 권한이 없습니다.");
+        }
 
         PageResultDTO<NoticeDTO, Notice> noticeDTOList = noticeService.getNoticeList(requestDTO, memberId);
 

@@ -73,7 +73,12 @@ public class MeetingApiController {
     }
 
     @PostMapping //모임등록
-    public ResponseEntity<?> registerMeeting(@Valid MeetingDTO meetingDTO, BindingResult bindingResult) throws IOException {
+    public ResponseEntity<?> registerMeeting(@Valid MeetingDTO meetingDTO, BindingResult bindingResult,
+                                             @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        if(!meetingDTO.getMasterId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("생성 권한이 없습니다.");
+        }
 
         meetingService.register(meetingDTO);
 
@@ -92,7 +97,12 @@ public class MeetingApiController {
 
     @PutMapping("/{meetingId}") //모임 수정
     public ResponseEntity<?> ModifyMeeting(@PathVariable("meetingId") Long meetingId,
-                                           @Valid MeetingDTO meetingDTO, BindingResult bindingResult) throws IOException {
+                                           @Valid MeetingDTO meetingDTO, BindingResult bindingResult,
+                                           @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        if(!meetingDTO.getMasterId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("수정 권한이 없습니다.");
+        }
 
         meetingService.modify(meetingDTO);
 
@@ -100,7 +110,8 @@ public class MeetingApiController {
     }
 
     @DeleteMapping("/{meetingId}") //모임삭제
-    public ResponseEntity<?> deleteMeeting(@PathVariable("meetingId") Long meetingId){
+    public ResponseEntity<?> deleteMeeting(@PathVariable("meetingId") Long meetingId,
+                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         meetingService.remove(meetingId);
 
