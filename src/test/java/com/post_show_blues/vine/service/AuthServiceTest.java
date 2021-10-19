@@ -3,7 +3,7 @@ package com.post_show_blues.vine.service;
 import com.post_show_blues.vine.domain.member.MemberRepository;
 import com.post_show_blues.vine.dto.auth.SignupDto;
 import com.post_show_blues.vine.dto.auth.SignupResponse;
-import com.post_show_blues.vine.exception.AlreadyExistedNicknameException;
+import com.post_show_blues.vine.handler.exception.AlreadyExistedNicknameException;
 import com.post_show_blues.vine.service.auth.AuthService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
