@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchMeetingRepository {
 
-    @Query("select m, mti, me, mbi from Meeting m " +
+    @Query("select m, mti, me, mbi, size(m.commentList), size(m.heartList) from Meeting m " +
             "left join MeetingImg mti on mti.meeting = m " +
             "left join Member me on me.id = m.member.id " +
             "left join MemberImg mbi on mbi.member.id = me.id " +

@@ -141,13 +141,14 @@ public interface MeetingService {
 
     default DetailMeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,
                                                Member master, MemberImg masterImg,
+                                               Integer commentCount, Integer heartCount,
                                                List<ParticipantDTO> participantDTOList, Long principalId){
 
         DetailMeetingDTO detailMeetingDTO = DetailMeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .category(meeting.getCategory())
-                .commentCount(meeting.getCommentList().size()) //추가 쿼리 지점
-                .heartCount(meeting.getHeartList().size())
+                .commentCount(commentCount)
+                .heartCount(heartCount)
                 .bookmarkState(false)
                 .title(meeting.getTitle())
                 .text(meeting.getText())

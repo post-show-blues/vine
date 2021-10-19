@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -500,7 +501,6 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
-
     @Test
     void 전체_모임리스트조회_로그인o() throws Exception{
         //given
@@ -960,13 +960,10 @@ class MeetingServiceImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .text("반가워요")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -988,14 +985,21 @@ class MeetingServiceImplTest {
 
         //현재 사용 유저 생성
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
+
+        //하트 생성
+        Heart heartA = createHeart(memberUser); //현재 사용자가 하트 생성
+        heartA.setMeeting(meeting);
+        heartRepository.save(heartA);
+
+        Heart heartB = createHeart(meeting.getMember());//모임 방장이 하트 생성
+        heartB.setMeeting(meeting);
+        heartRepository.save(heartB);
+
 
         //현재 유저 북마크 생성 - meeting 모임을 북마크
         Bookmark bookmark = Bookmark.builder()
@@ -1015,6 +1019,8 @@ class MeetingServiceImplTest {
         Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
         Assertions.assertThat(detailMeetingDTO.getCategory()).isEqualTo(meeting.getCategory());
         Assertions.assertThat(detailMeetingDTO.getCommentCount()).isEqualTo(2);
+        Assertions.assertThat(detailMeetingDTO.getHeartCount()).isEqualTo(2);
+        Assertions.assertThat(detailMeetingDTO.getHeartState()).isTrue();
         Assertions.assertThat(detailMeetingDTO.getBookmarkState()).isTrue();
         Assertions.assertThat(detailMeetingDTO.getDDay()).isEqualTo(meeting.getDDay());
 
@@ -1050,12 +1056,9 @@ class MeetingServiceImplTest {
 
         //현재 사용 유저 생성 - meeting 모임 북마크 x
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
 

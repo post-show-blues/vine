@@ -358,11 +358,15 @@ public class MeetingServiceImpl implements MeetingService{
 
         MemberImg masterImg = (MemberImg) result.get(0)[3];
 
+        Integer commentCount = (Integer) result.get(0)[4];
+
+        Integer heartCount = (Integer) result.get(0)[5];
+
 
         //참여자 리스트
         List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meeting.getId());
 
-        return readEntitiesToDTO(meeting, meetingImgList, master, masterImg,
+        return readEntitiesToDTO(meeting, meetingImgList, master, masterImg, commentCount, heartCount,
                 participantDTOList, participantId);
     }
 
