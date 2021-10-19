@@ -35,7 +35,6 @@ public class MeetingApiController {
      * 경우의 수
      * 1. 미로그인 상태
      * 2. 로그인 상태
-     * 3. 팔로우 모임 리스트
      */
 
     @GetMapping//모임목록
@@ -44,31 +43,33 @@ public class MeetingApiController {
 
         PageResultDTO<MeetingResDTO, Object[]> result;
 
-        //전체 모임리스트 조회
-        if(requestDTO.getUserId() == null){
-
-            //로그인하지 않은 상태
-            if(principalDetails == null){
-                result = meetingService.getAllMeetingList(requestDTO, null);
-            }
-            //로그인한 상태
-            else{
-                result = meetingService.getAllMeetingList(requestDTO, principalDetails.getMember().getId());
-            }
-
-            return new ResponseEntity<>(new CMRespDto<>(1, "모임 목록 불러오기 성공", result), HttpStatus.OK);
+        //로그인하지 않은 상태
+        if(principalDetails == null){
+            result = meetingService.getAllMeetingList(requestDTO, null);
+        }
+        //로그인한 상태
+        else{
+            result = meetingService.getAllMeetingList(requestDTO, principalDetails.getMember().getId());
         }
 
-       //팔로우가 방장인 모임리스트 조회
-        else {
+        return new ResponseEntity<>(new CMRespDto<>(1, "모임 목록 불러오기 성공", result), HttpStatus.OK);
 
-            if(!requestDTO.getUserId().equals(principalDetails.getMember().getId())){
-                throw new CustomException("조회 권한이 없습니다.");
-            }
-            result = meetingService.getFollowMeetingList(requestDTO, principalDetails.getMember().getId());
+    }
 
-            return new ResponseEntity<>(new CMRespDto<>(1, "팔로우 모임 목록 불러오기 성공", result), HttpStatus.OK);
+    @GetMapping("/follow") //팔로우 모임 리스트
+    public ResponseEntity<?> followMeetingList(PageRequestDTO requestDTO,
+                                               @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+
+        if(!requestDTO.getMemberId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("조회 권한이 없습니다.");
         }
+
+        PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getFollowMeetingList(
+                requestDTO, principalDetails.getMember().getId());
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "팔로우 모임 목록 불러오기 성공", result), HttpStatus.OK);
+
     }
 
     @PostMapping //모임등록

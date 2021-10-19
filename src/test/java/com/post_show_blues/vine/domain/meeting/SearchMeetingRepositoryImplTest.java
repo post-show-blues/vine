@@ -130,7 +130,7 @@ class SearchMeetingRepositoryImplTest {
          * meeting4 사진 x
          */
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
+                pageRequestDTO.getMemberId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -188,7 +188,7 @@ class SearchMeetingRepositoryImplTest {
 
         //when
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(),
-                pageRequestDTO.getKeyword(), pageRequestDTO.getUserId(),
+                pageRequestDTO.getKeyword(), pageRequestDTO.getMemberId(),
                 pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
@@ -257,7 +257,7 @@ class SearchMeetingRepositoryImplTest {
         //when
         // meeting 2,4 만 title 풋살 포함
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
+                pageRequestDTO.getMemberId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -334,7 +334,7 @@ class SearchMeetingRepositoryImplTest {
         //when
         // meeting2,3,4 만 카테고리 검색에 해당 (스포츠, 춤)
         Page<Object[]> result = meetingRepository.searchPage(pageRequestDTO.getCategoryList(), pageRequestDTO.getKeyword(),
-                pageRequestDTO.getUserId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
+                pageRequestDTO.getMemberId(), pageRequestDTO.getPageable(Sort.by("id").descending()));
 
         //then
         for (Object[] arr : result.getContent()){
@@ -457,7 +457,7 @@ class SearchMeetingRepositoryImplTest {
                 .keyword("풋살")
                 .page(1)
                 .size(10)
-                .userId(memberUser.getId())
+                .memberId(memberUser.getId())
                 .build();
 
         //when
