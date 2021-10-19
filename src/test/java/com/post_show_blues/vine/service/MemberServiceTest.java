@@ -103,7 +103,7 @@ public class MemberServiceTest {
     public void 내프로필_조회() throws Exception {
         //given
         //when //멤버A가 자신의 프로필 조회
-        MyProfileDTO myProfileDTO = memberService.MyProfile(memberA.getId());
+        MyProfileDTO myProfileDTO = memberService.myProfile(memberA.getId());
 
         //then
         assertThat(myProfileDTO.getId()).isEqualTo(memberA.getId());

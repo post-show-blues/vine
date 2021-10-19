@@ -22,6 +22,17 @@ public class MemberService {
 
 
     @Transactional(readOnly = true)
+    public List<ProfileMeetingDTO> profileMeeting(Long id) {
+        List<ProfileMeetingSQLDTO> lists = memberRepository.findParticipantMeeting(id);
+        List<ProfileMeetingDTO> profileMeeting = lists.stream().map(l ->
+                new ProfileMeetingDTO(l.getMeeting_Id(), l.getTitle(), l.getText().toString().split("\'")[1], l.getMax_Number(), l.getCurrent_Number(), l.getD_day(),
+                        l.getFolder_Path1(), l.getStore_File_Name1(), l.getFolder_Path2(), l.getStore_File_Name2())
+        ).collect(Collectors.toList());
+
+        return profileMeeting;
+    }
+
+    @Transactional(readOnly = true)
     public List<MemberListDTO> memberList(String keyword) {
         List<MemberListSQLDTO> members = memberRepository.findMemberByNickname(keyword);
 
@@ -56,7 +67,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MyProfileDTO MyProfile(Long id) {
+    public MyProfileDTO myProfile(Long id) {
 
         MyProfileDTO myProfile = searchMemberRepository.findMyProfile(id);
 
