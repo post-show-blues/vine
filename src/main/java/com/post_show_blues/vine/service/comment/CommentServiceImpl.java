@@ -67,6 +67,12 @@ public class CommentServiceImpl implements CommentService{
 
         comment.changeContent(content);
 
+        if(comment.getOpen() == true){
+            comment.changeOpen(false);
+        }else {
+            comment.changeOpen(true);
+        }
+
     }
 
     /**

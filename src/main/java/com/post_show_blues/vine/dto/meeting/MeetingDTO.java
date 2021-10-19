@@ -49,9 +49,6 @@ public class MeetingDTO {
     private int maxNumber;
 
     @NotNull
-    private int currentNumber;
-
-    @NotNull
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetDate;

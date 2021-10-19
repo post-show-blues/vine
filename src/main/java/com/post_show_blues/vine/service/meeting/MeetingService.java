@@ -53,7 +53,6 @@ public interface MeetingService {
                 .text(meetingDTO.getText())
                 .place(meetingDTO.getPlace())
                 .maxNumber(meetingDTO.getMaxNumber())
-                .currentNumber(meetingDTO.getCurrentNumber())
                 .meetDate(meetingDTO.getMeetDate())
                 .reqDeadline(meetingDTO.getReqDeadline())
                 .dDay(Duration.between(LocalDate.now().atStartOfDay(), meetingDTO.getReqDeadline().toLocalDate().atStartOfDay()).toDays())

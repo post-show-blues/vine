@@ -14,6 +14,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @ToString(exclude = {"member","meeting"})
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name="participant_uk", //유니크 제약조건 이름
+                        columnNames = {"member_id","meeting_id"}
+                )
+        }
+)
 public class Participant extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

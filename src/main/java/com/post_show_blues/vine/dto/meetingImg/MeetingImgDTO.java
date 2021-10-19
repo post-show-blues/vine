@@ -18,26 +18,4 @@ public class MeetingImgDTO {
     private String folderPath;
 
     private String storeFileName;
-
-    public String getImageURL() {
-        try {
-            return URLEncoder.encode(folderPath + "/" + storeFileName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
-    public String getThumbnailURL() {
-        try {
-            return URLEncoder.encode(folderPath + "/s_" + storeFileName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
-
 }

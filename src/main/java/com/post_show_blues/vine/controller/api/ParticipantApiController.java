@@ -19,7 +19,7 @@ import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/meetings/{meetingId}/participant")
+@RequestMapping("/meetings/{meetingId}/participants")
 @Controller
 public class ParticipantApiController {
 

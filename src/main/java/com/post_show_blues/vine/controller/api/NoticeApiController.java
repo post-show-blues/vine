@@ -25,8 +25,7 @@ public class NoticeApiController {
     private final NoticeService noticeService;
 
     @GetMapping //알림목록
-    public ResponseEntity<?> noticeList(@PathVariable("memberId") Long memberId,
-                                     @RequestBody PageRequestDTO requestDTO){
+    public ResponseEntity<?> noticeList(@PathVariable("memberId") Long memberId, PageRequestDTO requestDTO){
 
         PageResultDTO<NoticeDTO, Notice> noticeDTOList = noticeService.getNoticeList(requestDTO, memberId);
 

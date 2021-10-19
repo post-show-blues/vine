@@ -74,7 +74,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //모임저장
         Meeting meeting = dtoToEntity(meetingDTO);
-        Meeting savedMeeting = meetingRepository.save(meeting);
+        meetingRepository.save(meeting);
 
 
         List<MultipartFile> imageFiles = meetingDTO.getImageFiles();
@@ -341,6 +341,10 @@ public class MeetingServiceImpl implements MeetingService{
     @Transactional(readOnly = true)
     @Override
     public DetailMeetingDTO getMeeting(Long meetingId, Long participantId) {
+
+        meetingRepository.findById(meetingId).orElseThrow(() ->
+                new CustomException("존재하지 않은 모임입니다."));
+
         List<Object[]> result = meetingRepository.getMeetingWithAll(meetingId);
 
         Meeting meeting =(Meeting)result.get(0)[0];

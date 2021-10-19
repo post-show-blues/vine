@@ -67,7 +67,7 @@ public class Meeting extends BaseEntity {
     private int maxNumber;
 
     @Builder.Default
-    private int currentNumber=0;
+    private int currentNumber=1;
 
     @Column(nullable = false)
     private LocalDateTime meetDate;
