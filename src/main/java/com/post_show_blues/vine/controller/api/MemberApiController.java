@@ -5,6 +5,7 @@ import com.post_show_blues.vine.dto.CMRespDto;
 import com.post_show_blues.vine.dto.member.MemberListDTO;
 import com.post_show_blues.vine.dto.member.MemberProfileDTO;
 import com.post_show_blues.vine.dto.member.MyProfileDTO;
+import com.post_show_blues.vine.dto.member.ProfileMeetingDTO;
 import com.post_show_blues.vine.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +24,7 @@ import java.util.List;
 public class MemberApiController {
     private final MemberService memberService;
 
-    //프로필 조회
+    //내 프로필 조회
     @GetMapping("/profile")
     public CMRespDto<?> myProfile(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         //세션에서 멤버 찾아옴
@@ -32,16 +33,13 @@ public class MemberApiController {
         if (principalDetails != null) {
             Long id = principalDetails.getId();
             log.info("세션정보 : " + id);
-            MyProfileDTO myProfileDTO = memberService.MyProfile(id);
+            MyProfileDTO myProfileDTO = memberService.myProfile(id);
             return new CMRespDto<>(1, "내 프로필 조회", myProfileDTO);
         }
         throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다");
     }
 
-    //TODO : 내 프로필 정보, 다른 유저 프로필 정보
-    //TODO : 미팅 좋아요 표시
-    //    로그인 된 사용자 -> 팔로우 여부 표시
-//    로그인 안 된 사용자 -> 팔로우 여부 표시 x
+    //다른 회원 프로필 조회
     @GetMapping("/profile/{id}")
     public CMRespDto<?> othersProfile(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                       @PathVariable Long id) {
@@ -51,6 +49,23 @@ public class MemberApiController {
         }
         MemberProfileDTO memberProfileDTO = memberService.memberProfile(myId, id);
         return new CMRespDto<>(1, "다른 회원 프로필 조회", memberProfileDTO);
+    }
+
+    @GetMapping("/profile/meeting")
+    public CMRespDto<?> myProfileMeeting(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        if (principalDetails != null) {
+            Long id = principalDetails.getId();
+            log.info("세션정보 : " + id);
+            List<ProfileMeetingDTO> myProfileDTO = memberService.profileMeeting(id);
+            return new CMRespDto<>(1, "프로필 미팅 조회", myProfileDTO);
+        }
+        throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다");
+    }
+
+    @GetMapping("/profile/{id}/meeting")
+    public CMRespDto<?> othersProfileMeeting(@PathVariable Long id) {
+        List<ProfileMeetingDTO> participantMeeting = memberService.profileMeeting(id);
+        return new CMRespDto<>(1, "참가 방 리스트 조회", participantMeeting);
     }
 
     @GetMapping("/find/{keyword}")
