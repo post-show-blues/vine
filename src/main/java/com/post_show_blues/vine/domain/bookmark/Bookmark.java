@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"member"})
+@ToString(exclude = {"member","meeting"})
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(

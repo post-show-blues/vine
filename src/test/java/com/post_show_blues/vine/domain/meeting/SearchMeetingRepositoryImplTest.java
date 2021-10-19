@@ -5,6 +5,7 @@ import com.post_show_blues.vine.domain.bookmark.BookmarkRepository;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.follow.Follow;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
+import com.post_show_blues.vine.domain.heart.HeartRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImgRepository;
 import com.post_show_blues.vine.domain.member.Member;
@@ -40,6 +41,7 @@ class SearchMeetingRepositoryImplTest {
     @Autowired FollowRepository followRepository;
     @Autowired MeetingImgRepository meetingImgRepository;
     @Autowired BookmarkRepository bookmarkRepository;
+    @Autowired HeartRepository heartRepository;
 
     @Test
     void 검색리스트() throws Exception{
@@ -48,12 +50,9 @@ class SearchMeetingRepositoryImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -147,12 +146,9 @@ class SearchMeetingRepositoryImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -207,12 +203,9 @@ class SearchMeetingRepositoryImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -271,18 +264,13 @@ class SearchMeetingRepositoryImplTest {
     @Test
     void 리스트조회_카테고리검색() throws Exception{
         //given
-        //카테고리 생성
-
         //meeting 생성
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -351,12 +339,9 @@ class SearchMeetingRepositoryImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -404,12 +389,9 @@ class SearchMeetingRepositoryImplTest {
 
         //팔로우 - 팔로우하지 않은 사람(자기자신)의 모임은 출력되면 안됨. = 팔로우한 사람이 방장인 모임만 출력되어야 함.
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
 
@@ -487,12 +469,9 @@ class SearchMeetingRepositoryImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 

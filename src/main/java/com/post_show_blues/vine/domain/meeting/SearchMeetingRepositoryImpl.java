@@ -62,7 +62,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         }
 
         //select 문
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), master, masterImg, meeting.commentList.size());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), master, masterImg,
+                meeting.commentList.size(), meeting.heartList.size());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();
@@ -158,7 +159,8 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         jpqlQuery.leftJoin(bookmark).on(bookmark.meeting.eq(meeting));
 
         //select 문
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), member, memberImg, meeting.commentList.size());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(meeting, meetingImg.id.min(), member, memberImg,
+                meeting.commentList.size(), meeting.heartList.size());
 
         //where 문
         BooleanBuilder builder = new BooleanBuilder();

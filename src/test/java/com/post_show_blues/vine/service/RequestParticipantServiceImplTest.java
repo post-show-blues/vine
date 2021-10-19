@@ -211,12 +211,9 @@ class RequestParticipantServiceImplTest {
 
         //참여자 요청자 생성
         Member member =Member.builder()
-                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -334,12 +331,9 @@ class RequestParticipantServiceImplTest {
 
         //참여 요청자 생성
         Member member =Member.builder()
-                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -353,12 +347,9 @@ class RequestParticipantServiceImplTest {
 
         //참여 거절_철회 권한 없는 회원 생성
         Member memberX =Member.builder()
-                .name("memberX")
                 .email("memberX@kookmin.ac.kr")
                 .nickname("memberXNickname")
                 .password("1111")
-                .phone("010-0000-0000")
-                .university("국민대학교")
                 .build();
         memberRepository.save(memberX);
 

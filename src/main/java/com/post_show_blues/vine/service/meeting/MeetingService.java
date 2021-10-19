@@ -1,6 +1,7 @@
 package com.post_show_blues.vine.service.meeting;
 
 import com.post_show_blues.vine.domain.bookmark.Bookmark;
+import com.post_show_blues.vine.domain.heart.Heart;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
 import com.post_show_blues.vine.domain.member.Member;
@@ -77,7 +78,7 @@ public interface MeetingService {
 
     default MeetingResDTO listEntityToDTO(Meeting meeting, MeetingImg meetingImg,
                                           Member master, MemberImg masterImg,
-                                          Integer commentCount, Long principalId){
+                                          Integer commentCount, Integer heartCount, Long principalId){
 
         MeetingResDTO meetingResDTO = MeetingResDTO.builder()
                 .meetingId(meeting.getId())
@@ -89,12 +90,24 @@ public interface MeetingService {
                 .maxNumber(meeting.getMaxNumber())
                 .currentNumber(meeting.getCurrentNumber())
                 .dDay(meeting.getDDay())
-                .commentCount(commentCount) //추가 쿼리 발생
+                .commentCount(commentCount)
+                .heartCount(heartCount)
+                .heartState(false)
                 .bookmarkState(false)
                 .build();
 
-        //현재 사용자 모임 북마크
+        //현재 사용자 모임 북마크, 하트
         if(principalId != null) {
+
+            //하트 상태 체크
+            for (Heart heart : meeting.getHeartList()) {
+                if (heart.getMember().getId() == principalId) {
+                    meetingResDTO.setHeartState(true);
+                    break;
+                }
+            }
+
+            //북마크 상태 체크
             for (Bookmark bookmark : meeting.getBookmarkList()) {
                 if (bookmark.getMember().getId() == principalId) {
                     meetingResDTO.setBookmarkState(true);
@@ -134,6 +147,7 @@ public interface MeetingService {
                 .meetingId(meeting.getId())
                 .category(meeting.getCategory())
                 .commentCount(meeting.getCommentList().size()) //추가 쿼리 지점
+                .heartCount(meeting.getHeartList().size())
                 .bookmarkState(false)
                 .title(meeting.getTitle())
                 .text(meeting.getText())
@@ -145,8 +159,18 @@ public interface MeetingService {
                 .chatLink(meeting.getChatLink())
                 .build();
 
-        //현재 사용자 모임 북마크
+        //현재 사용자 모임 북마크, 하트
         if(principalId != null) {
+
+            //하트 상태 체크
+            for (Heart heart : meeting.getHeartList()) {
+                if (heart.getMember().getId() == principalId) {
+                    detailMeetingDTO.setHeartState(true);
+                    break;
+                }
+            }
+
+            //북마크 상태 체크
             for (Bookmark bookmark : meeting.getBookmarkList()) {
                 if (bookmark.getMember().getId() == principalId) {
                     detailMeetingDTO.setBookmarkState(true);

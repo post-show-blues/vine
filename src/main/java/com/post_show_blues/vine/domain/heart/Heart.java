@@ -1,5 +1,6 @@
 package com.post_show_blues.vine.domain.heart;
 
+import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,11 @@ public class Heart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", nullable = false)
-    private Member meeting;
+    private Meeting meeting;
+
+    //연관관계 메서드
+    public void setMeeting(Meeting meeting){
+        this.meeting = meeting;
+        meeting.getHeartList().add(this);
+    }
 }

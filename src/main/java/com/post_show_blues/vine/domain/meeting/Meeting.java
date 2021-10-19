@@ -6,6 +6,7 @@ import com.post_show_blues.vine.domain.BaseEntity;
 import com.post_show_blues.vine.domain.bookmark.Bookmark;
 import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
+import com.post_show_blues.vine.domain.heart.Heart;
 import com.post_show_blues.vine.domain.member.Member;
 import com.post_show_blues.vine.handler.exception.CustomException;
 import lombok.*;
@@ -45,6 +46,11 @@ public class Meeting extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Bookmark> bookmarkList = new ArrayList<>();
+
+    @BatchSize(size = 36) //처음 지연 로딩시 36 레코드를 한번에 가져옴.
+    @Builder.Default
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Heart> heartList = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;

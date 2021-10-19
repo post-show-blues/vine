@@ -36,6 +36,10 @@ public class MeetingResDTO {
 
     private Boolean bookmarkState;
 
+    private Boolean heartState;
+
+    private int heartCount;
+
     private MeetingImgDTO meetingImgDTO;
 
     private MemberImgDTO masterImgDTO;

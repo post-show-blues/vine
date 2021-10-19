@@ -32,6 +32,10 @@ public class DetailMeetingDTO {
 
     private Boolean bookmarkState;
 
+    private Boolean heartState;
+
+    private int heartCount;
+
     private String title;
 
     private String text;

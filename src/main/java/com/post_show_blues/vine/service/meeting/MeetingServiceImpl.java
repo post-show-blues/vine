@@ -266,6 +266,7 @@ public class MeetingServiceImpl implements MeetingService{
                 (Member)arr[2], //방장 엔티티
                 (MemberImg)arr[3],//모임장 프로필 사진
                 (Integer)arr[4],//댓글 수
+                (Integer)arr[5],//하트 수
                 principalId) //현재 유저 id
         );
 
@@ -296,6 +297,7 @@ public class MeetingServiceImpl implements MeetingService{
                 (Member)arr[2], //방장 엔티티
                 (MemberImg)arr[3],//모임장 프로필 사진
                 (Integer)arr[4],//댓글 수
+                (Integer)arr[5],//하트 수
                 principalId) //현재 유저 id
         );
 
@@ -326,6 +328,7 @@ public class MeetingServiceImpl implements MeetingService{
                 (Member)arr[2], //방장 엔티티
                 (MemberImg)arr[3],//모임장 프로필 사진
                 (Integer)arr[4],//댓글 수
+                (Integer)arr[5],//하트 수
                 principalId) //현재 유저 id
         );
 

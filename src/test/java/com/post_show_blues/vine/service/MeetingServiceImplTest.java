@@ -6,6 +6,8 @@ import com.post_show_blues.vine.domain.category.Category;
 import com.post_show_blues.vine.domain.comment.Comment;
 import com.post_show_blues.vine.domain.comment.CommentRepository;
 import com.post_show_blues.vine.domain.follow.FollowRepository;
+import com.post_show_blues.vine.domain.heart.Heart;
+import com.post_show_blues.vine.domain.heart.HeartRepository;
 import com.post_show_blues.vine.domain.meeting.Meeting;
 import com.post_show_blues.vine.domain.meeting.MeetingRepository;
 import com.post_show_blues.vine.domain.meetingimg.MeetingImg;
@@ -63,6 +65,7 @@ class MeetingServiceImplTest {
     @Autowired NoticeRepository noticeRepository;
     @Autowired CommentRepository commentRepository;
     @Autowired BookmarkRepository bookmarkRepository;
+    @Autowired HeartRepository heartRepository;
 
 
    @Test
@@ -83,12 +86,9 @@ class MeetingServiceImplTest {
        memberRepository.save(memberB);
 
        Member memberC = Member.builder()
-//               .name("memberC")
                .email("memberC@kookmin.ac.kr")
                .nickname("memberNicknameC")
                .password("1111")
-//               .phone("010-0000-0000")
-//               .university("국민대학교")
                .build();
 
        memberRepository.save(memberC);
@@ -245,12 +245,9 @@ class MeetingServiceImplTest {
 
         //수정 데이터
         Member member1 = Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member1);
@@ -295,12 +292,9 @@ class MeetingServiceImplTest {
 
         //meeting 의 요청자 생성
         Member member =Member.builder()
-//                .name("member")
                 .email("memberB@kookmin.ac.kr")
                 .nickname("memberBNickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -321,6 +315,12 @@ class MeetingServiceImplTest {
         commentB.setParent(commentA);
 
         commentRepository.save(commentB); //방장이 참여자 댓글에 대댓글 남김.
+
+        //meeting 하트 생성
+        Heart heartA = createHeart(member); // 참여자가 하트 누름.
+        heartA.setMeeting(meeting);
+
+        heartRepository.save(heartA);
 
         //when
         meetingService.remove(meetingId);
@@ -346,8 +346,12 @@ class MeetingServiceImplTest {
         NoSuchElementException e5 = assertThrows(NoSuchElementException.class,
                 () -> commentRepository.findById(commentA.getId()).get());
 
-        //삭제된 모임방 검색 (모임 삭제)
+        //삭제된 모임방의 하트 (하트 삭제)
         NoSuchElementException e6 = assertThrows(NoSuchElementException.class,
+                () -> heartRepository.findById(heartA.getId()).get());
+
+        //삭제된 모임방 검색 (모임 삭제)
+        NoSuchElementException e7 = assertThrows(NoSuchElementException.class,
                 () -> meetingRepository.findById(meetingId).get());
 
 
@@ -357,6 +361,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(e4.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e5.getMessage()).isEqualTo("No value present");
         Assertions.assertThat(e6.getMessage()).isEqualTo("No value present");
+        Assertions.assertThat(e7.getMessage()).isEqualTo("No value present");
 
         //알람 검증 -> 참여자들에게 생성
         List<Notice> noticeList = noticeRepository.getNoticeList(participant.getMember().getId());
@@ -368,6 +373,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(noticeList.size()).isEqualTo(1);
     }
 
+
     @Test
     void 전체_모임리스트조회_로그인x() throws Exception{
         //given
@@ -375,12 +381,9 @@ class MeetingServiceImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -456,6 +459,18 @@ class MeetingServiceImplTest {
 
         commentRepository.save(commentB);
 
+        //모임 하트 생성 - meeting 모임에만 생성 - 2개
+        Heart heartA = createHeart(meeting2.getMember());
+        heartA.setMeeting(meeting2);
+
+        heartRepository.save(heartA);
+
+        Heart heartB = createHeart(meeting1.getMember()); //meeting1 모임 방장이 하트 누름.
+        heartB.setMeeting(meeting2);
+
+        heartRepository.save(heartB);
+
+
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
                 .keyword("풋살")
@@ -493,12 +508,9 @@ class MeetingServiceImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -576,12 +588,9 @@ class MeetingServiceImplTest {
 
         //현재 사용 유저 생성
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
 
@@ -601,6 +610,15 @@ class MeetingServiceImplTest {
         bookmarkB.setMeeting(meeting5);
 
         bookmarkRepository.save(bookmarkB);
+
+        //memberUser 가 meeting2, 5 하트 누름.
+        Heart heartA = createHeart(memberUser);
+        heartA.setMeeting(meeting2);
+        heartRepository.save(heartA);
+
+        Heart heartB = createHeart(memberUser);
+        heartB.setMeeting(meeting5);
+        heartRepository.save(heartB);
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .categoryList(List.of(Category.SPORTS, Category.DANCE))
@@ -631,6 +649,8 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.getDtoList().size()).isEqualTo(2);
         Assertions.assertThat(result.getDtoList().get(0).getBookmarkState()).isFalse();
         Assertions.assertThat(result.getDtoList().get(1).getBookmarkState()).isTrue();
+        Assertions.assertThat(result.getDtoList().get(1).getHeartState()).isTrue();
+        Assertions.assertThat(result.getDtoList().get(1).getHeartCount()).isEqualTo(1);
         Assertions.assertThat(result.getTotalPage()).isEqualTo(1);
     }
 
@@ -641,12 +661,9 @@ class MeetingServiceImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -684,12 +701,9 @@ class MeetingServiceImplTest {
          * memberUser 가 meeting1, 4 방장을 팔로우
          */
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
 
@@ -724,12 +738,9 @@ class MeetingServiceImplTest {
         IntStream.rangeClosed(1,5).forEach(i -> {
 
             Member member = Member.builder()
-//                    .name("member"+i)
                     .email("member"+i+"@kookmin.ac.kr")
                     .nickname("member"+i+"Nickname")
                     .password("1111")
-//                    .phone("010-0000-0000")
-//                    .university("국민대학교")
                     .build();
             memberRepository.save(member);
 
@@ -766,12 +777,9 @@ class MeetingServiceImplTest {
 
         //현재 사용 유저 생성
         Member memberUser = Member.builder()
-//                .name("memberUser")
                 .email("memberUser@kookmin.ac.kr")
                 .nickname("memberUserNickname")
                 .password("1111")
-//                .phone("010-1111-1111")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(memberUser);
 
@@ -1125,6 +1133,14 @@ class MeetingServiceImplTest {
         Assertions.assertThat(result.get(1).getDDay() - result.get(0).getDDay()).isEqualTo(1);
     }
 
+    private Heart createHeart(Member member) {
+
+        Heart heart = Heart.builder()
+                .member(member)
+                .build();
+
+        return heart;
+    }
 
     private Comment createComment(Member member) {
 
