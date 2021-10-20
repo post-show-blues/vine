@@ -50,6 +50,25 @@ public class RequestParticipantServiceImpl implements RequestParticipantService{
                 new CustomException("존재하지 않은 회원입니다."));
 
 
+        //이미 참여 요청을 보낸 경우
+        List<RequestParticipant> requestParticipantList = requestParticipantRepository.findByMeeting(meeting);
+        for(RequestParticipant requestParticipant : requestParticipantList){
+            if(memberId.equals(requestParticipant.getMember().getId())){
+                throw new CustomException("이미 참여 요청하셨습다.");
+            }
+        }
+        //이미 모임 참여자인 경우
+        List<Participant> participantList = participantRepository.findByMeeting(meeting);
+        for(Participant participant : participantList){
+            if(memberId.equals(participant.getMember().getId())){
+                throw new CustomException("이미 모임에 참여하고 있습니다.");
+            }
+        }
+        //방장이 참여 요청을 보낸 경우
+        if(memberId.equals(meeting.getMember().getId())){
+            throw new CustomException("방장은 참여요청을 보낼 수 없습니다.");
+        }
+
         //요청마감일 체크
         LocalDateTime reqDeadline = meeting.getReqDeadline();
 

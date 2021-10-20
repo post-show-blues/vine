@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    //테스트코드에 사용
     @Query("select p from Participant p  where p.meeting = :meeting")
     List<Participant> findByMeeting(Meeting meeting);
 

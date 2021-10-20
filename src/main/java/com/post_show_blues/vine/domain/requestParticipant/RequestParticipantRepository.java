@@ -1,6 +1,7 @@
 package com.post_show_blues.vine.domain.requestParticipant;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
+import com.post_show_blues.vine.domain.participant.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,7 @@ public interface RequestParticipantRepository extends JpaRepository<RequestParti
     @Modifying(clearAutomatically = true) //쿼리 실행시 JPA 캐싱 clear
     @Query("delete from RequestParticipant r where r.meeting= :meeting")
     void deleteByMeeting(Meeting meeting);
+
+    @Query("select r from RequestParticipant r  where p.meeting = :meeting")
+    List<RequestParticipant> findByMeeting(Meeting meeting);
 }
