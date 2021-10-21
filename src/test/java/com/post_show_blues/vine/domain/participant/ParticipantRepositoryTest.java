@@ -85,6 +85,32 @@ class ParticipantRepositoryTest {
 
     }
 
+    @Test
+    void 참가_존재여부_존재o() throws Exception{
+        //given
+        //모임생성
+        Meeting meeting = createMeeting();
+        //회원 생성
+        Member memberE =Member.builder()
+                .email("memberE@kookmin.ac.kr")
+                .nickname("memberENickname")
+                .password("1111")
+                .build();
+        memberRepository.save(memberE);
+
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(memberE)
+                .build();
+        participantRepository.save(participant);
+
+        //when
+        boolean result = participantRepository.existsByMeetingAndMember(meeting, memberE);
+
+        //then
+        Assertions.assertThat(result).isTrue();
+    }
+
     private MemberImg createMemberImg () {
 
         Member memberC = Member.builder()
@@ -199,12 +225,9 @@ class ParticipantRepositoryTest {
 
     private Member createMember(){
         Member member = Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr" )
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);
