@@ -1,6 +1,7 @@
 package com.post_show_blues.vine.domain.participant;
 
 import com.post_show_blues.vine.domain.meeting.Meeting;
+import com.post_show_blues.vine.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    //테스트코드에 사용
+    //테스트 코드
     @Query("select p from Participant p  where p.meeting = :meeting")
     List<Participant> findByMeeting(Meeting meeting);
 
@@ -42,5 +43,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "where p.id = :participantId")
     String getNicknameOfParticipant(Long participantId);
 
+    @Query("select (count(p.id)>0) from Participant p " +
+            "where p.meeting.id = :meetingId and p.member.id = :memberId")
+    boolean exists(Long meetingId, Long memberId);
+
+    boolean existsByMeetingAndMember(Meeting meeting, Member member);
 
 }

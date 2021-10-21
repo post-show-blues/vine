@@ -44,19 +44,14 @@ class RequestParticipantServiceImplTest {
     @Autowired ParticipantRepository participantRepository;
     @Autowired NoticeRepository noticeRepository;
 
-
-
     @Test
     void 참여요청() throws Exception{
         //given
         Meeting meeting = createMeeting();
         Member member =Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);
@@ -113,6 +108,36 @@ class RequestParticipantServiceImplTest {
         Assertions.assertThat(e.getMessage()).isEqualTo("참여 가능일이 지났습니다.");
     }
      */
+
+    @Test
+    void 참여요청_이미요청o() throws Exception{
+        //given
+
+        //모임생성
+        Meeting meeting = createMeeting();
+
+        //회원생성
+        Member member =Member.builder()
+                .email("memberA@kookmin.ac.kr")
+                .nickname("memberANickname")
+                .password("1111")
+                .build();
+        memberRepository.save(member);
+
+        //참여요청 생성
+        RequestParticipant requestParticipant = RequestParticipant.builder()
+                .meeting(meeting)
+                .member(member)
+                .build();
+        requestParticipantRepository.save(requestParticipant);
+
+        //when
+        CustomException e = assertThrows(CustomException.class,
+                () -> requestParticipantService.request(meeting.getId(), member.getId()));
+
+        //then
+        Assertions.assertThat(e.getMessage()).isEqualTo("이미 참여 요청하셨습다.");
+    }
 
     @Test
     void 요청시_인원초과() throws Exception{
