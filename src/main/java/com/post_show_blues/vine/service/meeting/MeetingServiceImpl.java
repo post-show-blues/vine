@@ -91,6 +91,15 @@ public class MeetingServiceImpl implements MeetingService{
             }
         }
 
+        //participant 에 방장 추가
+        Participant participant = Participant.builder()
+                .meeting(meeting)
+                .member(Member.builder().id(principalId).build())
+                .build();
+
+        participantRepository.save(participant);
+
+        //팔로워들에게 알림 추가
         //[0] : Member, [1] : MemberImg
         List<Object[]> result = followRepository.findFollowerMembers(meeting.getMember().getId());
 
@@ -356,19 +365,15 @@ public class MeetingServiceImpl implements MeetingService{
             });
         }
 
-        Member master = (Member) result.get(0)[2];
+        Integer commentCount = (Integer) result.get(0)[2];
 
-        MemberImg masterImg = (MemberImg) result.get(0)[3];
-
-        Integer commentCount = (Integer) result.get(0)[4];
-
-        Integer heartCount = (Integer) result.get(0)[5];
+        Integer heartCount = (Integer) result.get(0)[3];
 
 
         //참여자 리스트
         List<ParticipantDTO> participantDTOList = participantService.getParticipantList(meeting.getId());
 
-        return readEntitiesToDTO(meeting, meetingImgList, master, masterImg, commentCount, heartCount,
+        return readEntitiesToDTO(meeting, meetingImgList, commentCount, heartCount,
                 participantDTOList, participantId);
     }
 
@@ -392,7 +397,8 @@ public class MeetingServiceImpl implements MeetingService{
     @Override
     public void updatedDay() {
 
-        List<Meeting> meetingList = meetingRepository.findAll();
+        //활동 예정인 모임 리스트 (활동종료 모임 포함x)
+        List<Meeting> meetingList = meetingRepository.getUpdateMeetingDdayList();
 
         meetingList.stream().forEach(meeting -> meeting.updateDDay());
 
