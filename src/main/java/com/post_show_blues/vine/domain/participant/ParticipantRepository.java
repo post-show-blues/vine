@@ -43,10 +43,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "where p.id = :participantId")
     String getNicknameOfParticipant(Long participantId);
 
-    @Query("select (count(p.id)>0) from Participant p " +
-            "where p.meeting.id = :meetingId and p.member.id = :memberId")
-    boolean exists(Long meetingId, Long memberId);
-
     boolean existsByMeetingAndMember(Meeting meeting, Member member);
 
 }

@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 
 public interface MeetingService {
 
-    Long register(MeetingDTO meetingDTO) throws IOException;
+    Long register(MeetingDTO meetingDTO, Long principalId) throws IOException;
 
-    void modify(MeetingDTO meetingDTO) throws IOException;
+    void modify(MeetingDTO meetingDTO, Long principalId) throws IOException;
 
     void remove(Long meetingId);
 
@@ -43,11 +43,11 @@ public interface MeetingService {
 
     void updatedDay();
 
-    default Meeting dtoToEntity(MeetingDTO meetingDTO){
+    default Meeting dtoToEntity(MeetingDTO meetingDTO, Long principalId){
 
         Meeting meeting = Meeting.builder()
                 .id(meetingDTO.getMeetingId())
-                .member(Member.builder().id(meetingDTO.getMasterId()).build())
+                .member(Member.builder().id(principalId).build())
                 .category(meetingDTO.getCategory())
                 .title(meetingDTO.getTitle())
                 .text(meetingDTO.getText())

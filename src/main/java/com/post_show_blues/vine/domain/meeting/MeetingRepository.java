@@ -26,4 +26,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, SearchM
     @Query("select m from Meeting m where m.dDay = 0")
     List<Meeting> getDZeroMeeting();
 
+    @Query("select m from Meeting m where m.dDay >= 0")
+    List<Meeting> getUpdateMeetingDdayList();
+
 }

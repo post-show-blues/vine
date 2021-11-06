@@ -64,7 +64,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional
     @Override
-    public Long register(MeetingDTO meetingDTO) throws IOException {
+    public Long register(MeetingDTO meetingDTO, Long principalId) throws IOException {
 
         //활동날짜, 신청 마감날짜 비교
         if(meetingDTO.getMeetDate().isBefore(meetingDTO.getReqDeadline())){
@@ -73,7 +73,7 @@ public class MeetingServiceImpl implements MeetingService{
 
 
         //모임저장
-        Meeting meeting = dtoToEntity(meetingDTO);
+        Meeting meeting = dtoToEntity(meetingDTO, principalId);
         meetingRepository.save(meeting);
 
 
@@ -126,7 +126,7 @@ public class MeetingServiceImpl implements MeetingService{
      */
     @Transactional
     @Override
-    public void modify(MeetingDTO meetingDTO) throws IOException {
+    public void modify(MeetingDTO meetingDTO, Long principalId) throws IOException {
 
         Meeting meeting = meetingRepository.findById(meetingDTO.getMeetingId()).orElseThrow(() ->
                 new CustomException("존재하는 않은 모임입니다."));
@@ -138,7 +138,7 @@ public class MeetingServiceImpl implements MeetingService{
 
         //변경
         meeting.changeCategory(meetingDTO.getCategory());
-        meeting.changeMember(Member.builder().id(meetingDTO.getMasterId()).build());
+        meeting.changeMember(Member.builder().id(principalId).build());
         meeting.changeTitle(meetingDTO.getTitle());
         meeting.changeText(meetingDTO.getText());
         meeting.changePlace(meetingDTO.getPlace());
