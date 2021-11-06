@@ -29,10 +29,6 @@ public class BookmarkApiController {
     public ResponseEntity<?> bookmarkList(PageRequestDTO requestDTO,
                                           @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        if(!requestDTO.getMemberId().equals(principalDetails.getMember().getId())){
-            throw new CustomException("조회 권한이 없습니다.");
-        }
-
         PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getBookmarkMeetingList(
                 requestDTO, principalDetails.getMember().getId());
 
