@@ -49,7 +49,6 @@ public class MeetingServiceImpl implements MeetingService{
     @Value("${org.zerock.upload.path}")
     private String uploadPath;
     private final FileStore fileStore;
-
     private final MeetingRepository meetingRepository;
     private final MeetingImgRepository meetingImgRepository;
     private final NoticeRepository noticeRepository;
@@ -138,7 +137,6 @@ public class MeetingServiceImpl implements MeetingService{
 
         //변경
         meeting.changeCategory(meetingDTO.getCategory());
-        meeting.changeMember(Member.builder().id(principalId).build());
         meeting.changeTitle(meetingDTO.getTitle());
         meeting.changeText(meetingDTO.getText());
         meeting.changePlace(meetingDTO.getPlace());

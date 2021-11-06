@@ -30,6 +30,9 @@ public class MeetingDTO {
     private Long meetingId;
 
     @NotNull
+    private Long masterId;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Category category;
 
