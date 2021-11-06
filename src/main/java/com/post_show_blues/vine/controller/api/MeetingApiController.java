@@ -60,11 +60,6 @@ public class MeetingApiController {
     public ResponseEntity<?> followMeetingList(PageRequestDTO requestDTO,
                                                @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-
-        if(!requestDTO.getMemberId().equals(principalDetails.getMember().getId())){
-            throw new CustomException("조회 권한이 없습니다.");
-        }
-
         PageResultDTO<MeetingResDTO, Object[]> result = meetingService.getFollowMeetingList(
                 requestDTO, principalDetails.getMember().getId());
 
