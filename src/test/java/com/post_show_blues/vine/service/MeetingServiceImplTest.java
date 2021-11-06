@@ -111,7 +111,6 @@ class MeetingServiceImplTest {
         //meetingDTO 생성
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .category(Category.SPORTS)
-                .masterId(memberA.getId())
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
@@ -122,7 +121,7 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        Long saveId = meetingService.register(meetingDTO);
+        Long saveId = meetingService.register(meetingDTO, memberA.getId());
 
         //then
         //모임 검증
@@ -130,7 +129,7 @@ class MeetingServiceImplTest {
         Assertions.assertThat(meeting.getTitle()).isEqualTo("MeetingA");
         Assertions.assertThat(meeting.getMember().getId()).isEqualTo(memberA.getId());
         Assertions.assertThat(meeting.getCategory()).isEqualTo(meetingDTO.getCategory());
-        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(0);
+        Assertions.assertThat(meeting.getCurrentNumber()).isEqualTo(1);
         //Assertions.assertThat(meeting.getDDay()).isEqualTo(5);
 
         //모임 imgFiles 검증
@@ -157,7 +156,6 @@ class MeetingServiceImplTest {
 
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .category(Category.SPORTS)
-                .masterId(member.getId())
                 .title("MeetingA")
                 .text("meet")
                 .place("A")
@@ -168,7 +166,7 @@ class MeetingServiceImplTest {
         
         //when
         CustomException e = assertThrows(CustomException.class,
-                () -> meetingService.register(meetingDTO));
+                () -> meetingService.register(meetingDTO, member.getId()));
 
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("활동일이 신청마감일보다 빠릅니다.");
@@ -188,18 +186,6 @@ class MeetingServiceImplTest {
 
         meetingImgRepository.save(memberImgA);
 
-        //수정 데이터
-        Member memberB = Member.builder()
-//                .name("member")
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
-                .build();
-
-        memberRepository.save(memberB);
-
         //mock 이미지 파일 meeting.imgFiles 생성
         List<MultipartFile> imgFiles = new ArrayList<>();
 
@@ -213,7 +199,6 @@ class MeetingServiceImplTest {
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meetingA.getId())
                 .category(Category.MUSIC) //변경 sports -> music
-                .masterId(memberB.getId()) //변경
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
@@ -224,12 +209,12 @@ class MeetingServiceImplTest {
                 .build();
 
         //when
-        meetingService.modify(meetingDTO);
+        meetingService.modify(meetingDTO, meetingA.getMember().getId());
 
         //then
         //모임수정
         Assertions.assertThat(meetingA.getTitle()).isEqualTo("MeetingB");
-        Assertions.assertThat(meetingA.getMember().getId()).isEqualTo(memberB.getId());
+        Assertions.assertThat(meetingA.getMember().getId()).isEqualTo(meetingA.getMember().getId());
         Assertions.assertThat(meetingA.getCategory()).isEqualTo(meetingDTO.getCategory());
         //Assertions.assertThat(meetingA.getDDay()).isEqualTo(5);
 
@@ -244,19 +229,9 @@ class MeetingServiceImplTest {
         //given
         Meeting meeting = createMeeting();
 
-        //수정 데이터
-        Member member1 = Member.builder()
-                .email("memberA@kookmin.ac.kr")
-                .nickname("memberANickname")
-                .password("1111")
-                .build();
-
-        memberRepository.save(member1);
-
         MeetingDTO meetingDTO = MeetingDTO.builder()
                 .meetingId(meeting.getId())
                 .category(Category.SPORTS)
-                .masterId(member1.getId())
                 .title("MeetingB") //meetingA -> meeting B로 변경
                 .text("meet2") //meet -> meet2
                 .place("B") // A -> B
@@ -267,7 +242,7 @@ class MeetingServiceImplTest {
 
         //when
         CustomException e = assertThrows(CustomException.class,
-                () -> meetingService.modify(meetingDTO));
+                () -> meetingService.modify(meetingDTO, meeting.getMember().getId()));
 
         //then
         Assertions.assertThat(e.getMessage()).isEqualTo("참여인원 초과입니다.");
