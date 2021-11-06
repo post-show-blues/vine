@@ -25,12 +25,16 @@ public class DetailMeetingDTO {
 
     private Long meetingId;
 
+    private Long masterId;
+
     @Enumerated(EnumType.STRING)
     private Category category;
 
     private int commentCount;
 
     private Boolean bookmarkState;
+
+    private Long participantId;
 
     private Boolean heartState;
 
@@ -53,8 +57,6 @@ public class DetailMeetingDTO {
     private Long dDay;
 
     private String chatLink;
-
-    private MemberListDTO masterDTO;
 
     @Builder.Default
     private List<ParticipantDTO> participantDTOList = new ArrayList<>();

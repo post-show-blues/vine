@@ -139,15 +139,16 @@ public interface MeetingService {
     }
 
     default DetailMeetingDTO readEntitiesToDTO(Meeting meeting, List<MeetingImg> meetingImgList,
-                                               Member master, MemberImg masterImg,
                                                Integer commentCount, Integer heartCount,
                                                List<ParticipantDTO> participantDTOList, Long principalId){
 
         DetailMeetingDTO detailMeetingDTO = DetailMeetingDTO.builder()
                 .meetingId(meeting.getId())
+                .masterId(meeting.getMember().getId())
                 .category(meeting.getCategory())
                 .commentCount(commentCount)
                 .heartCount(heartCount)
+                .heartState(false)
                 .bookmarkState(false)
                 .title(meeting.getTitle())
                 .text(meeting.getText())
@@ -177,6 +178,15 @@ public interface MeetingService {
                     break;
                 }
             }
+
+            //참여 상태 체크
+            for(ParticipantDTO participantDTO : participantDTOList){
+                if(participantDTO.getMemberId() == principalId){
+                    detailMeetingDTO.setParticipantId(participantDTO.getParticipantId());
+                    break;
+                }
+            }
+
         }
 
         //모임 사진
@@ -190,26 +200,6 @@ public interface MeetingService {
 
             detailMeetingDTO.setImgDTOList(meetingImgDTOList);
         }
-
-        //방장 memberListDTO 생성
-        MemberListDTO memberListDTO = MemberListDTO.builder()
-                .id(master.getId())
-                .nickname(master.getNickname())
-                .text(master.getText())
-                .build();
-
-        //방장 프로필 사진
-        if(masterImg != null){
-            MemberImgDTO masterImgDTO = MemberImgDTO.builder()
-                    .folderPath(masterImg.getFolderPath())
-                    .storeFileName(masterImg.getStoreFileName())
-                    .build();
-
-            //memberListDTO 프로필 사진 넣기
-            memberListDTO.setMemberImgDTO(masterImgDTO);
-        }
-
-        detailMeetingDTO.setMasterDTO(memberListDTO);
 
         //participantDTO 리스트
         if(participantDTOList.size() > 0){

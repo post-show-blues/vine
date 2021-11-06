@@ -43,11 +43,11 @@ public class CommentServiceImpl implements CommentService{
             Comment parentComment = commentRepository.findById(commentDTO.getParentId()).orElseThrow(() ->
                     new CustomException("존재하지 않은 댓글입니다."));
 
-            comment = commentDTO.toEntity(meeting, parentComment);
+            comment = commentDTO.toEntity(meeting, principalId, parentComment);
 
         }else{ //부모댓글이 없는 경우
 
-            comment = commentDTO.toEntity(meeting, null);
+            comment = commentDTO.toEntity(meeting, principalId,null);
         }
 
         commentRepository.save(comment);

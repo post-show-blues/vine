@@ -71,6 +71,10 @@ public class MeetingApiController {
     public ResponseEntity<?> registerMeeting(@Valid MeetingDTO meetingDTO, BindingResult bindingResult,
                                              @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
+        if(!meetingDTO.getMasterId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("생성 권한이 없습니다.");
+        }
+
         meetingService.register(meetingDTO, principalDetails.getMember().getId());
 
         return new ResponseEntity<>(new CMRespDto<>(1, "모임등록 성공", null), HttpStatus.CREATED);
@@ -90,6 +94,10 @@ public class MeetingApiController {
     public ResponseEntity<?> ModifyMeeting(@PathVariable("meetingId") Long meetingId,
                                            @Valid MeetingDTO meetingDTO, BindingResult bindingResult,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        if(!meetingDTO.getMasterId().equals(principalDetails.getMember().getId())){
+            throw new CustomException("수정 권한이 없습니다.");
+        }
 
         meetingService.modify(meetingDTO, principalDetails.getMember().getId());
 

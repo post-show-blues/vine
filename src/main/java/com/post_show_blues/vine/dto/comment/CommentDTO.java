@@ -34,11 +34,11 @@ public class CommentDTO {
     @NotNull
     private Boolean open;
 
-    public Comment toEntity(Meeting meeting, Comment parentComment){
+    public Comment toEntity(Meeting meeting, Long principalId, Comment parentComment){
 
 
         Comment comment = Comment.builder()
-                .member(Member.builder().id(memberId).build())
+                .member(Member.builder().id(principalId).build())
                 .content(content)
                 .open(open)
                 .build();
