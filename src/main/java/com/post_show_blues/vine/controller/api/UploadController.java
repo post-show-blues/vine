@@ -7,22 +7,18 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UploadController {
 
     private final FileStore filestore;
 
-    @ResponseBody
     @GetMapping("/img/{storeFileName}")
     public ResponseEntity<Resource> downloadImage(@RequestParam("folderPath") String folderPath,
                                                  @PathVariable("storeFileName") String storeFileName) throws IOException {
