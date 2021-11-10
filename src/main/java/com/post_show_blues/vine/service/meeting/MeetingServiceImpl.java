@@ -46,8 +46,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class MeetingServiceImpl implements MeetingService{
 
-    @Value("${org.zerock.upload.path}")
-    private String uploadPath;
     private final FileStore fileStore;
     private final MeetingRepository meetingRepository;
     private final MeetingImgRepository meetingImgRepository;

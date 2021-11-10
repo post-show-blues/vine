@@ -17,8 +17,8 @@ import java.util.UUID;
 @Component
 public class FileStore {
 
-    @Value("${org.zerock.upload.path}")
-    private String uploadFolder;
+    private String uploadFolder = System.getProperty("user.home");
+
 
     public String getFullPath(String folderPath, String storeFileName){
 
@@ -78,11 +78,7 @@ public class FileStore {
 
     private String makeFolder() {
 
-        String folderPath = "vine" + File.separator;
-
-        String str = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-        folderPath += str.replace("//", File.separator);
+        String folderPath = "vine/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
         log.info("folderPath: " + folderPath);
 
