@@ -39,8 +39,29 @@ public class NoticeApiController {
 
     }
 
+    @PutMapping("/{noticeId}") //읽음상태로 변경
+    public ResponseEntity<?> changeReadState(@PathVariable("memberId") Long memberId,
+                                             @PathVariable("noticeId") Long noticeId,
+                                             @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        if(!memberId.equals(principalDetails.getMember().getId())){
+            throw new CustomException("수정 권한이 없습니다.");
+        }
+
+        noticeService.changeRead(noticeId);
+
+        return new ResponseEntity<>(new CMRespDto<>(1, "읽음상태로 변경 완료", null), HttpStatus.OK);
+    }
+
+
     @DeleteMapping("/{noticeId}") //알림삭제
-    public ResponseEntity<?> deleteNotice(@PathVariable("noticeId") Long noticeId){
+    public ResponseEntity<?> deleteNotice(@PathVariable("memberId") Long memberId,
+                                          @PathVariable("noticeId") Long noticeId,
+                                          @AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        if(!memberId.equals(principalDetails.getMember().getId())){
+            throw new CustomException("삭제 권한이 없습니다.");
+        }
 
         noticeService.remove(noticeId);
 

@@ -1021,7 +1021,6 @@ class MeetingServiceImplTest {
 
         //when
         DetailMeetingDTO detailMeetingDTO = meetingService.getMeeting(meeting.getId(), memberUser.getId());
-
         //then
         //모임 관련
         Assertions.assertThat(detailMeetingDTO.getMeetingId()).isEqualTo(meeting.getId());
