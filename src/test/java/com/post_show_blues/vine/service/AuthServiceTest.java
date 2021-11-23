@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @SpringBootTest
 public class AuthServiceTest {
+    /*
     @Autowired
     AuthService authService;
     @Autowired
@@ -85,5 +86,5 @@ public class AuthServiceTest {
         signupDto.setFile(file1);
         return signupDto;
     }
-
+*/
 }
