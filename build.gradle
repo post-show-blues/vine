@@ -36,8 +36,9 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.querydsl:querydsl-jpa'  //qdsl 추가 내용
 
-	//https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.26'
+
 
 	// validation 추가
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
