@@ -41,12 +41,9 @@ class NoticeServiceImplTest {
 
         //meetingA 모임 participant 생성 -> participant1(memberB), participant2(memberC)
         Member memberB =Member.builder()
-//                .name("memberB")
                 .email("memberB@kookmin.ac.kr")
                 .nickname("memberNicknameB")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(memberB);
@@ -59,12 +56,9 @@ class NoticeServiceImplTest {
         participantRepository.save(participant1);
 
         Member memberC =Member.builder()
-//                .name("memberC")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberNicknameC")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(memberC);
@@ -78,12 +72,9 @@ class NoticeServiceImplTest {
 
         //dDay = 0 이 아닌 meeting 생성 -> meetingB
         Member memberD =Member.builder()
-//                .name("memberD")
                 .email("memberD@kookmin.ac.kr")
                 .nickname("memberNicknameD")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(memberD);
@@ -221,12 +212,9 @@ class NoticeServiceImplTest {
 
     private Member createMember() {
         Member member = Member.builder()
-//                .name("memberA")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberNicknameA")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

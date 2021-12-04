@@ -76,12 +76,9 @@ class MeetingServiceImplTest {
 
        //memberA를 팔로우 하는 memberB,C 생성
        Member memberB = Member.builder()
-//               .name("memberB")
                .email("memberB@kookmin.ac.kr")
                .nickname("memberNicknameB")
                .password("1111")
-//               .phone("010-0000-0000")
-//               .university("국민대학교")
                .build();
 
        memberRepository.save(memberB);
@@ -1165,12 +1162,9 @@ class MeetingServiceImplTest {
     private Participant createParticipant() {
         Meeting meeting = createMeeting();
         Member member =Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);
@@ -1211,12 +1205,9 @@ class MeetingServiceImplTest {
 
     private Member createMember() {
         Member member = Member.builder()
-//                .name("member")
                 .email("member@kookmin.ac.kr")
                 .nickname("memberNickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

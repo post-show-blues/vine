@@ -42,12 +42,9 @@ class ParticipantServiceImplTest {
     void 추방_기능() throws Exception{
         //given
         Member member =Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 
@@ -88,12 +85,9 @@ class ParticipantServiceImplTest {
     void 나가기_기능() throws Exception{
         //given
         Member member =Member.builder()
-//                .name("member")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberANickname")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
         memberRepository.save(member);
 

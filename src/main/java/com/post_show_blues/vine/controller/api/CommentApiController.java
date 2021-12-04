@@ -79,7 +79,6 @@ public class CommentApiController {
     public ResponseEntity<?> removeComment(@PathVariable("commentId") Long commentId,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails){
 
-
         commentService.remove(commentId);
 
         return new ResponseEntity<>(

@@ -103,12 +103,9 @@ public class BookmarkServiceImplTest {
 
     private Member createMember(String email, String nickname) {
         Member member = Member.builder()
-//                .name("member")
                 .email(email)
                 .nickname(nickname)
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);

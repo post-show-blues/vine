@@ -85,10 +85,6 @@ public class Meeting extends BaseEntity {
         this.category = category;
     }
 
-    public void changeMember(Member member){
-        this.member = member;
-    }
-
     public void changeTitle(String title){
         this.title = title;
     }

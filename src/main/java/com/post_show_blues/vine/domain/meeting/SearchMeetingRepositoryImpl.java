@@ -120,7 +120,6 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         tuple.offset(pageable.getOffset()); //RequestDTO.page
         tuple.limit(pageable.getPageSize()); //RequestDTO.size
 
-        log.info("++++++++++++++++++++++++++");
         log.info(pageable.getOffset());
 
         List<Tuple> result = tuple.fetch();
@@ -195,7 +194,6 @@ public class SearchMeetingRepositoryImpl extends QuerydslRepositorySupport
         tuple.offset(pageable.getOffset()); //RequestDTO.page
         tuple.limit(pageable.getPageSize()); //RequestDTO.size
 
-        log.info("++++++++++++++++++++++++++");
         log.info(pageable.getOffset());
 
         List<Tuple> result = tuple.fetch();

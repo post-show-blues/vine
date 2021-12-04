@@ -41,12 +41,9 @@ public class CommentServiceImplTest {
 
         //작성자 생성
         Member writer = Member.builder()
-//                .name("memberB")
                 .email("memberB@kookmin.ac.kr")
                 .nickname("memberNicknameB")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(writer);
@@ -88,12 +85,9 @@ public class CommentServiceImplTest {
 
         //작성자 생성
         Member writer = Member.builder()
-//                .name("memberC")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberNicknameC")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(writer);
@@ -136,12 +130,9 @@ public class CommentServiceImplTest {
 
         //작성자 생성
         Member writer = Member.builder()
-//                .name("memberC")
                 .email("memberC@kookmin.ac.kr")
                 .nickname("memberNicknameC")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(writer);
@@ -248,12 +239,9 @@ public class CommentServiceImplTest {
 
         //댓글 작성자 생성, 프로필 사진 생성
         Member writer = Member.builder()
-//                .name("writer")
                 .email("writer@kookmin.ac.kr")
                 .nickname("writer")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(writer);
@@ -352,12 +340,9 @@ public class CommentServiceImplTest {
 
     private Member createMember() {
         Member member = Member.builder()
-//                .name("memberA")
                 .email("memberA@kookmin.ac.kr")
                 .nickname("memberNicknameA")
                 .password("1111")
-//                .phone("010-0000-0000")
-//                .university("국민대학교")
                 .build();
 
         memberRepository.save(member);
