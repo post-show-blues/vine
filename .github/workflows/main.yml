@@ -1,4 +1,4 @@
-name: allchat-main
+name: vine
 
 on:
   push:
