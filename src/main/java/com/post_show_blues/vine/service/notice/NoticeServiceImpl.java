@@ -11,6 +11,7 @@ import com.post_show_blues.vine.dto.page.PageRequestDTO;
 import com.post_show_blues.vine.dto.page.PageResultDTO;
 import com.post_show_blues.vine.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Log4j2
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Transactional
     @Override
     public void dDayNotice() {
-
+        log.info("----------D-day 모임 참여자들에게 알림 생성 시작---------");
         //dDay -1 갱신
         meetingService.updatedDay();
 
@@ -74,6 +76,7 @@ public class NoticeServiceImpl implements NoticeService{
             });
         });
 
+        log.info("----------D-day 모임 참여자들에게 알림 생성 종료---------");
     }
 
 
